@@ -14,10 +14,10 @@ config :get5_api,
 # Configures the endpoint
 config :get5_api, Get5ApiWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "6wWkY5MdPncUEKUfSNe93SoctprfRnxoUwAc7qQzixk5YPUgbZebN+QDAfAWjekN",
-  render_errors: [view: Get5ApiWeb.ErrorView, accepts: ~w(json), layout: false],
+  secret_key_base: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1",
+  render_errors: [view: Get5ApiWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Get5Api.PubSub,
-  live_view: [signing_salt: "27S45xNG"]
+  live_view: [signing_salt: "MfwQGPQ2"]
 
 # Configures Elixir's Logger
 config :logger, :console,

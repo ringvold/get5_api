@@ -7,7 +7,7 @@ defmodule Get5ApiWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_get5_api_key",
-    signing_salt: "q30W038n"
+    signing_salt: "o22tS7he"
   ]
 
   socket "/socket", Get5ApiWeb.UserSocket,
@@ -29,6 +29,8 @@ defmodule Get5ApiWeb.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :get5_api
   end
