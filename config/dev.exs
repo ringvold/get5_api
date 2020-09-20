@@ -3,7 +3,7 @@ use Mix.Config
 # Configure your database
 config :get5_api, Get5Api.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "",
   database: "get5_api_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
