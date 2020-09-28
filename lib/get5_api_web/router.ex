@@ -19,6 +19,13 @@ defmodule Get5ApiWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/" do
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: Get5ApiWeb.Schema,
+      interface: :simple,
+      context: %{pubsub: Get5ApiWeb.Endpoint}
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Get5ApiWeb do
   #   pipe_through :api
