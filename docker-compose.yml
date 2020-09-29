@@ -9,6 +9,8 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - 5432:5432
+    volumes:
+       - db-data:/var/lib/postgresql/data
   # web:
   #   image: bitwalker/alpine-elixir-phoenix
   #   env_file: .env
@@ -22,3 +24,6 @@ services:
   #     - db
   #   stdin_open: true
   #   tty: true
+
+volumes:
+  db-data:
