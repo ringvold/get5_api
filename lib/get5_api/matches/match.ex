@@ -1,6 +1,8 @@
 defmodule Get5Api.Matches.Match do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Get5Api.Teams.Team
+  alias Get5Api.GameServers.GameServer
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -20,9 +22,11 @@ defmodule Get5Api.Matches.Match do
     field :title, :string
     field :veto_first, :string
     field :veto_map_pool, {:array, :string}
-    field :team1_id, :binary_id
-    field :team2_id, :binary_id
     field :winner, :binary_id
+
+    belongs_to :team1, Team
+    belongs_to :team2, Team
+    belongs_to :game_server, GameServer
 
     timestamps()
   end
@@ -30,7 +34,7 @@ defmodule Get5Api.Matches.Match do
   @doc false
   def changeset(match, attrs) do
     match
-    |> cast(attrs, [:title, :series_type, :side_type, :veto_map_pool, :veto_first, :spectator_ids, :enforce_teams, :api_key, :start_time, :end_time, :min_player_ready, :status, :max_maps, :team1_score, :team2_score])
-    |> validate_required([:title, :series_type, :side_type, :veto_map_pool, :veto_first, :spectator_ids, :enforce_teams, :api_key, :start_time, :end_time, :min_player_ready, :status, :max_maps, :team1_score, :team2_score])
+    |> cast(attrs, [:title, :series_type, :veto_map_pool, :veto_first, :spectator_ids, :enforce_teams, :start_time, :end_time, :min_player_ready, :status, :max_maps, :team1_score, :team2_score])
+    |> validate_required([:title, :series_type, :veto_map_pool, :veto_first, :spectator_ids, :start_time, :end_time, :min_player_ready, :status, :max_maps, :team1_score, :team2_score])
   end
 end

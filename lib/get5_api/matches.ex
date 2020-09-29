@@ -18,7 +18,8 @@ defmodule Get5Api.Matches do
 
   """
   def list_matches do
-    Repo.all(Match)
+    Repo.all from m in Match,
+      preload: [:team1, :team2, :game_server]
   end
 
   @doc """

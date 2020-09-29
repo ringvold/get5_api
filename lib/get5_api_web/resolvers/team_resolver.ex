@@ -6,8 +6,8 @@ defmodule Get5ApiWeb.TeamResolver do
     {:ok, teams}
   end
 
-  defp to_graphql(%Teams.Team{name: name, players: players}) do
-    %{name: name, players: Enum.map(players,
+  defp to_graphql(%Teams.Team{id: id, name: name, players: players}) do
+    %{id: id, name: name, players: Enum.map(players,
       fn {id, name} -> %{id: id, name: name} end)}
   end
 end
