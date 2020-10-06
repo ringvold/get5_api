@@ -26,6 +26,10 @@ defmodule Get5ApiWeb.Router do
       context: %{pubsub: Get5ApiWeb.Endpoint}
   end
 
+  scope "/api" do
+    forward "/graphql/v1", Absinthe.Plug, schema: Get5ApiWeb.Schema
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Get5ApiWeb do
   #   pipe_through :api

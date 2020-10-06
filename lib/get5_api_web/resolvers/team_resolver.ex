@@ -6,8 +6,47 @@ defmodule Get5ApiWeb.TeamResolver do
     {:ok, teams}
   end
 
+  def create_team(_parent, %{name: name, players: players}, _context) do
+    players1 =
+      players
+      |> Enum.reduce(Map.new(), &input_player_to_map/2)
+
+    team =
+      Teams.create_team(%{name: name, players: players1})
+      |> to_graphql
+
+    {:ok, team}
+  end
+
+  defp input_player_to_map(%{id: id, name: name}, acc) do
+    Map.put(acc, id, name)
+  end
+
+  defp input_player_to_map(%{id: id}, acc) do
+    Map.put(acc, id, nil)
+  end
+
+  defp to_graphql({:ok, team = %Teams.Team{}}) do
+    to_graphql(team)
+  end
+
   defp to_graphql(%Teams.Team{id: id, name: name, players: players}) do
-    %{id: id, name: name, players: Enum.map(players,
-      fn {id, name} -> %{id: id, name: name} end)}
+    %{
+      id: id,
+      name: name,
+      players:
+        Enum.map(
+          players,
+          &map_to_player/1
+        )
+    }
+  end
+
+  defp map_to_player({id}) do
+    %{id: id}
+  end
+
+  defp map_to_player({id, name}) do
+    %{id: id, name: name}
   end
 end
