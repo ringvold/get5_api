@@ -25,6 +25,16 @@ defmodule Get5ApiWeb.Schema do
   end
 
   mutation do
+    @desc "Create a game server"
+    field :create_game_server, type: :game_server do
+      arg(:name, non_null(:string))
+      arg(:host, non_null(:integer))
+      arg(:port, non_null(:string))
+      arg(:rcon_password, non_null(:string))
+
+      resolve(&GameServerResolver.create_game/3)
+    end
+
     @desc "Create a team"
     field :create_team, type: :team do
       arg(:name, non_null(:string))
