@@ -14,7 +14,7 @@ defmodule Get5ApiWeb.Schema do
     end
 
     @desc "Get all game server"
-    field :all_game_servers, non_null(list_of(non_null(:team))) do
+    field :all_game_servers, non_null(list_of(non_null(:game_server))) do
       resolve(&GameServerResolver.all_game_servers/3)
     end
 
@@ -28,11 +28,11 @@ defmodule Get5ApiWeb.Schema do
     @desc "Create a game server"
     field :create_game_server, type: :game_server do
       arg(:name, non_null(:string))
-      arg(:host, non_null(:integer))
+      arg(:host, non_null(:string))
       arg(:port, non_null(:string))
       arg(:rcon_password, non_null(:string))
 
-      resolve(&GameServerResolver.create_game/3)
+      resolve(&GameServerResolver.create_game_server/3)
     end
 
     @desc "Create a team"

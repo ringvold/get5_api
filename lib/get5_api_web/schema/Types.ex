@@ -3,7 +3,7 @@ defmodule Get5ApiWeb.Schema.Types do
 
   object :game_server do
     field :id, non_null(:id)
-    field :host, non_null(:integer)
+    field :host, non_null(:string)
     field :in_use, non_null(:boolean)
     field :name, non_null(:string)
     field :port, non_null(:string)
