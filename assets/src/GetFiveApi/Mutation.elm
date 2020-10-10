@@ -19,6 +19,24 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
 
 
+type alias CreateGameServerRequiredArguments =
+    { host : String
+    , name : String
+    , port_ : String
+    , rconPassword : String
+    }
+
+
+{-| Create a game server
+-}
+createGameServer :
+    CreateGameServerRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.GameServer
+    -> SelectionSet (Maybe decodesTo) RootMutation
+createGameServer requiredArgs object_ =
+    Object.selectionForCompositeField "createGameServer" [ Argument.required "host" requiredArgs.host Encode.string, Argument.required "name" requiredArgs.name Encode.string, Argument.required "port" requiredArgs.port_ Encode.string, Argument.required "rconPassword" requiredArgs.rconPassword Encode.string ] object_ (identity >> Decode.nullable)
+
+
 type alias CreateMatchOptionalArguments =
     { enforceTeams : OptionalArgument Bool
     , spectatorIds : OptionalArgument (List (Maybe String))
