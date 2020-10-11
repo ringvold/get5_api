@@ -14,7 +14,7 @@ defmodule Get5ApiWeb.Schema do
     end
 
     @desc "Get all game server"
-    field :all_game_servers, non_null(list_of(non_null(:game_server))) do
+    field :all_game_servers, non_null(list_of(non_null(:team))) do
       resolve(&GameServerResolver.all_game_servers/3)
     end
 
