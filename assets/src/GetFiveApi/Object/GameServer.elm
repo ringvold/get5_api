@@ -19,9 +19,9 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-host : SelectionSet Int GetFiveApi.Object.GameServer
+host : SelectionSet String GetFiveApi.Object.GameServer
 host =
-    Object.selectionForField "Int" "host" [] Decode.int
+    Object.selectionForField "String" "host" [] Decode.string
 
 
 id : SelectionSet GetFiveApi.ScalarCodecs.Id GetFiveApi.Object.GameServer

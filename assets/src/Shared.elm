@@ -72,6 +72,7 @@ view { page, toMsg } model =
             [ row [ spacing 20 ]
                 [ link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Top, label = text "Homepage" }
                 , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Teams, label = text "Teams" }
+                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Servers, label = text "Servers" }
                 ]
             , column [ height fill ] page.body
             ]

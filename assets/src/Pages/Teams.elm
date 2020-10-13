@@ -1,13 +1,15 @@
 module Pages.Teams exposing (Model, Msg, Params, page)
 
-import Api exposing (GraphqlData, Team, Teams)
+import Api exposing (GraphqlData)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
 import RemoteData exposing (RemoteData(..), WebData)
 import Spa.Document exposing (Document)
+import Spa.Generated.Route as Route
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Team exposing (Team, Teams)
 
 
 page : Page Params Model Msg
@@ -45,7 +47,7 @@ init { params } =
 
 
 type Msg
-    = TeamsReceived (Api.GraphqlData Api.Teams)
+    = TeamsReceived (Api.GraphqlData Teams)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -93,4 +95,7 @@ teamsResponse response =
 
 teamView : Team -> Element msg
 teamView team =
-    text ("Team: " ++ team.name ++ " with id " ++ team.id)
+    link []
+        { url = Route.toString (Route.Teams__Id_String { id = team.id })
+        , label = text ("Team: " ++ team.name ++ " with id " ++ team.id)
+        }

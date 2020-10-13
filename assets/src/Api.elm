@@ -1,5 +1,6 @@
-module Api exposing (GraphqlData, Team, Teams, getAllTeams)
+module Api exposing (GraphqlData, getAllServers, getAllTeams, getTeam)
 
+import GetFiveApi.Object.GameServer as GServer
 import GetFiveApi.Object.Team as GTeam
 import GetFiveApi.Query as Query
 import GetFiveApi.Scalar exposing (Id(..))
@@ -8,27 +9,49 @@ import Graphql.Operation exposing (RootQuery)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import RemoteData exposing (RemoteData)
-
-
-type alias Teams =
-    List Team
-
-
-type alias Team =
-    { id : String
-    , name : String
-    }
+import Server exposing (Server, Servers)
+import Team exposing (Team, Teams)
 
 
 type alias GraphqlData a =
     RemoteData (Graphql.Http.Error a) a
 
 
-getAllTeams : Cmd (RemoteData (Graphql.Http.Error Teams) Teams)
-getAllTeams =
-    allTeams
-        |> Graphql.Http.queryRequest "http://localhost:4000/api/graphql/v1"
+url : String
+url =
+    "http://localhost:4000/api/graphql/v1"
+
+
+sendRequest : SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
+sendRequest query =
+    query
+        |> Graphql.Http.queryRequest url
         |> Graphql.Http.send RemoteData.fromResult
+
+
+getAllTeams : Cmd (GraphqlData Teams)
+getAllTeams =
+    sendRequest allTeams
+
+
+getTeam : String -> Cmd (GraphqlData Team)
+getTeam id =
+    teamQuery id
+        |> sendRequest
+
+
+getAllServers : Cmd (GraphqlData Servers)
+getAllServers =
+    allServers
+        |> sendRequest
+
+
+teamQuery : String -> SelectionSet Team RootQuery
+teamQuery id =
+    Query.team { id = Id id } <|
+        SelectionSet.map2 Team
+            (SelectionSet.map scalarIdToString GTeam.id)
+            GTeam.name
 
 
 allTeams : SelectionSet Teams RootQuery
@@ -37,6 +60,17 @@ allTeams =
         SelectionSet.map2 Team
             (SelectionSet.map scalarIdToString GTeam.id)
             GTeam.name
+
+
+allServers : SelectionSet Servers RootQuery
+allServers =
+    Query.allGameServers <|
+        SelectionSet.map5 Server
+            (SelectionSet.map scalarIdToString GServer.id)
+            GServer.name
+            GServer.host
+            GServer.port_
+            GServer.inUse
 
 
 

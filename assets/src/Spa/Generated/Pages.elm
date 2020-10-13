@@ -11,7 +11,9 @@ module Spa.Generated.Pages exposing
 
 import Pages.Top
 import Pages.NotFound
+import Pages.Servers
 import Pages.Teams
+import Pages.Teams.Id_String
 import Shared
 import Spa.Document as Document exposing (Document)
 import Spa.Generated.Route as Route exposing (Route)
@@ -25,13 +27,17 @@ import Spa.Url as Url
 type Model
     = Top__Model Pages.Top.Model
     | NotFound__Model Pages.NotFound.Model
+    | Servers__Model Pages.Servers.Model
     | Teams__Model Pages.Teams.Model
+    | Teams__Id_String__Model Pages.Teams.Id_String.Model
 
 
 type Msg
     = Top__Msg Pages.Top.Msg
     | NotFound__Msg Pages.NotFound.Msg
+    | Servers__Msg Pages.Servers.Msg
     | Teams__Msg Pages.Teams.Msg
+    | Teams__Id_String__Msg Pages.Teams.Id_String.Msg
 
 
 
@@ -47,8 +53,14 @@ init route =
         Route.NotFound ->
             pages.notFound.init ()
         
+        Route.Servers ->
+            pages.servers.init ()
+        
         Route.Teams ->
             pages.teams.init ()
+        
+        Route.Teams__Id_String params ->
+            pages.teams__id_string.init params
 
 
 
@@ -64,8 +76,14 @@ update bigMsg bigModel =
         ( NotFound__Msg msg, NotFound__Model model ) ->
             pages.notFound.update msg model
         
+        ( Servers__Msg msg, Servers__Model model ) ->
+            pages.servers.update msg model
+        
         ( Teams__Msg msg, Teams__Model model ) ->
             pages.teams.update msg model
+        
+        ( Teams__Id_String__Msg msg, Teams__Id_String__Model model ) ->
+            pages.teams__id_string.update msg model
         
         _ ->
             ( bigModel, Cmd.none )
@@ -84,8 +102,14 @@ bundle bigModel =
         NotFound__Model model ->
             pages.notFound.bundle model
         
+        Servers__Model model ->
+            pages.servers.bundle model
+        
         Teams__Model model ->
             pages.teams.bundle model
+        
+        Teams__Id_String__Model model ->
+            pages.teams__id_string.bundle model
 
 
 view : Model -> Document Msg
@@ -155,10 +179,14 @@ upgrade toModel toMsg page =
 pages :
     { top : Upgraded Pages.Top.Params Pages.Top.Model Pages.Top.Msg
     , notFound : Upgraded Pages.NotFound.Params Pages.NotFound.Model Pages.NotFound.Msg
+    , servers : Upgraded Pages.Servers.Params Pages.Servers.Model Pages.Servers.Msg
     , teams : Upgraded Pages.Teams.Params Pages.Teams.Model Pages.Teams.Msg
+    , teams__id_string : Upgraded Pages.Teams.Id_String.Params Pages.Teams.Id_String.Model Pages.Teams.Id_String.Msg
     }
 pages =
     { top = Pages.Top.page |> upgrade Top__Model Top__Msg
     , notFound = Pages.NotFound.page |> upgrade NotFound__Model NotFound__Msg
+    , servers = Pages.Servers.page |> upgrade Servers__Model Servers__Msg
     , teams = Pages.Teams.page |> upgrade Teams__Model Teams__Msg
+    , teams__id_string = Pages.Teams.Id_String.page |> upgrade Teams__Id_String__Model Teams__Id_String__Msg
     }

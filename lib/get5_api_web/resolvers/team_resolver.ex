@@ -6,6 +6,11 @@ defmodule Get5ApiWeb.TeamResolver do
     {:ok, teams}
   end
 
+  def get_team(_root, args, _info) do
+    # TODO: Fix error handling on
+    {:ok, Teams.get_team!(args.id)}
+  end
+
   def create_team(_parent, %{name: name, players: input_players}, _context) do
     players =
       input_players
@@ -45,5 +50,4 @@ defmodule Get5ApiWeb.TeamResolver do
   defp map_to_player({id}), do: %{id: id}
 
   defp map_to_player({id, name}), do: %{id: id, name: name}
-
 end
