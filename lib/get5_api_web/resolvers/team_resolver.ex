@@ -8,7 +8,7 @@ defmodule Get5ApiWeb.TeamResolver do
 
   def get_team(_root, args, _info) do
     # TODO: Fix error handling on
-    {:ok, Teams.get_team!(args.id)}
+    {:ok, Teams.get_team!(args.id) |> to_graphql()}
   end
 
   def create_team(_parent, %{name: name, players: input_players}, _context) do

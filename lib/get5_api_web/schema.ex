@@ -24,7 +24,7 @@ defmodule Get5ApiWeb.Schema do
       resolve(&GameServerResolver.get_game_sever/3)
     end
 
-    @desc "Get a game server"
+    @desc "Get a team"
     field :team, non_null(:team) do
       arg(:id, non_null(:id))
       resolve(&TeamResolver.get_team/3)
