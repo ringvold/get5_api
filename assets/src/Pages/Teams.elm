@@ -99,3 +99,4 @@ teamView team =
         { url = Route.toString (Route.Teams__Id_String { id = team.id })
         , label = text ("Team: " ++ team.name ++ " with id " ++ team.id)
         }
+ 

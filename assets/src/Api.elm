@@ -1,6 +1,8 @@
 module Api exposing (GraphqlData, getAllServers, getAllTeams, getTeam)
 
+import GetFiveApi.Object as GObject
 import GetFiveApi.Object.GameServer as GServer
+import GetFiveApi.Object.Player as GPlayer
 import GetFiveApi.Object.Team as GTeam
 import GetFiveApi.Query as Query
 import GetFiveApi.Scalar exposing (Id(..))
@@ -10,7 +12,7 @@ import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import RemoteData exposing (RemoteData)
 import Server exposing (Server, Servers)
-import Team exposing (Team, Teams)
+import Team exposing (Player, Team, Teams)
 
 
 type alias GraphqlData a =
@@ -49,17 +51,28 @@ getAllServers =
 teamQuery : String -> SelectionSet Team RootQuery
 teamQuery id =
     Query.team { id = Id id } <|
-        SelectionSet.map2 Team
+        SelectionSet.map3 Team
             (SelectionSet.map scalarIdToString GTeam.id)
             GTeam.name
+            (SelectionSet.map (List.filterMap identity) playersSelectionSet)
+
+
+playersSelectionSet : SelectionSet (List (Maybe Player)) GObject.Team
+playersSelectionSet =
+    GTeam.players
+        (SelectionSet.map2 Player
+            GPlayer.id
+            GPlayer.name
+        )
 
 
 allTeams : SelectionSet Teams RootQuery
 allTeams =
     Query.allTeams <|
-        SelectionSet.map2 Team
+        SelectionSet.map3 Team
             (SelectionSet.map scalarIdToString GTeam.id)
             GTeam.name
+            (SelectionSet.succeed [])
 
 
 allServers : SelectionSet Servers RootQuery

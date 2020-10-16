@@ -93,4 +93,5 @@ viewings result =
             text "Error!"
 
         Success team ->
-            text team.name
+            column [] [text team.name
+            , List.filterMap (.name ) team.players |> String.join " " |> text]
