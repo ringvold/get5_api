@@ -97,6 +97,5 @@ teamView : Team -> Element msg
 teamView team =
     link []
         { url = Route.toString (Route.Teams__Id_String { id = team.id })
-        , label = text ("Team: " ++ team.name ++ " with id " ++ team.id)
+        , label = text team.name
         }
- 
