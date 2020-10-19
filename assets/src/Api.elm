@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, getAllServers, getAllTeams, getTeam)
+module Api exposing (GraphqlData, getAllServers, getAllTeams, getServer, getTeam)
 
 import GetFiveApi.Object as GObject
 import GetFiveApi.Object.GameServer as GServer
@@ -22,6 +22,10 @@ type alias GraphqlData a =
 url : String
 url =
     "http://localhost:4000/api/graphql/v1"
+
+
+
+-- Request
 
 
 sendRequest : SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
@@ -48,6 +52,16 @@ getAllServers =
         |> sendRequest
 
 
+getServer : String -> Cmd (GraphqlData Server)
+getServer id =
+    serverQuery id
+        |> sendRequest
+
+
+
+-- Queries
+
+
 teamQuery : String -> SelectionSet Team RootQuery
 teamQuery id =
     Query.team { id = Id id } <|
@@ -55,6 +69,18 @@ teamQuery id =
             (SelectionSet.map scalarIdToString GTeam.id)
             GTeam.name
             (SelectionSet.map (List.filterMap identity) playersSelectionSet)
+
+
+serverQuery : String -> SelectionSet Server RootQuery
+serverQuery id =
+    Query.gameServer { id = Id id } <|
+        (SelectionSet.succeed Server
+            |> with (SelectionSet.map scalarIdToString GServer.id)
+            |> with GServer.name
+            |> with GServer.host
+            |> with GServer.port_
+            |> with GServer.inUse
+        )
 
 
 playersSelectionSet : SelectionSet (List (Maybe Player)) GObject.Team

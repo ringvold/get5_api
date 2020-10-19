@@ -9,6 +9,7 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Styling
 import Team exposing (Team, Teams)
 
 
@@ -95,7 +96,7 @@ teamsResponse response =
 
 teamView : Team -> Element msg
 teamView team =
-    link []
+    link Styling.link
         { url = Route.toString (Route.Teams__Id_String { id = team.id })
         , label = text team.name
         }

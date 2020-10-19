@@ -13,6 +13,7 @@ type Route
     | NotFound
     | Servers
     | Teams
+    | Servers__Id_String { id : String }
     | Teams__Id_String { id : String }
 
 
@@ -28,6 +29,9 @@ routes =
         , Parser.map NotFound (Parser.s "not-found")
         , Parser.map Servers (Parser.s "servers")
         , Parser.map Teams (Parser.s "teams")
+        , (Parser.s "servers" </> Parser.string)
+          |> Parser.map (\id -> { id = id })
+          |> Parser.map Servers__Id_String
         , (Parser.s "teams" </> Parser.string)
           |> Parser.map (\id -> { id = id })
           |> Parser.map Teams__Id_String
@@ -51,6 +55,9 @@ toString route =
                 
                 Teams ->
                     [ "teams" ]
+                
+                Servers__Id_String { id } ->
+                    [ "servers", id ]
                 
                 Teams__Id_String { id } ->
                     [ "teams", id ]

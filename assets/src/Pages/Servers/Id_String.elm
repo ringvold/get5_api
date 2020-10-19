@@ -1,6 +1,6 @@
-module Pages.Servers exposing (Model, Msg, Params, page)
+module Pages.Servers.Id_String exposing (Model, Msg, Params, page)
 
-import Api
+import Api exposing (GraphqlData)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
@@ -8,10 +8,8 @@ import RemoteData exposing (RemoteData(..))
 import Server exposing (Server, Servers)
 import Shared
 import Spa.Document exposing (Document)
-import Spa.Generated.Route as Route
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
-import Styling
 
 
 page : Page Params Model Msg
@@ -31,18 +29,19 @@ page =
 
 
 type alias Params =
-    ()
+    { id : String }
 
 
 type alias Model =
-    { servers : Api.GraphqlData Servers }
+    { server : GraphqlData Server }
 
 
 init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
 init shared { params } =
-    ( { servers = Loading }
+    ( { server = Loading }
     , Cmd.batch
-        [ Cmd.map ServersReceived Api.getAllServers ]
+        [ Cmd.map ServerReceived (Api.getServer params.id)
+        ]
     )
 
 
@@ -51,14 +50,14 @@ init shared { params } =
 
 
 type Msg
-    = ServersReceived (Api.GraphqlData Servers)
+    = ServerReceived (GraphqlData Server)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ServersReceived servers ->
-            ( { model | servers = servers }, Cmd.none )
+        ServerReceived server ->
+            ( { model | server = server }, Cmd.none )
 
 
 save : Model -> Shared.Model -> Shared.Model
@@ -82,17 +81,14 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Servers"
-    , body =
-        [ el [ Region.heading 1, Font.size 25 ] (text "Servers")
-        , gameServerResponse model.servers
-        ]
+    { title = "Servers.Id_String"
+    , body = [ viewGraphdata model.server ]
     }
 
 
-gameServerResponse : Api.GraphqlData Servers -> Element msg
-gameServerResponse response =
-    case response of
+viewGraphdata : GraphqlData Server -> Element Msg
+viewGraphdata result =
+    case result of
         NotAsked ->
             text "Not asked for servers yet"
 
@@ -102,14 +98,19 @@ gameServerResponse response =
         Failure err ->
             text "Error!"
 
-        Success teams ->
-            List.map serverView teams
-                |> column []
+        Success server ->
+            column []
+                [ text server.name |> el [ Region.heading 1, Font.size 30 ]
+                , "Host: " ++ server.host |> text |> el []
+                , "Port: " ++ server.port_ |> text |> el []
+                , "In use: " ++ boolToString server.inUse |> text |> el []
+                ]
 
 
-serverView : Server -> Element msg
-serverView server =
-    link Styling.link
-        { url = Route.toString (Route.Servers__Id_String { id = server.id })
-        , label = text ("Server: " ++ server.name ++ " with id " ++ server.id)
-        }
+boolToString bool =
+    case bool of
+        True ->
+            "Yes"
+
+        False ->
+            "No"
