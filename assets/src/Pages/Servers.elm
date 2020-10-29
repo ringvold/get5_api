@@ -85,26 +85,15 @@ view model =
     { title = "Servers"
     , body =
         [ el [ Region.heading 1, Font.size 25 ] (text "Servers")
-        , gameServerResponse model.servers
+        , Shared.graphDataView viewServers model.servers
         ]
     }
 
 
-gameServerResponse : Api.GraphqlData Servers -> Element msg
-gameServerResponse response =
-    case response of
-        NotAsked ->
-            text "Not asked for servers yet"
-
-        Loading ->
-            text "Loading servers"
-
-        Failure err ->
-            text "Error!"
-
-        Success teams ->
-            List.map serverView teams
-                |> column []
+viewServers : Servers -> Element msg
+viewServers servers =
+    List.map serverView servers
+        |> column []
 
 
 serverView : Server -> Element msg

@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
 import RemoteData exposing (RemoteData(..), WebData)
+import Shared
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Spa.Page as Page exposing (Page)
@@ -72,26 +73,15 @@ view model =
     { title = "Teams"
     , body =
         [ el [ Region.heading 1, Font.size 25 ] (text "Teams")
-        , teamsResponse model.teams
+        , Shared.graphDataView viewTeams model.teams
         ]
     }
 
 
-teamsResponse : GraphqlData Teams -> Element msg
-teamsResponse response =
-    case response of
-        NotAsked ->
-            text "Not asked for teams yet"
-
-        Loading ->
-            text "Loading teams"
-
-        Failure err ->
-            text "Error!"
-
-        Success teams ->
-            List.map teamView teams
-                |> column []
+viewTeams : Teams -> Element msg
+viewTeams teams =
+    List.map teamView teams
+        |> column []
 
 
 teamView : Team -> Element msg

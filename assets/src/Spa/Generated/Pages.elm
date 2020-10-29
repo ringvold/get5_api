@@ -13,6 +13,7 @@ import Pages.Top
 import Pages.NotFound
 import Pages.Servers
 import Pages.Teams
+import Pages.Teams.New
 import Pages.Servers.Id_String
 import Pages.Teams.Id_String
 import Shared
@@ -30,6 +31,7 @@ type Model
     | NotFound__Model Pages.NotFound.Model
     | Servers__Model Pages.Servers.Model
     | Teams__Model Pages.Teams.Model
+    | Teams__New__Model Pages.Teams.New.Model
     | Servers__Id_String__Model Pages.Servers.Id_String.Model
     | Teams__Id_String__Model Pages.Teams.Id_String.Model
 
@@ -39,6 +41,7 @@ type Msg
     | NotFound__Msg Pages.NotFound.Msg
     | Servers__Msg Pages.Servers.Msg
     | Teams__Msg Pages.Teams.Msg
+    | Teams__New__Msg Pages.Teams.New.Msg
     | Servers__Id_String__Msg Pages.Servers.Id_String.Msg
     | Teams__Id_String__Msg Pages.Teams.Id_String.Msg
 
@@ -61,6 +64,9 @@ init route =
         
         Route.Teams ->
             pages.teams.init ()
+        
+        Route.Teams__New ->
+            pages.teams__new.init ()
         
         Route.Servers__Id_String params ->
             pages.servers__id_string.init params
@@ -87,6 +93,9 @@ update bigMsg bigModel =
         
         ( Teams__Msg msg, Teams__Model model ) ->
             pages.teams.update msg model
+        
+        ( Teams__New__Msg msg, Teams__New__Model model ) ->
+            pages.teams__new.update msg model
         
         ( Servers__Id_String__Msg msg, Servers__Id_String__Model model ) ->
             pages.servers__id_string.update msg model
@@ -116,6 +125,9 @@ bundle bigModel =
         
         Teams__Model model ->
             pages.teams.bundle model
+        
+        Teams__New__Model model ->
+            pages.teams__new.bundle model
         
         Servers__Id_String__Model model ->
             pages.servers__id_string.bundle model
@@ -193,6 +205,7 @@ pages :
     , notFound : Upgraded Pages.NotFound.Params Pages.NotFound.Model Pages.NotFound.Msg
     , servers : Upgraded Pages.Servers.Params Pages.Servers.Model Pages.Servers.Msg
     , teams : Upgraded Pages.Teams.Params Pages.Teams.Model Pages.Teams.Msg
+    , teams__new : Upgraded Pages.Teams.New.Params Pages.Teams.New.Model Pages.Teams.New.Msg
     , servers__id_string : Upgraded Pages.Servers.Id_String.Params Pages.Servers.Id_String.Model Pages.Servers.Id_String.Msg
     , teams__id_string : Upgraded Pages.Teams.Id_String.Params Pages.Teams.Id_String.Model Pages.Teams.Id_String.Msg
     }
@@ -201,6 +214,7 @@ pages =
     , notFound = Pages.NotFound.page |> upgrade NotFound__Model NotFound__Msg
     , servers = Pages.Servers.page |> upgrade Servers__Model Servers__Msg
     , teams = Pages.Teams.page |> upgrade Teams__Model Teams__Msg
+    , teams__new = Pages.Teams.New.page |> upgrade Teams__New__Model Teams__New__Msg
     , servers__id_string = Pages.Servers.Id_String.page |> upgrade Servers__Id_String__Model Servers__Id_String__Msg
     , teams__id_string = Pages.Teams.Id_String.page |> upgrade Teams__Id_String__Model Teams__Id_String__Msg
     }

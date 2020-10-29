@@ -78,27 +78,16 @@ subscriptions model =
 view : Model -> Document Msg
 view model =
     { title = "Team"
-    , body = [ viewings model.team ]
+    , body = [ Shared.graphDataView viewTeam model.team ]
     }
 
 
-viewings : GraphqlData Team -> Element Msg
-viewings result =
-    case result of
-        NotAsked ->
-            text "Not asked for servers yet"
-
-        Loading ->
-            text "Loading servers"
-
-        Failure err ->
-            text "Error!"
-
-        Success team ->
-            column []
-                [ el [ Region.heading 1, Font.size 30 ] <| text team.name
-                , viewPlayers team.players
-                ]
+viewTeam : Team -> Element Msg
+viewTeam team =
+    column []
+        [ el [ Region.heading 1, Font.size 30 ] <| text team.name
+        , viewPlayers team.players
+        ]
 
 
 viewPlayers : List Player -> Element Msg

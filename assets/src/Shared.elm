@@ -2,15 +2,18 @@ module Shared exposing
     ( Flags
     , Model
     , Msg
+    , graphDataView
     , init
     , subscriptions
     , update
     , view
     )
 
+import Api exposing (GraphqlData)
 import Browser.Navigation exposing (Key)
 import Element exposing (..)
 import Element.Font as Font
+import RemoteData exposing (RemoteData(..))
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Url exposing (Url)
@@ -78,3 +81,19 @@ view { page, toMsg } model =
             ]
         ]
     }
+
+
+graphDataView : (a -> Element msg) -> GraphqlData a -> Element msg
+graphDataView successView graphData =
+    case graphData of
+        NotAsked ->
+            text "Initializing"
+
+        Loading ->
+            text "Loading"
+
+        Failure error ->
+            text "Error loading data from server"
+
+        Success data ->
+            successView data
