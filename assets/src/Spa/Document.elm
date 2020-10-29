@@ -6,6 +6,8 @@ module Spa.Document exposing
 
 import Browser
 import Element exposing (..)
+import Element.Background exposing (color)
+import Styling.Colors exposing (..)
 
 
 type alias Document msg =
@@ -23,9 +25,21 @@ map fn doc =
 
 toBrowserDocument : Document msg -> Browser.Document msg
 toBrowserDocument doc =
-    { title = doc.title
+    { title = String.join "" [ doc.title, " - ", "Get5 UI" ]
     , body =
-        [ Element.layout [ width fill, height fill ]
-            (column [ width fill, height fill ] doc.body)
+        [ Element.layout
+            [ width fill
+            , height fill
+            , centerX
+            , color grey100
+            ]
+            (column
+                [ centerX
+                , width (fill |> maximum 800)
+                , height fill
+                , color white
+                ]
+                doc.body
+            )
         ]
     }

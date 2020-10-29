@@ -100,5 +100,5 @@ serverView : Server -> Element msg
 serverView server =
     link Styling.link
         { url = Route.toString (Route.Servers__Id_String { id = server.id })
-        , label = text ("Server: " ++ server.name ++ " with id " ++ server.id)
+        , label = text server.name
         }

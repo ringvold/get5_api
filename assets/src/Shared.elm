@@ -12,10 +12,12 @@ module Shared exposing
 import Api exposing (GraphqlData)
 import Browser.Navigation exposing (Key)
 import Element exposing (..)
+import Element.Background as Background
 import Element.Font as Font
 import RemoteData exposing (RemoteData(..))
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
+import Styling.Colors exposing (..)
 import Url exposing (Url)
 
 
@@ -64,6 +66,13 @@ subscriptions model =
 -- VIEW
 
 
+menuLinks : List (Attr decorative msg)
+menuLinks =
+    [ Font.color white
+    , Font.size 20
+    ]
+
+
 view :
     { page : Document msg, toMsg : Msg -> msg }
     -> Model
@@ -71,13 +80,27 @@ view :
 view { page, toMsg } model =
     { title = page.title
     , body =
-        [ column [ padding 20, spacing 20, height fill ]
-            [ row [ spacing 20 ]
-                [ link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Top, label = text "Homepage" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Teams, label = text "Teams" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Servers, label = text "Servers" }
+        [ column
+            [ height fill
+            , width fill
+            ]
+            [ row
+                [ Background.color grey900
+                , spacing 20
+                , padding 20
+                , width fill
                 ]
-            , column [ height fill ] page.body
+                [ link
+                    menuLinks
+                    { url = Route.toString Route.Top, label = text "Homepage" }
+                , link
+                    menuLinks
+                    { url = Route.toString Route.Teams, label = text "Teams" }
+                , link
+                    menuLinks
+                    { url = Route.toString Route.Servers, label = text "Servers" }
+                ]
+            , column [ height fill, paddingXY 20 20 ] page.body
             ]
         ]
     }

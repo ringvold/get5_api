@@ -77,7 +77,9 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Team"
+    { title =
+        RemoteData.map (.name >> String.append "Team ") model.team
+            |> RemoteData.withDefault "Unknown team"
     , body = [ Shared.graphDataView viewTeam model.team ]
     }
 

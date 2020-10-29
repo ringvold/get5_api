@@ -81,30 +81,21 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Servers.Id_String"
-    , body = [ viewGraphdata model.server ]
+    { title =
+        RemoteData.map .name model.server
+            |> RemoteData.withDefault "Unknown server"
+    , body = [ Shared.graphDataView serverView model.server ]
     }
 
 
-viewGraphdata : GraphqlData Server -> Element Msg
-viewGraphdata result =
-    case result of
-        NotAsked ->
-            text "Not asked for servers yet"
-
-        Loading ->
-            text "Loading servers"
-
-        Failure err ->
-            text "Error!"
-
-        Success server ->
-            column []
-                [ text server.name |> el [ Region.heading 1, Font.size 30 ]
-                , "Host: " ++ server.host |> text |> el []
-                , "Port: " ++ server.port_ |> text |> el []
-                , "In use: " ++ boolToString server.inUse |> text |> el []
-                ]
+serverView : Server -> Element Msg
+serverView server =
+    column []
+        [ text server.name |> el [ Region.heading 1, Font.size 25 ]
+        , "Host: " ++ server.host |> text |> el []
+        , "Port: " ++ server.port_ |> text |> el []
+        , "In use: " ++ boolToString server.inUse |> text |> el []
+        ]
 
 
 boolToString bool =
