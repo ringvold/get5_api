@@ -19,16 +19,17 @@ config :get5_api, Get5ApiWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
-  check_origin: false,
-  watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
-      cd: Path.expand("../assets", __DIR__)
-    ]
-  ]
+  check_origin: false
+
+# watchers: [
+#   node: [
+#     "node_modules/webpack/bin/webpack.js",
+#     "--mode",
+#     "development",
+#     "--watch-stdin",
+#     cd: Path.expand("../assets", __DIR__)
+#   ]
+# ]
 
 # ## SSL Support
 #
