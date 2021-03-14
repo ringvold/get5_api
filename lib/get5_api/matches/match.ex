@@ -4,6 +4,11 @@ defmodule Get5Api.Matches.Match do
   alias Get5Api.Teams.Team
   alias Get5Api.GameServers.GameServer
 
+  @type series_type() :: :bo1_preset | :bo1 | :bo2 | :bo3 | :bo5 | :bo7
+
+  # Side type is defined by Get5 in match schema https://github.com/splewis/get5#match-schema
+  @type side_type() :: :standard | :always_knife | :never_knife
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "matches" do
@@ -12,7 +17,12 @@ defmodule Get5Api.Matches.Match do
     field :enforce_teams, :boolean, default: false
     field :max_maps, :integer
     field :min_player_ready, :integer
-    field :series_type, :string
+
+    field :side_type, Ecto.Enum,
+      values: [:standard, :always_knife, :never_knife],
+      default: :standard
+
+    field :series_type, Ecto.Enum, values: [:bo1_preset, :bo1, :bo2, :bo3, :bo5, :bo7]
     field :spectator_ids, {:array, :string}
     field :start_time, :utc_datetime
     field :status, :string
@@ -34,32 +44,93 @@ defmodule Get5Api.Matches.Match do
   def changeset(match, attrs) do
     match
     |> cast(attrs, [
+      :api_key,
       :title,
       :series_type,
       :veto_map_pool,
       :veto_first,
       :spectator_ids,
       :enforce_teams,
-      :start_time,
-      :end_time,
       :min_player_ready,
       :status,
-      :max_maps,
-      :team1_score,
-      :team2_score
+      :team1_id,
+      :team2_id
     ])
+    |> cast_assoc(:team1, required: true)
+    |> cast_assoc(:team2, required: true)
     |> validate_required([
-      :title,
       :series_type,
       :veto_map_pool,
       :veto_first,
-      :spectator_ids,
-      :start_time,
-      :end_time,
       :min_player_ready,
-      :status,
-      :max_maps
+      :status
     ])
+    |> validate_map_pool()
+    |> validate_different_teams()
+  end
+
+  @spec validate_different_teams(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
+  def validate_different_teams(changeset, options \\ []) do
+    team1 = get_field(changeset, :team1)
+    team2 = get_field(changeset, :team2)
+
+    with true <- team1 != nil,
+         true <- team2 != nil,
+         true <- team1.name == team2.name do
+      add_error(changeset, :team1, options[:message] || "Team1 and team2 cannot be the same")
+    else
+      _ -> changeset
+    end
+  end
+
+  @spec validate_map_pool(Ecto.Changeset.t(), Keyword.t()) :: Ecto.Changeset.t()
+  def validate_map_pool(changeset, options \\ []) do
+    maps = get_field(changeset, :veto_map_pool, [])
+    series_type = get_field(changeset, :series_type)
+
+    with {:maps, true} <- {:maps, maps != nil},
+         {:bo1_preset, false} <- {:bo1_preset, series_type != :bo1_preset and length(maps) != 1},
+         max_maps = series_type_to_max_maps(get_field(changeset, :series_type, :b01)),
+         {:minimum_maps, true, _} <- {:minimum_maps, length(maps) >= max_maps, max_maps} do
+      changeset
+    else
+      {:bo1_preset, true} ->
+        add_error(
+          changeset,
+          :veto_map_pool,
+          options[:bo1_preset_message] ||
+            "must have exactly 1 map selected to do a bo1 with a preset map"
+        )
+
+      {:minimum_maps, false, max_maps} ->
+        add_error(
+          changeset,
+          :veto_map_pool,
+          options[:max_maps_message] ||
+            "must have at least #{max_maps} maps selected to do a Bo#{max_maps}"
+        )
+
+      {:maps, false} ->
+        add_error(
+          changeset,
+          :veto_map_pool,
+          options[:message] ||
+            "can't be blank"
+        )
+    end
+  end
+
+  @spec series_type_to_max_maps(series_type()) :: integer()
+  def series_type_to_max_maps(series_type) do
+    case series_type do
+      :bo1_preset -> 1
+      :bo1 -> 1
+      :bo2 -> 2
+      :bo3 -> 3
+      :bo5 -> 5
+      :bo7 -> 7
+      _ -> 1
+    end
   end
 
   ## Series type

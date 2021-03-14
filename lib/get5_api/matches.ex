@@ -18,8 +18,10 @@ defmodule Get5Api.Matches do
 
   """
   def list_matches do
-    Repo.all from m in Match,
-      preload: [:team1, :team2, :game_server]
+    Repo.all(
+      from m in Match,
+        preload: [:team1, :team2, :game_server]
+    )
   end
 
   @doc """
@@ -36,7 +38,7 @@ defmodule Get5Api.Matches do
       ** (Ecto.NoResultsError)
 
   """
-  def get_match!(id), do: Repo.get!(Match, id)
+  def get_match!(id), do: Repo.get!(Match, id) |> Repo.preload([:team1, :team2])
 
   @doc """
   Creates a match.

@@ -2,15 +2,75 @@ defmodule Get5Api.MatchesTest do
   use Get5Api.DataCase
 
   alias Get5Api.Matches
+  alias Get5Api.Teams
+  alias Get5Api.Repo
+
+  @team_valid_attrs %{name: "some name", players: %{}}
 
   describe "matches" do
     alias Get5Api.Matches.Match
 
-    @valid_attrs %{api_key: "some api_key", end_time: "2010-04-17T14:00:00Z", enforce_teams: true, max_maps: 42, min_player_ready: 42, series_type: "some series_type", side_type: "some side_type", spectator_ids: [], start_time: "2010-04-17T14:00:00Z", status: "some status", team1_score: 42, team2_score: 42, title: "some title", veto_first: "some veto_first", veto_map_pool: []}
-    @update_attrs %{api_key: "some updated api_key", end_time: "2011-05-18T15:01:01Z", enforce_teams: false, max_maps: 43, min_player_ready: 43, series_type: "some updated series_type", side_type: "some updated side_type", spectator_ids: [], start_time: "2011-05-18T15:01:01Z", status: "some updated status", team1_score: 43, team2_score: 43, title: "some updated title", veto_first: "some updated veto_first", veto_map_pool: []}
-    @invalid_attrs %{api_key: nil, end_time: nil, enforce_teams: nil, max_maps: nil, min_player_ready: nil, series_type: nil, side_type: nil, spectator_ids: nil, start_time: nil, status: nil, team1_score: nil, team2_score: nil, title: nil, veto_first: nil, veto_map_pool: nil}
+    import Ecto.Changeset
 
-    def match_fixture(attrs \\ %{}) do
+    @team1 %{
+      id: 1,
+      name: "Team1",
+      players: %{player1: "1", player2: "2", player3: "3", player4: "4", player5: "5"}
+    }
+    @team2 %{
+      id: 2,
+      name: "Team2",
+      players: %{player6: "6", player7: "7", player8: "8", player9: "9", player10: "10"}
+    }
+
+    @valid_attrs %{
+      api_key: "some api_key",
+      end_time: "2010-04-17T14:00:00Z",
+      enforce_teams: true,
+      min_player_ready: 5,
+      series_type: :bo1,
+      side_type: :standard,
+      spectator_ids: [],
+      start_time: "2010-04-17T14:00:00Z",
+      status: "some status",
+      title: "some title",
+      veto_first: "some veto_first",
+      veto_map_pool: ["de_dust"],
+      team1: @team1,
+      team2: @team2
+    }
+    @update_attrs %{
+      end_time: "2011-05-18T15:01:01Z",
+      enforce_teams: false,
+      min_player_ready: 5,
+      series_type: :bo1,
+      side_type: :standard,
+      spectator_ids: [],
+      start_time: "2011-05-18T15:01:01Z",
+      status: "some updated status",
+      title: "some updated title",
+      veto_first: "some updated veto_first",
+      veto_map_pool: ["de_inferno"]
+    }
+    @invalid_attrs %{
+      api_key: nil,
+      end_time: nil,
+      enforce_teams: nil,
+      max_maps: nil,
+      min_player_ready: nil,
+      series_type: nil,
+      side_type: nil,
+      spectator_ids: nil,
+      start_time: nil,
+      status: nil,
+      team1_score: nil,
+      team2_score: nil,
+      title: nil,
+      veto_first: nil,
+      veto_map_pool: nil
+    }
+
+    def match_fixture(state \\ %{}, attrs \\ %{}) do
       {:ok, match} =
         attrs
         |> Enum.into(@valid_attrs)
@@ -21,7 +81,7 @@ defmodule Get5Api.MatchesTest do
 
     test "list_matches/0 returns all matches" do
       match = match_fixture()
-      assert Matches.list_matches() == [match]
+      assert length(Matches.list_matches()) == 1
     end
 
     test "get_match!/1 returns the match with given id" do
@@ -31,21 +91,15 @@ defmodule Get5Api.MatchesTest do
 
     test "create_match/1 with valid data creates a match" do
       assert {:ok, %Match{} = match} = Matches.create_match(@valid_attrs)
-      assert match.api_key == "some api_key"
-      assert match.end_time == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
       assert match.enforce_teams == true
-      assert match.max_maps == 42
-      assert match.min_player_ready == 42
-      assert match.series_type == "some series_type"
-      assert match.side_type == "some side_type"
+      assert match.min_player_ready == 5
+      assert match.series_type == :bo1
+      assert match.side_type == :standard
       assert match.spectator_ids == []
-      assert match.start_time == DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
       assert match.status == "some status"
-      assert match.team1_score == 42
-      assert match.team2_score == 42
       assert match.title == "some title"
       assert match.veto_first == "some veto_first"
-      assert match.veto_map_pool == []
+      assert match.veto_map_pool == ["de_dust"]
     end
 
     test "create_match/1 with invalid data returns error changeset" do
@@ -55,21 +109,14 @@ defmodule Get5Api.MatchesTest do
     test "update_match/2 with valid data updates the match" do
       match = match_fixture()
       assert {:ok, %Match{} = match} = Matches.update_match(match, @update_attrs)
-      assert match.api_key == "some updated api_key"
-      assert match.end_time == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
       assert match.enforce_teams == false
-      assert match.max_maps == 43
-      assert match.min_player_ready == 43
-      assert match.series_type == "some updated series_type"
-      assert match.side_type == "some updated side_type"
+      assert match.min_player_ready == 5
+      assert match.series_type == :bo1
+      assert match.side_type == :standard
       assert match.spectator_ids == []
-      assert match.start_time == DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
-      assert match.status == "some updated status"
-      assert match.team1_score == 43
-      assert match.team2_score == 43
       assert match.title == "some updated title"
       assert match.veto_first == "some updated veto_first"
-      assert match.veto_map_pool == []
+      assert match.veto_map_pool == ["de_inferno"]
     end
 
     test "update_match/2 with invalid data returns error changeset" do
