@@ -61,9 +61,7 @@ defmodule Get5Api.Matches.Match do
     |> validate_required([
       :series_type,
       :veto_map_pool,
-      :veto_first,
-      :min_player_ready,
-      :status
+      :veto_first
     ])
     |> validate_map_pool()
     |> validate_different_teams()
@@ -74,12 +72,12 @@ defmodule Get5Api.Matches.Match do
     team1 = get_field(changeset, :team1)
     team2 = get_field(changeset, :team2)
 
-    with true <- team1 != nil,
-         true <- team2 != nil,
-         true <- team1.name == team2.name do
+    if team1 != nil &&
+         team2 != nil &&
+         team1.name == team2.name do
       add_error(changeset, :team1, options[:message] || "Team1 and team2 cannot be the same")
     else
-      _ -> changeset
+      changeset
     end
   end
 
