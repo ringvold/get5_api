@@ -54,7 +54,9 @@ defmodule Get5Api.Matches.Match do
       :min_player_ready,
       :status,
       :team1_id,
-      :team2_id
+      :team2_id,
+      :team1_score,
+      :team2_score
     ])
     |> cast_assoc(:team1, required: true)
     |> cast_assoc(:team2, required: true)

@@ -2,25 +2,31 @@ defmodule Get5Api.MatchesTest do
   use Get5Api.DataCase
 
   alias Get5Api.Matches
-  alias Get5Api.Teams
-  alias Get5Api.Repo
-
-  @team_valid_attrs %{name: "some name", players: %{}}
 
   describe "matches" do
     alias Get5Api.Matches.Match
 
-    import Ecto.Changeset
-
     @team1 %{
       id: 1,
       name: "Team1",
-      players: %{player1: "1", player2: "2", player3: "3", player4: "4", player5: "5"}
+      players: %{
+        "player1" => "1",
+        "player2" => "2",
+        "player3" => "3",
+        "player4" => "4",
+        "player5" => "5"
+      }
     }
     @team2 %{
       id: 2,
       name: "Team2",
-      players: %{player6: "6", player7: "7", player8: "8", player9: "9", player10: "10"}
+      players: %{
+        "player6" => "6",
+        "player7" => "7",
+        "player8" => "8",
+        "player9" => "9",
+        "player10" => "10"
+      }
     }
 
     @valid_attrs %{
@@ -36,6 +42,8 @@ defmodule Get5Api.MatchesTest do
       title: "some title",
       veto_first: "some veto_first",
       veto_map_pool: ["de_dust"],
+      team1_score: 0,
+      team2_score: 0,
       team1: @team1,
       team2: @team2
     }
@@ -49,6 +57,8 @@ defmodule Get5Api.MatchesTest do
       start_time: "2011-05-18T15:01:01Z",
       status: "some updated status",
       title: "some updated title",
+      team1_score: 0,
+      team2_score: 0,
       veto_first: "some updated veto_first",
       veto_map_pool: ["de_inferno"]
     }
@@ -63,14 +73,12 @@ defmodule Get5Api.MatchesTest do
       spectator_ids: nil,
       start_time: nil,
       status: nil,
-      team1_score: nil,
-      team2_score: nil,
       title: nil,
       veto_first: nil,
       veto_map_pool: nil
     }
 
-    def match_fixture(state \\ %{}, attrs \\ %{}) do
+    def match_fixture(_state \\ %{}, attrs \\ %{}) do
       {:ok, match} =
         attrs
         |> Enum.into(@valid_attrs)
@@ -80,7 +88,7 @@ defmodule Get5Api.MatchesTest do
     end
 
     test "list_matches/0 returns all matches" do
-      match = match_fixture()
+      match_fixture()
       assert length(Matches.list_matches()) == 1
     end
 

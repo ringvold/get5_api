@@ -20,7 +20,7 @@ defmodule Get5Api.GameServers.GameServer do
   @doc false
   def changeset(game_server, attrs) do
     game_server
-    |> cast(attrs, [:name, :host, :port, :rcon_password])
+    |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
     |> validate_required([:name, :host, :port, :rcon_password])
   end
 end

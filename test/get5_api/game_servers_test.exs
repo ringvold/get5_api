@@ -6,8 +6,20 @@ defmodule Get5Api.GameServersTest do
   describe "game_servers" do
     alias Get5Api.GameServers.GameServer
 
-    @valid_attrs %{host: 42, in_use: true, name: "some name", port: "some port", rcon_password: "some rcon_password"}
-    @update_attrs %{host: 43, in_use: false, name: "some updated name", port: "some updated port", rcon_password: "some updated rcon_password"}
+    @valid_attrs %{
+      host: "csgo.example.com",
+      in_use: true,
+      name: "some name",
+      port: "some port",
+      rcon_password: "some rcon_password"
+    }
+    @update_attrs %{
+      host: "10.0.0.10",
+      in_use: false,
+      name: "some updated name",
+      port: "some updated port",
+      rcon_password: "some updated rcon_password"
+    }
     @invalid_attrs %{host: nil, in_use: nil, name: nil, port: nil, rcon_password: nil}
 
     def game_server_fixture(attrs \\ %{}) do
@@ -31,7 +43,7 @@ defmodule Get5Api.GameServersTest do
 
     test "create_game_server/1 with valid data creates a game_server" do
       assert {:ok, %GameServer{} = game_server} = GameServers.create_game_server(@valid_attrs)
-      assert game_server.host == 42
+      assert game_server.host == "csgo.example.com"
       assert game_server.in_use == true
       assert game_server.name == "some name"
       assert game_server.port == "some port"
@@ -44,8 +56,11 @@ defmodule Get5Api.GameServersTest do
 
     test "update_game_server/2 with valid data updates the game_server" do
       game_server = game_server_fixture()
-      assert {:ok, %GameServer{} = game_server} = GameServers.update_game_server(game_server, @update_attrs)
-      assert game_server.host == 43
+
+      assert {:ok, %GameServer{} = game_server} =
+               GameServers.update_game_server(game_server, @update_attrs)
+
+      assert game_server.host == "10.0.0.10"
       assert game_server.in_use == false
       assert game_server.name == "some updated name"
       assert game_server.port == "some updated port"
@@ -54,7 +69,10 @@ defmodule Get5Api.GameServersTest do
 
     test "update_game_server/2 with invalid data returns error changeset" do
       game_server = game_server_fixture()
-      assert {:error, %Ecto.Changeset{}} = GameServers.update_game_server(game_server, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               GameServers.update_game_server(game_server, @invalid_attrs)
+
       assert game_server == GameServers.get_game_server!(game_server.id)
     end
 
