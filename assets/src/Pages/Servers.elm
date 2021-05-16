@@ -1,28 +1,27 @@
-module Pages.Servers exposing (Model, Msg, Params, page)
+module Pages.Servers exposing (Model, Msg, page)
 
 import Api
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
+import Gen.Params.Servers exposing (Params)
+import Gen.Route as Route
+import Page
 import RemoteData exposing (RemoteData(..))
+import Request
 import Server exposing (Server, Servers)
 import Shared
-import Spa.Document exposing (Document)
-import Spa.Generated.Route as Route
-import Spa.Page as Page exposing (Page)
-import Spa.Url as Url exposing (Url)
 import Styling
+import View exposing (View)
 
 
-page : Page Params Model Msg
-page =
-    Page.application
+page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page shared req =
+    Page.element
         { init = init
         , update = update
-        , subscriptions = subscriptions
         , view = view
-        , save = save
-        , load = load
+        , subscriptions = subscriptions
         }
 
 
@@ -30,16 +29,12 @@ page =
 -- INIT
 
 
-type alias Params =
-    ()
-
-
 type alias Model =
     { servers : Api.GraphqlData Servers }
 
 
-init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
-init shared { params } =
+init : ( Model, Cmd Msg )
+init =
     ( { servers = Loading }
     , Cmd.batch
         [ Cmd.map ServersReceived Api.getAllServers ]
@@ -61,14 +56,8 @@ update msg model =
             ( { model | servers = servers }, Cmd.none )
 
 
-save : Model -> Shared.Model -> Shared.Model
-save model shared =
-    shared
 
-
-load : Shared.Model -> Model -> ( Model, Cmd Msg )
-load shared model =
-    ( model, Cmd.none )
+-- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
@@ -80,13 +69,14 @@ subscriptions model =
 -- VIEW
 
 
-view : Model -> Document Msg
+view : Model -> View Msg
 view model =
     { title = "Servers"
-    , body =
-        [ el [ Region.heading 1, Font.size 25 ] (text "Servers")
-        , Shared.graphDataView viewServers model.servers
-        ]
+    , element =
+        Element.column []
+            [ el [ Region.heading 1, Font.size 25 ] (text "Servers")
+            , View.graphDataView viewServers model.servers
+            ]
     }
 
 
@@ -99,6 +89,6 @@ viewServers servers =
 serverView : Server -> Element msg
 serverView server =
     link Styling.link
-        { url = Route.toString (Route.Servers__Id_String { id = server.id })
+        { url = Route.toHref (Route.Servers__Id_ { id = server.id })
         , label = text server.name
         }

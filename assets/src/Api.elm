@@ -21,7 +21,7 @@ type alias GraphqlData a =
 
 url : String
 url =
-    "http://localhost:4000/api/graphql/v1"
+    "http://localhost:4001/api/graphql/v1"
 
 
 

@@ -1,21 +1,22 @@
-module Pages.Teams exposing (Model, Msg, Params, page)
+module Pages.Teams exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
+import Gen.Params.Teams exposing (Params)
+import Gen.Route as Route exposing (Route(..))
+import Page
 import RemoteData exposing (RemoteData(..), WebData)
+import Request
 import Shared
-import Spa.Document exposing (Document)
-import Spa.Generated.Route as Route
-import Spa.Page as Page exposing (Page)
-import Spa.Url as Url exposing (Url)
 import Styling
 import Team exposing (Team, Teams)
+import View exposing (View)
 
 
-page : Page Params Model Msg
-page =
+page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page shared req =
     Page.element
         { init = init
         , update = update
@@ -28,16 +29,12 @@ page =
 -- INIT
 
 
-type alias Params =
-    ()
-
-
 type alias Model =
     { teams : GraphqlData Teams }
 
 
-init : Url Params -> ( Model, Cmd Msg )
-init { params } =
+init : ( Model, Cmd Msg )
+init =
     ( { teams = Loading }
     , Cmd.batch
         [ Cmd.map TeamsReceived Api.getAllTeams ]
@@ -68,13 +65,14 @@ subscriptions model =
 -- VIEW
 
 
-view : Model -> Document Msg
+view : Model -> View Msg
 view model =
     { title = "Teams"
-    , body =
-        [ el [ Region.heading 1, Font.size 25 ] (text "Teams")
-        , Shared.graphDataView viewTeams model.teams
-        ]
+    , element =
+        Element.column []
+            [ el [ Region.heading 1, Font.size 25 ] (text "Teams")
+            , View.graphDataView viewTeams model.teams
+            ]
     }
 
 
@@ -87,6 +85,6 @@ viewTeams teams =
 teamView : Team -> Element msg
 teamView team =
     link Styling.link
-        { url = Route.toString (Route.Teams__Id_String { id = team.id })
+        { url = Route.toHref (Route.Teams__Id_ { id = team.id })
         , label = text team.name
         }

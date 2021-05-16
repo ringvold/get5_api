@@ -1,26 +1,25 @@
-module Pages.Servers.Id_String exposing (Model, Msg, Params, page)
+module Pages.Servers.Id_ exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
+import Gen.Params.Servers.Id_ exposing (Params)
+import Page
 import RemoteData exposing (RemoteData(..))
+import Request
 import Server exposing (Server, Servers)
 import Shared
-import Spa.Document exposing (Document)
-import Spa.Page as Page exposing (Page)
-import Spa.Url as Url exposing (Url)
+import View exposing (View)
 
 
-page : Page Params Model Msg
-page =
-    Page.application
-        { init = init
+page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page shared req =
+    Page.element
+        { init = init req.params
         , update = update
-        , subscriptions = subscriptions
         , view = view
-        , save = save
-        , load = load
+        , subscriptions = subscriptions
         }
 
 
@@ -28,16 +27,12 @@ page =
 -- INIT
 
 
-type alias Params =
-    { id : String }
-
-
 type alias Model =
     { server : GraphqlData Server }
 
 
-init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
-init shared { params } =
+init : Params -> ( Model, Cmd Msg )
+init params =
     ( { server = Loading }
     , Cmd.batch
         [ Cmd.map ServerReceived (Api.getServer params.id)
@@ -60,14 +55,8 @@ update msg model =
             ( { model | server = server }, Cmd.none )
 
 
-save : Model -> Shared.Model -> Shared.Model
-save model shared =
-    shared
 
-
-load : Shared.Model -> Model -> ( Model, Cmd Msg )
-load shared model =
-    ( model, Cmd.none )
+-- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
@@ -79,12 +68,12 @@ subscriptions model =
 -- VIEW
 
 
-view : Model -> Document Msg
+view : Model -> View Msg
 view model =
     { title =
         RemoteData.map .name model.server
             |> RemoteData.withDefault "Unknown server"
-    , body = [ Shared.graphDataView serverView model.server ]
+    , element = Element.column [] [ View.graphDataView serverView model.server ]
     }
 
 
@@ -98,10 +87,10 @@ serverView server =
         ]
 
 
+boolToString : Bool -> String
 boolToString bool =
-    case bool of
-        True ->
-            "Yes"
+    if bool then
+        "Yes"
 
-        False ->
-            "No"
+    else
+        "No"

@@ -1,26 +1,25 @@
-module Pages.Teams.Id_String exposing (Model, Msg, Params, page)
+module Pages.Teams.Id_ exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Region as Region
+import Gen.Params.Teams.Id_ exposing (Params)
+import Page
 import RemoteData exposing (RemoteData(..))
+import Request
 import Shared
-import Spa.Document exposing (Document)
-import Spa.Page as Page exposing (Page)
-import Spa.Url as Url exposing (Url)
 import Team exposing (Player, Team)
+import View exposing (View)
 
 
-page : Page Params Model Msg
-page =
-    Page.application
-        { init = init
+page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page shared req =
+    Page.element
+        { init = init req.params
         , update = update
-        , subscriptions = subscriptions
         , view = view
-        , save = save
-        , load = load
+        , subscriptions = subscriptions
         }
 
 
@@ -28,17 +27,17 @@ page =
 -- INIT
 
 
-type alias Params =
-    { id : String }
-
-
 type alias Model =
     { team : GraphqlData Team }
 
 
-init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
-init shared { params } =
-    ( { team = Loading }, Cmd.batch [ Cmd.map TeamReceived (Api.getTeam params.id) ] )
+init : Params -> ( Model, Cmd Msg )
+init params =
+    ( { team = Loading }
+    , Cmd.batch
+        [ Cmd.map TeamReceived (Api.getTeam params.id)
+        ]
+    )
 
 
 
@@ -56,14 +55,8 @@ update msg model =
             ( { model | team = team }, Cmd.none )
 
 
-save : Model -> Shared.Model -> Shared.Model
-save model shared =
-    shared
 
-
-load : Shared.Model -> Model -> ( Model, Cmd Msg )
-load shared model =
-    ( model, Cmd.none )
+-- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
@@ -75,12 +68,12 @@ subscriptions model =
 -- VIEW
 
 
-view : Model -> Document Msg
+view : Model -> View Msg
 view model =
     { title =
         RemoteData.map (.name >> String.append "Team ") model.team
             |> RemoteData.withDefault "Unknown team"
-    , body = [ Shared.graphDataView viewTeam model.team ]
+    , element = Element.column [] [ View.graphDataView viewTeam model.team ]
     }
 
 
