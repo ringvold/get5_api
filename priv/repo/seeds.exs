@@ -20,4 +20,4 @@ astralis = %Team{name: "Astralis",players: %{"98234789234" => "Dupreeh", "836224
 
 server = %GameServer{name: "MyServer", host: "192.168.1.2", port: "27015", rcon_password: "1234"} |> Repo.insert!
 
-match = %Match{team1_id: genesis.id, team2_id: astralis.id, api_key: "ølaksdf", status: "pending", enforce_teams: true, max_maps: 1, title: "Genesis vs Astralis", series_type: "bo1", spectator_ids: ["92034275", "02340435934"], game_server_id: server.id} |> Repo.insert!
+match = %Match{team1_id: genesis.id, team2_id: astralis.id, api_key: "ølaksdf", status: "pending", enforce_teams: true, max_maps: 1, title: "Genesis vs Astralis", series_type: :bo1, spectator_ids: ["92034275", "02340435934"], game_server_id: server.id} |> Repo.insert!
