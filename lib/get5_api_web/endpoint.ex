@@ -23,8 +23,8 @@ defmodule Get5ApiWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :get5_api,
-    gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    gzip: true,
+    only: ~w(css fonts images js favicon.ico robots.txt main.js dist)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
