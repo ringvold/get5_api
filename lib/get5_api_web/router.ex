@@ -50,4 +50,10 @@ defmodule Get5ApiWeb.Router do
       live_dashboard "/dashboard", metrics: Get5ApiWeb.Telemetry
     end
   end
+
+  scope "/", Get5ApiWeb do
+    pipe_through :browser
+
+    get "/*path", PageController, :index
+  end
 end

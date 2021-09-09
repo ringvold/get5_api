@@ -19,43 +19,43 @@ type alias GraphqlData a =
     RemoteData (Graphql.Http.Error a) a
 
 
-url : String
-url =
-    "http://localhost:4001/api/graphql/v1"
+url : String -> String
+url baseUrl =
+    baseUrl ++ "/api/graphql/v1"
 
 
 
 -- Request
 
 
-sendRequest : SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
-sendRequest query =
+sendRequest : String -> SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
+sendRequest baseUrl query =
     query
-        |> Graphql.Http.queryRequest url
+        |> Graphql.Http.queryRequest (url baseUrl)
         |> Graphql.Http.send RemoteData.fromResult
 
 
-getAllTeams : Cmd (GraphqlData Teams)
-getAllTeams =
-    sendRequest allTeams
+getAllTeams : String -> Cmd (GraphqlData Teams)
+getAllTeams baseUrl =
+    sendRequest baseUrl allTeams
 
 
-getTeam : String -> Cmd (GraphqlData Team)
-getTeam id =
+getTeam : String -> String -> Cmd (GraphqlData Team)
+getTeam baseUrl id =
     teamQuery id
-        |> sendRequest
+        |> sendRequest baseUrl
 
 
-getAllServers : Cmd (GraphqlData Servers)
-getAllServers =
+getAllServers : String -> Cmd (GraphqlData Servers)
+getAllServers baseUrl =
     allServers
-        |> sendRequest
+        |> sendRequest baseUrl
 
 
-getServer : String -> Cmd (GraphqlData Server)
-getServer id =
+getServer : String -> String -> Cmd (GraphqlData Server)
+getServer baseUrl id =
     serverQuery id
-        |> sendRequest
+        |> sendRequest baseUrl
 
 
 

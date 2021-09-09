@@ -19,21 +19,18 @@ config :get5_api, Get5ApiWeb.Endpoint,
   http: [port: 4001],
   debug_errors: true,
   code_reloader: true,
-  check_origin: false
-
+  check_origin: false,
+  watchers: [
+    # Yup this is weird, but necessery for the elm-spa server to exit when the phoenix dev sever exists
+    "#{Path.expand("../assets", __DIR__) <> "/stdin-shim.sh"}": [
+      "node_modules/.bin/elm-spa",
+      "server",
+      cd: Path.expand("../assets", __DIR__)
+    ]
+  ]
 
 config :cors_plug,
   origin: ["http://localhost:1234"]
-
-# watchers: [
-#   node: [
-#     "node_modules/webpack/bin/webpack.js",
-#     "--mode",
-#     "development",
-#     "--watch-stdin",
-#     cd: Path.expand("../assets", __DIR__)
-#   ]
-# ]
 
 # ## SSL Support
 #

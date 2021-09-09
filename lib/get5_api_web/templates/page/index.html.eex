@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<%= if @is_dev do %>
+  <a href="http://localhost:1234"><h1>elm-spa dev server is used in dev mode</h1></a>
+<% else %>
   <script src="/dist/elm.js"></script>
-  <script> Elm.Main.init() </script>
+  <script> Elm.Main.init({ flags: { baseUrl: "<%= @base_url %>" } }) </script>
+<% end %>
 </body>
 </html>

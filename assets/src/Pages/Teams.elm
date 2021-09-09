@@ -18,7 +18,7 @@ import View exposing (View)
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
-        { init = init
+        { init = init shared
         , update = update
         , view = view
         , subscriptions = subscriptions
@@ -33,11 +33,11 @@ type alias Model =
     { teams : GraphqlData Teams }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Shared.Model -> ( Model, Cmd Msg )
+init shared =
     ( { teams = Loading }
     , Cmd.batch
-        [ Cmd.map TeamsReceived Api.getAllTeams ]
+        [ Cmd.map TeamsReceived <| Api.getAllTeams shared.baseUrl ]
     )
 
 

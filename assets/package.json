@@ -3,15 +3,8 @@
     "version": "1.0.0",
     "description": "A project created with elm-spa",
     "scripts": {
-        "start": "npm install && npm run build:dev && npm run dev",
-        "test": "elm-test",
-        "test:watch": "elm-test --watch",
+        "start": "elm-spa server",
         "build": "elm-spa build",
-        "build:elm": "elm make .elm-spa/defaults/Main.elm --optimize --output='../priv/static/index.html'",
-        "build:dev:elm": "elm make src/Main.elm --debug --output=public/dist/elm.compiled.js || true",
-        "build:elm-spa": "elm-spa build .",
-        "dev:elm": "elm-live src/Main.elm -u -d public -- --debug --output=public/dist/elm.compiled.js",
-        "dev:elm-spa": "chokidar src/Pages -c \"elm-spa build .\"",
         "graphql": "elm-graphql http://localhost:4000/api/graphql/v1 --base GetFiveApi --output src/",
         "copy": "copyup \"public/**/*\" ../priv/static/",
         "deploy": "run-s build copy"
