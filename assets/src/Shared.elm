@@ -34,14 +34,6 @@ init _ flags =
                     "baseUrl"
                     Json.string
                     "baseUrlDecodeError"
-
-        debug =
-            case Json.decodeValue (Json.field "baseUrl" Json.string) flags of
-                Err err ->
-                    Debug.log "flags" <| Json.errorToString err
-
-                Ok a ->
-                    Debug.log "success" a
     in
     ( { baseUrl = baseUrl }, Cmd.none )
 
