@@ -10,6 +10,6 @@ defmodule Get5ApiWeb.PageController do
   end
 
   defp is_dev? do
-    Mix.env() in [:dev, :test]
+    Application.get_env(:get5_api, :env) in [:dev, :test]
   end
 end

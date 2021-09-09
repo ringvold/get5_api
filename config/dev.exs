@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :get5_api, Get5Api.Repo,

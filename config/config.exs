@@ -5,11 +5,12 @@
 # is restricted to this project.
 
 # General application configuration
-use Mix.Config
+import Config
 
 config :get5_api,
   ecto_repos: [Get5Api.Repo],
-  generators: [binary_id: true]
+  generators: [binary_id: true],
+  env: config_env()
 
 # Configures the endpoint
 config :get5_api, Get5ApiWeb.Endpoint,

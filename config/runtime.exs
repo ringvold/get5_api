@@ -22,6 +22,9 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :get5_api,
+    env: :prod
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
