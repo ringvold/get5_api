@@ -1,11 +1,10 @@
 module Pages.Teams exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
-import Element exposing (..)
-import Element.Font as Font
-import Element.Region as Region
 import Gen.Params.Teams exposing (Params)
 import Gen.Route as Route exposing (Route(..))
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
 import Page
 import RemoteData exposing (RemoteData(..), WebData)
 import Request
@@ -68,23 +67,20 @@ subscriptions model =
 view : Model -> View Msg
 view model =
     { title = "Teams"
-    , element =
-        Element.column []
-            [ el [ Region.heading 1, Font.size 25 ] (text "Teams")
-            , View.graphDataView viewTeams model.teams
-            ]
+    , body =
+        [ h1 [] [ text "Teams" ]
+        , View.graphDataView viewTeams model.teams
+        ]
     }
 
 
-viewTeams : Teams -> Element msg
+viewTeams : Teams -> Html msg
 viewTeams teams =
     List.map teamView teams
-        |> column []
+        |> div []
 
 
-teamView : Team -> Element msg
+teamView : Team -> Html msg
 teamView team =
-    link Styling.link
-        { url = Route.toHref (Route.Teams__Id_ { id = team.id })
-        , label = text team.name
-        }
+    a [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id }) ]
+        [ text team.name ]

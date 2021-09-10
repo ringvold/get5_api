@@ -1,11 +1,10 @@
 module Pages.Servers exposing (Model, Msg, page)
 
 import Api
-import Element exposing (..)
-import Element.Font as Font
-import Element.Region as Region
 import Gen.Params.Servers exposing (Params)
 import Gen.Route as Route
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
 import Page
 import RemoteData exposing (RemoteData(..))
 import Request
@@ -72,23 +71,20 @@ subscriptions model =
 view : Model -> View Msg
 view model =
     { title = "Servers"
-    , element =
-        Element.column []
-            [ el [ Region.heading 1, Font.size 25 ] (text "Servers")
-            , View.graphDataView viewServers model.servers
-            ]
+    , body =
+        [ Html.h1 [] [ Html.text "Servers" ]
+        , View.graphDataView viewServers model.servers
+        ]
     }
 
 
-viewServers : Servers -> Element msg
+viewServers : Servers -> Html msg
 viewServers servers =
     List.map serverView servers
-        |> column []
+        |> div []
 
 
-serverView : Server -> Element msg
+serverView : Server -> Html msg
 serverView server =
-    link Styling.link
-        { url = Route.toHref (Route.Servers__Id_ { id = server.id })
-        , label = text server.name
-        }
+    a [ Attr.href <| Route.toHref (Route.Servers__Id_ { id = server.id }) ]
+        [ text server.name ]

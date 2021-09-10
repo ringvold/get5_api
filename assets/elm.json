@@ -16,6 +16,7 @@
             "elm/url": "1.0.0",
             "krisajenkins/remotedata": "6.0.1",
             "mdgriffith/elm-ui": "1.1.8",
+            "rtfeldman/elm-css": "16.1.1",
             "ryannhg/elm-spa": "6.0.0"
         },
         "indirect": {
@@ -26,7 +27,8 @@
             "elm/time": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "elm-community/list-extra": "8.3.0",
-            "lukewestby/elm-string-interpolate": "1.0.4"
+            "lukewestby/elm-string-interpolate": "1.0.4",
+            "rtfeldman/elm-hex": "1.0.0"
         }
     },
     "test-dependencies": {

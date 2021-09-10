@@ -1,10 +1,9 @@
 module Pages.Teams.Id_ exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
-import Element exposing (..)
-import Element.Font as Font
-import Element.Region as Region
 import Gen.Params.Teams.Id_ exposing (Params)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
 import Page
 import RemoteData exposing (RemoteData(..))
 import Request
@@ -73,19 +72,19 @@ view model =
     { title =
         RemoteData.map (.name >> String.append "Team ") model.team
             |> RemoteData.withDefault "Unknown team"
-    , element = Element.column [] [ View.graphDataView viewTeam model.team ]
+    , body = [ View.graphDataView viewTeam model.team ]
     }
 
 
-viewTeam : Team -> Element Msg
+viewTeam : Team -> Html Msg
 viewTeam team =
-    column []
-        [ el [ Region.heading 1, Font.size 30 ] <| text team.name
+    div []
+        [ h1 [] [ text team.name ]
         , viewPlayers team.players
         ]
 
 
-viewPlayers : List Player -> Element Msg
+viewPlayers : List Player -> Html Msg
 viewPlayers players =
     players
         |> List.map
@@ -97,5 +96,5 @@ viewPlayers players =
                     Nothing ->
                         "Steam ID: " ++ player.id |> text
             )
-        |> List.append [ el [ Region.heading 2 ] <| text "Players:" ]
-        |> column []
+        |> List.append [ h1 [] [ text "Players:" ] ]
+        |> div []

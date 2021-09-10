@@ -2,9 +2,11 @@ module View exposing (View, graphDataView, map, none, placeholder, toBrowserDocu
 
 import Api exposing (GraphqlData)
 import Browser
-import Element exposing (..)
-import Element.Background as Background
+import Css
+import Css.Global
 import Gen.Route as Route
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr
 import RemoteData exposing (RemoteData(..))
 import Styling
 import Styling.Colors as Colors
@@ -12,14 +14,14 @@ import Styling.Colors as Colors
 
 type alias View msg =
     { title : String
-    , element : Element msg
+    , body : List (Html msg)
     }
 
 
 placeholder : String -> View msg
 placeholder str =
     { title = str
-    , element = Element.text str
+    , body = [ Html.text str ]
     }
 
 
@@ -31,7 +33,7 @@ none =
 map : (a -> b) -> View a -> View b
 map fn view =
     { title = view.title
-    , element = Element.map fn view.element
+    , body = List.map (Html.map fn) view.body
     }
 
 
@@ -39,44 +41,61 @@ toBrowserDocument : View msg -> Browser.Document msg
 toBrowserDocument view =
     { title = view.title
     , body =
-        [ Element.layout [] <|
-            column
-                [ height fill
-                , width fill
+        [ Css.Global.global [ Css.Global.selector "body" [ Css.padding Css.zero, Css.margin Css.zero ] ]
+        , Html.div
+            [ Attr.css
+                [ Css.displayFlex
+                , Css.flexDirection Css.column
                 ]
-                [ row
-                    [ Background.color Colors.grey900
-                    , spacing 20
-                    , padding 20
-                    , width fill
+            ]
+            [ Html.header
+                []
+                [ Html.ul
+                    [ Attr.css
+                        [ Css.displayFlex
+                        , Css.alignItems Css.center
+                        , Css.listStyle Css.none
+                        , Css.margin Css.zero
+                        ]
                     ]
-                    [ link
-                        Styling.menuLinks
-                        { url = Route.toHref Route.Home_, label = text "Homepage" }
-                    , link
-                        Styling.menuLinks
-                        { url = Route.toHref Route.Teams, label = text "Teams" }
-                    , link
-                        Styling.menuLinks
-                        { url = Route.toHref Route.Servers, label = text "Servers" }
+                    [ li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Home_ ] [ text "Homepage" ] ]
+                    , li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Teams ] [ text "Teams" ] ]
+                    , li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Servers ] [ text "Servers" ] ]
+                    , Html.li
+                        [ Attr.css
+                            [ Css.marginLeft Css.auto ]
+                        ]
+                        []
                     ]
-                , column [ height fill, paddingXY 20 20 ] [ view.element ]
                 ]
+            , Html.main_
+                [ Attr.css
+                    [ Css.flexGrow <| Css.int 1
+                    , Css.displayFlex
+                    , Css.flexDirection Css.column
+                    ]
+                ]
+                view.body
+            , Html.footer
+                []
+                []
+            ]
         ]
+            |> List.map Html.toUnstyled
     }
 
 
-graphDataView : (a -> Element msg) -> GraphqlData a -> Element msg
+graphDataView : (a -> Html msg) -> GraphqlData a -> Html msg
 graphDataView successView graphData =
     case graphData of
         NotAsked ->
-            text "Initializing"
+            div [] [ Html.text "Initializing" ]
 
         Loading ->
-            text "Loading"
+            div [] [ Styling.loader ]
 
         Failure error ->
-            text "Error loading data from server"
+            div [] [ Html.text "Error loading data from server" ]
 
         Success data ->
             successView data

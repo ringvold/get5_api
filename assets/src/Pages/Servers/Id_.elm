@@ -1,10 +1,9 @@
 module Pages.Servers.Id_ exposing (Model, Msg, page)
 
 import Api exposing (GraphqlData)
-import Element exposing (..)
-import Element.Font as Font
-import Element.Region as Region
 import Gen.Params.Servers.Id_ exposing (Params)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
 import Page
 import RemoteData exposing (RemoteData(..))
 import Request
@@ -73,17 +72,17 @@ view model =
     { title =
         RemoteData.map .name model.server
             |> RemoteData.withDefault "Unknown server"
-    , element = Element.column [] [ View.graphDataView serverView model.server ]
+    , body = [ View.graphDataView serverView model.server ]
     }
 
 
-serverView : Server -> Element Msg
+serverView : Server -> Html Msg
 serverView server =
-    column []
-        [ text server.name |> el [ Region.heading 1, Font.size 25 ]
-        , "Host: " ++ server.host |> text |> el []
-        , "Port: " ++ server.port_ |> text |> el []
-        , "In use: " ++ boolToString server.inUse |> text |> el []
+    div []
+        [ h1 [] [ text server.name ]
+        , text ("Host: " ++ server.host)
+        , text ("Port: " ++ server.port_)
+        , text ("In use: " ++ boolToString server.inUse)
         ]
 
 
