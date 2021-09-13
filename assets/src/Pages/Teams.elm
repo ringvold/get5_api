@@ -6,10 +6,11 @@ import Gen.Route as Route exposing (Route(..))
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr exposing (..)
 import Page
-import RemoteData exposing (RemoteData(..), WebData)
+import RemoteData exposing (RemoteData(..))
 import Request
 import Shared
 import Styling
+import Tailwind.Utilities as Tw
 import Team exposing (Team, Teams)
 import View exposing (View)
 
@@ -68,7 +69,14 @@ view : Model -> View Msg
 view model =
     { title = "Teams"
     , body =
-        [ h1 [] [ text "Teams" ]
+        [ h1 [ Styling.header ]
+            [ text "Teams"
+            , a
+                [ Attr.href <| Route.toHref Route.Teams__New
+                , Styling.header_inline_link
+                ]
+                [ text "New team" ]
+            ]
         , View.graphDataView viewTeams model.teams
         ]
     }
@@ -82,5 +90,9 @@ viewTeams teams =
 
 teamView : Team -> Html msg
 teamView team =
-    a [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id }) ]
+    a
+        [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
+        , Attr.css
+            [ Tw.block ]
+        ]
         [ text team.name ]

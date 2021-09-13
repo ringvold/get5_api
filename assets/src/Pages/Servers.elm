@@ -72,7 +72,7 @@ view : Model -> View Msg
 view model =
     { title = "Servers"
     , body =
-        [ Html.h1 [] [ Html.text "Servers" ]
+        [ Html.h1 [ Styling.header ] [ Html.text "Servers" ]
         , View.graphDataView viewServers model.servers
         ]
     }

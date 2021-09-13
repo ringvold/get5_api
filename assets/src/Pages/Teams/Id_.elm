@@ -8,6 +8,7 @@ import Page
 import RemoteData exposing (RemoteData(..))
 import Request
 import Shared
+import Styling
 import Team exposing (Player, Team)
 import View exposing (View)
 
@@ -79,7 +80,7 @@ view model =
 viewTeam : Team -> Html Msg
 viewTeam team =
     div []
-        [ h1 [] [ text team.name ]
+        [ h1 [ Styling.header ] [ text team.name ]
         , viewPlayers team.players
         ]
 

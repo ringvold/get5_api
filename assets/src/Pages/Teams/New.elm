@@ -78,11 +78,9 @@ view model =
                     [ Attr.css [ Breakpoints.md [ Tw.w_1over3 ] ]
                     ]
                     [ label
-                        [ Attr.class "block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-                        , Attr.css
+                        [ Attr.css
                             [ Tw.block
                             , Tw.text_gray_500
-                            , Tw.text_right
                             , Tw.mb_1
                             , Tw.pr_4
                             , Breakpoints.md [ Tw.text_right, Tw.mb_0 ]
@@ -93,11 +91,9 @@ view model =
                     ]
                 , div
                     [ Attr.css [ Breakpoints.md [ Tw.w_2over3 ] ]
-                    , Attr.class "md:w-2/3"
                     ]
                     [ input
-                        [ Attr.class "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                        , Attr.css
+                        [ Attr.css
                             [ Breakpoints.md []
                             , Tw.bg_gray_200
                             , Tw.appearance_none
@@ -120,16 +116,13 @@ view model =
                 ]
             , div
                 [ Attr.css [ Breakpoints.md [ Tw.flex, Tw.items_center ] ]
-                , Attr.class "md:flex md:items-center"
                 ]
                 [ div
                     [ Attr.css [ Breakpoints.md [ Tw.w_1over3 ] ]
-                    , Attr.class "md:w-1/3"
                     ]
                     []
                 , div
                     [ Attr.css [ Breakpoints.md [ Tw.w_2over3 ] ]
-                    , Attr.class "md:w-2/3"
                     ]
                     [ button
                         [ Attr.css
@@ -145,7 +138,6 @@ view model =
                             , Css.focus [ Tw.outline_none ]
                             , Css.hover [ Tw.bg_green_400 ]
                             ]
-                        , Attr.class "shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
                         , Attr.type_ "button"
                         ]
                         [ text "Create" ]

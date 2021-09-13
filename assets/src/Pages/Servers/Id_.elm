@@ -9,6 +9,7 @@ import RemoteData exposing (RemoteData(..))
 import Request
 import Server exposing (Server, Servers)
 import Shared
+import Styling
 import View exposing (View)
 
 
@@ -79,10 +80,10 @@ view model =
 serverView : Server -> Html Msg
 serverView server =
     div []
-        [ h1 [] [ text server.name ]
-        , text ("Host: " ++ server.host)
-        , text ("Port: " ++ server.port_)
-        , text ("In use: " ++ boolToString server.inUse)
+        [ h1 [ Styling.header ] [ text server.name ]
+        , div [] [ text ("Host: " ++ server.host) ]
+        , div [] [ text ("Port: " ++ server.port_) ]
+        , div [] [ text ("In use: " ++ boolToString server.inUse) ]
         ]
 
 

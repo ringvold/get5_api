@@ -2,15 +2,38 @@ module Styling exposing (..)
 
 import Css
 import Css.Animations
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attr
 import Styling.Colors exposing (..)
+import Tailwind.Utilities as Tw
 
 
 menuLinks : Html.Attribute msg
 menuLinks =
     Attr.css
         [ Css.padding <| Css.em 1
+        , Tw.font_bold
+        , Tw.text_gray_100
+        , Css.hover []
+        ]
+
+
+header : Attribute msg
+header =
+    Attr.css
+        [ Tw.text_3xl
+        , Tw.font_bold
+        ]
+
+
+header_inline_link : Attribute msg
+header_inline_link =
+    Attr.css
+        [ Tw.inline
+        , Tw.text_base
+        , Tw.ml_1
+        , Tw.font_medium
+        , Tw.ml_4
         ]
 
 

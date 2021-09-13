@@ -10,6 +10,8 @@ import Html.Styled.Attributes as Attr
 import RemoteData exposing (RemoteData(..))
 import Styling
 import Styling.Colors as Colors
+import Tailwind.Breakpoints as Breakpoints
+import Tailwind.Utilities as Tw
 
 
 type alias View msg =
@@ -41,11 +43,19 @@ toBrowserDocument : View msg -> Browser.Document msg
 toBrowserDocument view =
     { title = view.title
     , body =
-        [ Css.Global.global [ Css.Global.selector "body" [ Css.padding Css.zero, Css.margin Css.zero ] ]
+        [ Css.Global.global
+            [ Css.Global.selector "body" [ Css.padding Css.zero, Css.margin Css.zero ]
+            ]
+        , Css.Global.global Tw.globalStyles
         , Html.div
             [ Attr.css
                 [ Css.displayFlex
                 , Css.flexDirection Css.column
+                , Breakpoints.lg
+                    [ Tw.my_0
+                    , Tw.mx_auto
+                    , Tw.max_w_5xl
+                    ]
                 ]
             ]
             [ Html.header
@@ -56,6 +66,8 @@ toBrowserDocument view =
                         , Css.alignItems Css.center
                         , Css.listStyle Css.none
                         , Css.margin Css.zero
+                        , Tw.p_0
+                        , Tw.bg_gray_800
                         ]
                     ]
                     [ li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Home_ ] [ text "Homepage" ] ]
