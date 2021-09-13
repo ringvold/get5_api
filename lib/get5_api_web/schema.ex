@@ -50,7 +50,7 @@ defmodule Get5ApiWeb.Schema do
     @desc "Create a team"
     field :create_team, type: :team do
       arg(:name, non_null(:string))
-      arg(:players, non_null(list_of(:player_input)))
+      arg(:players, list_of(:player_input))
 
       resolve(&TeamResolver.create_team/3)
     end

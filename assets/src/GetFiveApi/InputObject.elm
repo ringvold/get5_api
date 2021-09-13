@@ -21,13 +21,13 @@ buildPlayerInput :
     PlayerInputRequiredFields
     -> (PlayerInputOptionalFields -> PlayerInputOptionalFields)
     -> PlayerInput
-buildPlayerInput required fillOptionals =
+buildPlayerInput required____ fillOptionals____ =
     let
-        optionals =
-            fillOptionals
+        optionals____ =
+            fillOptionals____
                 { name = Absent }
     in
-    { id = required.id, name = optionals.name }
+    { id = required____.id, name = optionals____.name }
 
 
 type alias PlayerInputRequiredFields =
@@ -49,6 +49,6 @@ type alias PlayerInput =
 {-| Encode a PlayerInput into a value that can be used as an argument.
 -}
 encodePlayerInput : PlayerInput -> Value
-encodePlayerInput input =
+encodePlayerInput input____ =
     Encode.maybeObject
-        [ ( "id", Encode.string input.id |> Just ), ( "name", Encode.string |> Encode.optional input.name ) ]
+        [ ( "id", Encode.string input____.id |> Just ), ( "name", Encode.string |> Encode.optional input____.name ) ]

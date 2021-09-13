@@ -24,8 +24,8 @@ import Json.Decode as Decode exposing (Decoder)
 allGameServers :
     SelectionSet decodesTo GetFiveApi.Object.GameServer
     -> SelectionSet (List decodesTo) RootQuery
-allGameServers object_ =
-    Object.selectionForCompositeField "allGameServers" [] object_ (identity >> Decode.list)
+allGameServers object____ =
+    Object.selectionForCompositeField "allGameServers" [] object____ (identity >> Decode.list)
 
 
 {-| Get all matches
@@ -33,8 +33,8 @@ allGameServers object_ =
 allMatches :
     SelectionSet decodesTo GetFiveApi.Object.Match
     -> SelectionSet (List decodesTo) RootQuery
-allMatches object_ =
-    Object.selectionForCompositeField "allMatches" [] object_ (identity >> Decode.list)
+allMatches object____ =
+    Object.selectionForCompositeField "allMatches" [] object____ (identity >> Decode.list)
 
 
 {-| Get all teams
@@ -42,8 +42,8 @@ allMatches object_ =
 allTeams :
     SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet (List decodesTo) RootQuery
-allTeams object_ =
-    Object.selectionForCompositeField "allTeams" [] object_ (identity >> Decode.list)
+allTeams object____ =
+    Object.selectionForCompositeField "allTeams" [] object____ (identity >> Decode.list)
 
 
 type alias GameServerRequiredArguments =
@@ -56,19 +56,19 @@ gameServer :
     GameServerRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.GameServer
     -> SelectionSet decodesTo RootQuery
-gameServer requiredArgs object_ =
-    Object.selectionForCompositeField "gameServer" [ Argument.required "id" requiredArgs.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object_ identity
+gameServer requiredArgs____ object____ =
+    Object.selectionForCompositeField "gameServer" [ Argument.required "id" requiredArgs____.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object____ identity
 
 
 type alias TeamRequiredArguments =
     { id : GetFiveApi.ScalarCodecs.Id }
 
 
-{-| Get a game server
+{-| Get a team
 -}
 team :
     TeamRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet decodesTo RootQuery
-team requiredArgs object_ =
-    Object.selectionForCompositeField "team" [ Argument.required "id" requiredArgs.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object_ identity
+team requiredArgs____ object____ =
+    Object.selectionForCompositeField "team" [ Argument.required "id" requiredArgs____.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object____ identity

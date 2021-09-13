@@ -5,7 +5,7 @@
     "scripts": {
         "start": "elm-spa server",
         "build": "elm-spa build",
-        "graphql": "elm-graphql http://localhost:4000/api/graphql/v1 --base GetFiveApi --output src/",
+        "graphql": "elm-graphql http://localhost:4001/api/graphql/v1 --base GetFiveApi --output src/",
         "copy": "copyup \"public/**/*\" ../priv/static/",
         "deploy": "run-s build copy"
     },

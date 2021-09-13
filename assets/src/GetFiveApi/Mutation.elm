@@ -33,8 +33,8 @@ createGameServer :
     CreateGameServerRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.GameServer
     -> SelectionSet (Maybe decodesTo) RootMutation
-createGameServer requiredArgs object_ =
-    Object.selectionForCompositeField "createGameServer" [ Argument.required "host" requiredArgs.host Encode.string, Argument.required "name" requiredArgs.name Encode.string, Argument.required "port" requiredArgs.port_ Encode.string, Argument.required "rconPassword" requiredArgs.rconPassword Encode.string ] object_ (identity >> Decode.nullable)
+createGameServer requiredArgs____ object____ =
+    Object.selectionForCompositeField "createGameServer" [ Argument.required "host" requiredArgs____.host Encode.string, Argument.required "name" requiredArgs____.name Encode.string, Argument.required "port" requiredArgs____.port_ Encode.string, Argument.required "rconPassword" requiredArgs____.rconPassword Encode.string ] object____ (identity >> Decode.nullable)
 
 
 type alias CreateMatchOptionalArguments =
@@ -61,29 +61,40 @@ createMatch :
     -> CreateMatchRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.Match
     -> SelectionSet (Maybe decodesTo) RootMutation
-createMatch fillInOptionals requiredArgs object_ =
+createMatch fillInOptionals____ requiredArgs____ object____ =
     let
-        filledInOptionals =
-            fillInOptionals { enforceTeams = Absent, spectatorIds = Absent, title = Absent, vetoFirst = Absent }
+        filledInOptionals____ =
+            fillInOptionals____ { enforceTeams = Absent, spectatorIds = Absent, title = Absent, vetoFirst = Absent }
 
-        optionalArgs =
-            [ Argument.optional "enforceTeams" filledInOptionals.enforceTeams Encode.bool, Argument.optional "spectatorIds" filledInOptionals.spectatorIds (Encode.string |> Encode.maybe |> Encode.list), Argument.optional "title" filledInOptionals.title Encode.string, Argument.optional "vetoFirst" filledInOptionals.vetoFirst Encode.string ]
+        optionalArgs____ =
+            [ Argument.optional "enforceTeams" filledInOptionals____.enforceTeams Encode.bool, Argument.optional "spectatorIds" filledInOptionals____.spectatorIds (Encode.string |> Encode.maybe |> Encode.list), Argument.optional "title" filledInOptionals____.title Encode.string, Argument.optional "vetoFirst" filledInOptionals____.vetoFirst Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "createMatch" (optionalArgs ++ [ Argument.required "gameServer" requiredArgs.gameServer Encode.string, Argument.required "seriesType" requiredArgs.seriesType Encode.string, Argument.required "team1" requiredArgs.team1 Encode.string, Argument.required "team2" requiredArgs.team2 Encode.string, Argument.required "vetoMapPool" requiredArgs.vetoMapPool (Encode.string |> Encode.maybe |> Encode.list) ]) object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "createMatch" (optionalArgs____ ++ [ Argument.required "gameServer" requiredArgs____.gameServer Encode.string, Argument.required "seriesType" requiredArgs____.seriesType Encode.string, Argument.required "team1" requiredArgs____.team1 Encode.string, Argument.required "team2" requiredArgs____.team2 Encode.string, Argument.required "vetoMapPool" requiredArgs____.vetoMapPool (Encode.string |> Encode.maybe |> Encode.list) ]) object____ (identity >> Decode.nullable)
+
+
+type alias CreateTeamOptionalArguments =
+    { players : OptionalArgument (List (Maybe GetFiveApi.InputObject.PlayerInput)) }
 
 
 type alias CreateTeamRequiredArguments =
-    { name : String
-    , players : List (Maybe GetFiveApi.InputObject.PlayerInput)
-    }
+    { name : String }
 
 
 {-| Create a team
 -}
 createTeam :
-    CreateTeamRequiredArguments
+    (CreateTeamOptionalArguments -> CreateTeamOptionalArguments)
+    -> CreateTeamRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet (Maybe decodesTo) RootMutation
-createTeam requiredArgs object_ =
-    Object.selectionForCompositeField "createTeam" [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "players" requiredArgs.players (GetFiveApi.InputObject.encodePlayerInput |> Encode.maybe |> Encode.list) ] object_ (identity >> Decode.nullable)
+createTeam fillInOptionals____ requiredArgs____ object____ =
+    let
+        filledInOptionals____ =
+            fillInOptionals____ { players = Absent }
+
+        optionalArgs____ =
+            [ Argument.optional "players" filledInOptionals____.players (GetFiveApi.InputObject.encodePlayerInput |> Encode.maybe |> Encode.list) ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "createTeam" (optionalArgs____ ++ [ Argument.required "name" requiredArgs____.name Encode.string ]) object____ (identity >> Decode.nullable)

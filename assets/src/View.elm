@@ -1,4 +1,4 @@
-module View exposing (View, graphDataView, map, none, placeholder, toBrowserDocument)
+module View exposing (View, graphDataView, graphDataView2, map, none, placeholder, toBrowserDocument)
 
 import Api exposing (GraphqlData)
 import Browser
@@ -99,15 +99,22 @@ toBrowserDocument view =
 
 graphDataView : (a -> Html msg) -> GraphqlData a -> Html msg
 graphDataView successView graphData =
+    graphDataView2
+        successView
+        (div [] [ Html.text "Initializing" ])
+        graphData
+
+
+graphDataView2 successView notAskedView graphData =
     case graphData of
         NotAsked ->
-            div [] [ Html.text "Initializing" ]
+            notAskedView
 
         Loading ->
             div [] [ Styling.loader ]
 
         Failure error ->
-            div [] [ Html.text "Error loading data from server" ]
+            div [ Styling.header ] [ Html.text "Error loading data from server" ]
 
         Success data ->
             successView data

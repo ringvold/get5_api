@@ -1,5 +1,6 @@
-module Api exposing (GraphqlData, getAllServers, getAllTeams, getServer, getTeam)
+module Api exposing (GraphqlData, createTeam, getAllServers, getAllTeams, getServer, getTeam)
 
+import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
 import GetFiveApi.Object.GameServer as GServer
 import GetFiveApi.Object.Player as GPlayer
@@ -7,7 +8,7 @@ import GetFiveApi.Object.Team as GTeam
 import GetFiveApi.Query as Query
 import GetFiveApi.Scalar exposing (Id(..))
 import Graphql.Http
-import Graphql.Operation exposing (RootQuery)
+import Graphql.Operation exposing (RootMutation, RootQuery)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import RemoteData exposing (RemoteData)
@@ -26,13 +27,6 @@ url baseUrl =
 
 
 -- Request
-
-
-sendRequest : String -> SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
-sendRequest baseUrl query =
-    query
-        |> Graphql.Http.queryRequest (url baseUrl)
-        |> Graphql.Http.send RemoteData.fromResult
 
 
 getAllTeams : String -> Cmd (GraphqlData Teams)
@@ -58,6 +52,13 @@ getServer baseUrl id =
         |> sendRequest baseUrl
 
 
+sendRequest : String -> SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
+sendRequest baseUrl query =
+    query
+        |> Graphql.Http.queryRequest (url baseUrl)
+        |> Graphql.Http.send RemoteData.fromResult
+
+
 
 -- Queries
 
@@ -65,10 +66,15 @@ getServer baseUrl id =
 teamQuery : String -> SelectionSet Team RootQuery
 teamQuery id =
     Query.team { id = Id id } <|
-        SelectionSet.map3 Team
-            (SelectionSet.map scalarIdToString GTeam.id)
-            GTeam.name
-            (SelectionSet.map (List.filterMap identity) playersSelectionSet)
+        teamSelectionSet
+
+
+teamSelectionSet : SelectionSet Team GObject.Team
+teamSelectionSet =
+    SelectionSet.map3 Team
+        (SelectionSet.map scalarIdToString GTeam.id)
+        GTeam.name
+        (SelectionSet.map (List.filterMap identity) playersSelectionSet)
 
 
 serverQuery : String -> SelectionSet Server RootQuery
@@ -113,16 +119,28 @@ allServers =
 
 
 
--- stopPlaceSelection : SelectionSet StopPlace EO.StopPlace
--- stopPlaceSelection =
---     SelectionSet.map3 StopPlace
---         (SelectionSet.map scalarIdToString EOS.id)
---         EOS.name
---         (SelectionSet.map (List.filterMap identity) estimatedCalls)
+-- Mutations
+
+
+createTeam : String -> { a | name : String } -> Cmd (RemoteData (Graphql.Http.Error (Maybe Team)) (Maybe Team))
+createTeam baseUrl team =
+    createTeamMutation team
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send RemoteData.fromResult
+
+
+createTeamMutation : { a | name : String } -> SelectionSet (Maybe Team) RootMutation
+createTeamMutation team =
+    Mutation.createTeam
+        identity
+        { name = team.name }
+        teamSelectionSet
+
+
+
+-- Helpers
 
 
 scalarIdToString : GetFiveApi.Scalar.Id -> String
-scalarIdToString scalarId =
-    case scalarId of
-        Id id ->
-            id
+scalarIdToString (Id id) =
+    id

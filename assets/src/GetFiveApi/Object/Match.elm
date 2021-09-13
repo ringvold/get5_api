@@ -37,8 +37,8 @@ enforceTeams =
 gameServer :
     SelectionSet decodesTo GetFiveApi.Object.GameServer
     -> SelectionSet decodesTo GetFiveApi.Object.Match
-gameServer object_ =
-    Object.selectionForCompositeField "gameServer" [] object_ identity
+gameServer object____ =
+    Object.selectionForCompositeField "gameServer" [] object____ identity
 
 
 id : SelectionSet GetFiveApi.ScalarCodecs.Id GetFiveApi.Object.Match
@@ -84,8 +84,8 @@ status =
 team1 :
     SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet decodesTo GetFiveApi.Object.Match
-team1 object_ =
-    Object.selectionForCompositeField "team1" [] object_ identity
+team1 object____ =
+    Object.selectionForCompositeField "team1" [] object____ identity
 
 
 team1Score : SelectionSet (Maybe Int) GetFiveApi.Object.Match
@@ -96,8 +96,8 @@ team1Score =
 team2 :
     SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet decodesTo GetFiveApi.Object.Match
-team2 object_ =
-    Object.selectionForCompositeField "team2" [] object_ identity
+team2 object____ =
+    Object.selectionForCompositeField "team2" [] object____ identity
 
 
 team2Score : SelectionSet (Maybe Int) GetFiveApi.Object.Match
@@ -123,5 +123,5 @@ vetoMapPool =
 winner :
     SelectionSet decodesTo GetFiveApi.Object.Team
     -> SelectionSet (Maybe decodesTo) GetFiveApi.Object.Match
-winner object_ =
-    Object.selectionForCompositeField "winner" [] object_ (identity >> Decode.nullable)
+winner object____ =
+    Object.selectionForCompositeField "winner" [] object____ (identity >> Decode.nullable)

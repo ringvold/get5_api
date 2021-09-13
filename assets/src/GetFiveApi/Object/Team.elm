@@ -32,5 +32,5 @@ name =
 players :
     SelectionSet decodesTo GetFiveApi.Object.Player
     -> SelectionSet (List (Maybe decodesTo)) GetFiveApi.Object.Team
-players object_ =
-    Object.selectionForCompositeField "players" [] object_ (identity >> Decode.nullable >> Decode.list)
+players object____ =
+    Object.selectionForCompositeField "players" [] object____ (identity >> Decode.nullable >> Decode.list)

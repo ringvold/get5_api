@@ -1,25 +1,36 @@
 module Pages.Teams.New exposing (Model, Msg, page)
 
+import Api exposing (GraphqlData)
 import Css
 import Gen.Params.Teams.New exposing (Params)
+import Gen.Route as Route
+import Graphql.Http exposing (Error)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr
+import Html.Styled.Events as Events
 import Page
+import RemoteData exposing (RemoteData(..))
 import Request
 import Shared
+import Styling
 import Tailwind.Breakpoints as Breakpoints
 import Tailwind.Utilities as Tw
+import Team exposing (Team)
 import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
-        { init = init
+        { init = init shared
         , update = update
         , view = view
         , subscriptions = subscriptions
         }
+
+
+type alias GraphqlMutationData a =
+    RemoteData (Error (Maybe a)) (Maybe a)
 
 
 
@@ -27,12 +38,20 @@ page shared req =
 
 
 type alias Model =
-    {}
+    { baseUrl : String
+    , createdTeam : GraphqlMutationData Team
+    , nameInput : String
+    }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+init : Shared.Model -> ( Model, Cmd Msg )
+init shared =
+    ( { createdTeam = NotAsked
+      , nameInput = ""
+      , baseUrl = shared.baseUrl
+      }
+    , Cmd.none
+    )
 
 
 
@@ -40,14 +59,25 @@ init =
 
 
 type Msg
-    = ReplaceMe
+    = TeamCreated (GraphqlMutationData Team)
+    | NameChanged String
+    | SubmitTriggered
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReplaceMe ->
-            ( model, Cmd.none )
+        TeamCreated result ->
+            ( { model | createdTeam = result }, Cmd.none )
+
+        NameChanged string ->
+            ( { model | nameInput = string }, Cmd.none )
+
+        SubmitTriggered ->
+            ( model
+            , Cmd.map TeamCreated <|
+                Api.createTeam model.baseUrl { name = model.nameInput }
+            )
 
 
 
@@ -67,9 +97,16 @@ view : Model -> View Msg
 view model =
     { title = "Create team"
     , body =
-        [ h1 [] [ text "Create team" ]
+        [ View.graphDataView2 successView preSubmit model.createdTeam ]
+    }
+
+
+preSubmit =
+    div []
+        [ h1 [ Styling.header ] [ text "Create team" ]
         , form
             [ Attr.css [ Tw.w_full, Tw.max_w_sm ]
+            , Events.onSubmit SubmitTriggered
             ]
             [ div
                 [ Attr.css [ Breakpoints.md [ Tw.flex, Tw.items_center, Tw.mb_6 ] ]
@@ -110,6 +147,7 @@ view model =
                         , Attr.id "team-name"
                         , Attr.type_ "text"
                         , Attr.placeholder "Team Name"
+                        , Events.onInput NameChanged
                         ]
                         []
                     ]
@@ -145,4 +183,18 @@ view model =
                 ]
             ]
         ]
-    }
+
+
+successView : Maybe Team -> Html msg
+successView mteam =
+    case mteam of
+        Just team ->
+            a
+                [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
+                , Attr.css
+                    [ Tw.block ]
+                ]
+                [ text team.name ]
+
+        Nothing ->
+            div [] [ text "Could not create team" ]

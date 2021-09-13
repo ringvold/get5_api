@@ -3,7 +3,6 @@ defmodule Get5Api.Teams.Team do
   import Ecto.Changeset
   alias Get5Api.Matches.Match
 
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "teams" do
@@ -18,6 +17,6 @@ defmodule Get5Api.Teams.Team do
   def changeset(team, attrs) do
     team
     |> cast(attrs, [:name, :players])
-    |> validate_required([:name, :players])
+    |> validate_required([:name])
   end
 end

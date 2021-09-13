@@ -37,7 +37,7 @@ defmodule Get5ApiWeb.Schema.Types do
   object :team do
     field :id, non_null(:id)
     field :name, non_null(:string)
-    field :players, non_null(list_of(:player))
+    field :players, list_of(:player)
   end
 
   object :player do

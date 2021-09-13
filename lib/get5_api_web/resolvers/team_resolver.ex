@@ -7,8 +7,23 @@ defmodule Get5ApiWeb.TeamResolver do
   end
 
   def get_team(_root, args, _info) do
-    # TODO: Fix error handling on
-    {:ok, Teams.get_team!(args.id) |> to_graphql()}
+    case Teams.get_team(args.id) do
+      nil ->
+        {:error, "Team not found"}
+
+      team ->
+        {:ok, to_graphql(team)}
+    end
+  end
+
+  def create_team(_parent, %{name: name}, _context) do
+    case Teams.create_team(%{name: name}) do
+      {:ok, team} ->
+        {:ok, to_graphql(team)}
+
+      err ->
+        err
+    end
   end
 
   def create_team(_parent, %{name: name, players: input_players}, _context) do
@@ -16,11 +31,13 @@ defmodule Get5ApiWeb.TeamResolver do
       input_players
       |> Enum.reduce(Map.new(), &input_player_to_map/2)
 
-    team =
-      Teams.create_team(%{name: name, players: players})
-      |> to_graphql
+    case Teams.create_team(%{name: name, players: players}) do
+      {:ok, team} ->
+        {:ok, to_graphql(team)}
 
-    {:ok, team}
+      err ->
+        err
+    end
   end
 
   defp input_player_to_map(%{id: id, name: name}, acc) do
@@ -33,6 +50,14 @@ defmodule Get5ApiWeb.TeamResolver do
 
   defp to_graphql({:ok, team = %Teams.Team{}}) do
     to_graphql(team)
+  end
+
+  defp to_graphql(%Teams.Team{id: id, name: name, players: nil}) do
+    %{
+      id: id,
+      name: name,
+      players: []
+    }
   end
 
   defp to_graphql(%Teams.Team{id: id, name: name, players: players}) do
