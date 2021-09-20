@@ -22,8 +22,8 @@ import View exposing (View)
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
-        { init = init shared
-        , update = update
+        { init = init shared req
+        , update = update req
         , view = view
         , subscriptions = subscriptions
         }
@@ -44,8 +44,8 @@ type alias Model =
     }
 
 
-init : Shared.Model -> ( Model, Cmd Msg )
-init shared =
+init : Shared.Model -> Request.With Params -> ( Model, Cmd Msg )
+init shared req =
     ( { createdTeam = NotAsked
       , nameInput = ""
       , baseUrl = shared.baseUrl
@@ -64,9 +64,14 @@ type Msg
     | SubmitTriggered
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Request.With Params -> Msg -> Model -> ( Model, Cmd Msg )
+update req msg model =
     case msg of
+        TeamCreated (Success (Just team)) ->
+            ( model
+            , Request.pushRoute (Route.Teams__Id_ { id = team.id }) req
+            )
+
         TeamCreated result ->
             ( { model | createdTeam = result }, Cmd.none )
 
@@ -101,6 +106,7 @@ view model =
     }
 
 
+preSubmit : Html Msg
 preSubmit =
     div []
         [ h1 [ Styling.header ] [ text "Create team" ]
