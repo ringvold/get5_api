@@ -82,7 +82,9 @@ toBrowserDocument view =
                 ]
             , Html.main_
                 [ Attr.css
-                    [ Css.flexGrow <| Css.int 1
+                    [ Breakpoints.lg [ Tw.mx_0 ]
+                    , Tw.mx_5
+                    , Css.flexGrow <| Css.int 1
                     , Css.displayFlex
                     , Css.flexDirection Css.column
                     ]
