@@ -27,11 +27,11 @@ buildPlayerInput required____ fillOptionals____ =
             fillOptionals____
                 { name = Absent }
     in
-    { id = required____.id, name = optionals____.name }
+    { name = optionals____.name, steamId = required____.steamId }
 
 
 type alias PlayerInputRequiredFields =
-    { id : String }
+    { steamId : String }
 
 
 type alias PlayerInputOptionalFields =
@@ -41,8 +41,8 @@ type alias PlayerInputOptionalFields =
 {-| Type for the PlayerInput input object.
 -}
 type alias PlayerInput =
-    { id : String
-    , name : OptionalArgument String
+    { name : OptionalArgument String
+    , steamId : String
     }
 
 
@@ -51,4 +51,4 @@ type alias PlayerInput =
 encodePlayerInput : PlayerInput -> Value
 encodePlayerInput input____ =
     Encode.maybeObject
-        [ ( "id", Encode.string input____.id |> Just ), ( "name", Encode.string |> Encode.optional input____.name ) ]
+        [ ( "name", Encode.string |> Encode.optional input____.name ), ( "steamId", Encode.string input____.steamId |> Just ) ]

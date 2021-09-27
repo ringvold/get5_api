@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, createTeam, getAllServers, getAllTeams, getServer, getTeam)
+module Api exposing (GraphqlData, addPlayer, createTeam, getAllServers, getAllTeams, getServer, getTeam)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
@@ -40,6 +40,20 @@ getTeam baseUrl id =
         |> sendRequest baseUrl
 
 
+addPlayer : String -> String -> Player -> Cmd (GraphqlData (Maybe Player))
+addPlayer baseUrl teamId player =
+    addPlayerMutation teamId player
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send RemoteData.fromResult
+
+
+createTeam : String -> { a | name : String } -> Cmd (RemoteData (Graphql.Http.Error (Maybe Team)) (Maybe Team))
+createTeam baseUrl team =
+    createTeamMutation team
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send RemoteData.fromResult
+
+
 getAllServers : String -> Cmd (GraphqlData Servers)
 getAllServers baseUrl =
     allServers
@@ -74,7 +88,9 @@ teamSelectionSet =
     SelectionSet.map3 Team
         (SelectionSet.map scalarIdToString GTeam.id)
         GTeam.name
-        (SelectionSet.map (List.filterMap identity) playersSelectionSet)
+        (SelectionSet.withDefault [] playersSelectionSet
+            |> SelectionSet.map (List.filterMap identity)
+        )
 
 
 serverQuery : String -> SelectionSet Server RootQuery
@@ -89,13 +105,20 @@ serverQuery id =
         )
 
 
-playersSelectionSet : SelectionSet (List (Maybe Player)) GObject.Team
+playersSelectionSet : SelectionSet (Maybe (List (Maybe Player))) GObject.Team
 playersSelectionSet =
     GTeam.players
         (SelectionSet.map2 Player
-            GPlayer.id
+            GPlayer.steamId
             GPlayer.name
         )
+
+
+playerSelectionSet : SelectionSet Player GObject.Player
+playerSelectionSet =
+    SelectionSet.map2 Player
+        GPlayer.steamId
+        GPlayer.name
 
 
 allTeams : SelectionSet Teams RootQuery
@@ -122,19 +145,22 @@ allServers =
 -- Mutations
 
 
-createTeam : String -> { a | name : String } -> Cmd (RemoteData (Graphql.Http.Error (Maybe Team)) (Maybe Team))
-createTeam baseUrl team =
-    createTeamMutation team
-        |> Graphql.Http.mutationRequest (url baseUrl)
-        |> Graphql.Http.send RemoteData.fromResult
-
-
 createTeamMutation : { a | name : String } -> SelectionSet (Maybe Team) RootMutation
 createTeamMutation team =
     Mutation.createTeam
         identity
         { name = team.name }
         teamSelectionSet
+
+
+addPlayerMutation : String -> Player -> SelectionSet (Maybe Player) RootMutation
+addPlayerMutation teamId player =
+    Mutation.addPlayer
+        identity
+        { steamId = player.id
+        , teamId = teamId
+        }
+        playerSelectionSet
 
 
 

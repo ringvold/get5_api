@@ -4,7 +4,6 @@ import Api exposing (GraphqlData)
 import Css
 import Gen.Params.Teams.Id_ exposing (Params)
 import Gen.Route as Route
-import GetFiveApi.Object.Team exposing (players)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
@@ -23,7 +22,7 @@ page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
         { init = init shared req.params
-        , update = update
+        , update = update shared
         , view = view
         , subscriptions = subscriptions
         }
@@ -36,12 +35,18 @@ page shared req =
 type alias Model =
     { team : GraphqlData Team
     , showForm : Bool
+    , playerSteamId : String
+    , playerName : String
     }
 
 
 init : Shared.Model -> Params -> ( Model, Cmd Msg )
 init shared params =
-    ( { team = Loading, showForm = False }
+    ( { team = Loading
+      , showForm = False
+      , playerSteamId = ""
+      , playerName = ""
+      }
     , Cmd.batch
         [ Cmd.map TeamReceived (Api.getTeam shared.baseUrl params.id)
         ]
@@ -57,10 +62,12 @@ type Msg
     | ShowNewPlayerForm
     | PlayerIdChanged String
     | PlayerNameChanged String
+    | PlayerSubmit
+    | PlayerAddedReceived (GraphqlData (Maybe Player))
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Shared.Model -> Msg -> Model -> ( Model, Cmd Msg )
+update shared msg model =
     case msg of
         TeamReceived team ->
             ( { model | team = team }, Cmd.none )
@@ -68,10 +75,21 @@ update msg model =
         ShowNewPlayerForm ->
             ( { model | showForm = not model.showForm }, Cmd.none )
 
-        PlayerIdChanged id ->
+        PlayerIdChanged id_ ->
             ( model, Cmd.none )
 
         PlayerNameChanged id ->
+            ( model, Cmd.none )
+
+        PlayerSubmit ->
+            case model.team of
+                Success team ->
+                    ( model, Cmd.batch [ Cmd.map PlayerAddedReceived <| Api.addPlayer shared.baseUrl team.id { id = "1234", name = Nothing } ] )
+
+                _ ->
+                    ( { model | showForm = not model.showForm }, Cmd.none )
+
+        PlayerAddedReceived _ ->
             ( model, Cmd.none )
 
 
@@ -131,7 +149,8 @@ newPlayerView : Bool -> Html Msg
 newPlayerView show =
     if show then
         form
-            [ Attr.css
+            [ Events.onSubmit PlayerSubmit
+            , Attr.css
                 [ Tw.mb_5
                 , Tw.p_5
                 , Tw.border_2
@@ -196,6 +215,7 @@ newPlayerView show =
                     , Css.hover [ Tw.bg_green_400 ]
                     ]
                 , Attr.type_ "button"
+                , Events.onClick PlayerSubmit
                 ]
                 [ text "Add player" ]
             ]

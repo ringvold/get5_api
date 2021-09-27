@@ -19,11 +19,11 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-id : SelectionSet String GetFiveApi.Object.Player
-id =
-    Object.selectionForField "String" "id" [] Decode.string
-
-
 name : SelectionSet (Maybe String) GetFiveApi.Object.Player
 name =
     Object.selectionForField "(Maybe String)" "name" [] (Decode.string |> Decode.nullable)
+
+
+steamId : SelectionSet String GetFiveApi.Object.Player
+steamId =
+    Object.selectionForField "String" "steamId" [] Decode.string

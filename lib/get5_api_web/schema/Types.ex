@@ -41,12 +41,12 @@ defmodule Get5ApiWeb.Schema.Types do
   end
 
   object :player do
-    field :id, non_null(:string)
+    field :steam_id, non_null(:string)
     field :name, :string
   end
 
   input_object :player_input do
-    field :id, non_null(:string)
+    field :steam_id, non_null(:string)
     field :name, :string
   end
 end

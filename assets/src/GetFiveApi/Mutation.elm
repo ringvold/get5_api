@@ -19,6 +19,33 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
 
 
+type alias AddPlayerOptionalArguments =
+    { name : OptionalArgument String }
+
+
+type alias AddPlayerRequiredArguments =
+    { steamId : String
+    , teamId : String
+    }
+
+
+addPlayer :
+    (AddPlayerOptionalArguments -> AddPlayerOptionalArguments)
+    -> AddPlayerRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.Player
+    -> SelectionSet (Maybe decodesTo) RootMutation
+addPlayer fillInOptionals____ requiredArgs____ object____ =
+    let
+        filledInOptionals____ =
+            fillInOptionals____ { name = Absent }
+
+        optionalArgs____ =
+            [ Argument.optional "name" filledInOptionals____.name Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "addPlayer" (optionalArgs____ ++ [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ]) object____ (identity >> Decode.nullable)
+
+
 type alias CreateGameServerRequiredArguments =
     { host : String
     , name : String

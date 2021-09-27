@@ -40,6 +40,11 @@ defmodule Get5ApiWeb.TeamResolver do
     end
   end
 
+  def add_player(_parent, %{steam_id: steam_id, team_id: team_id}, _context) do
+    # { :ok, %{ steam_id: steam_id} }
+    { :error, "Not implemented"}
+  end
+
   defp input_player_to_map(%{id: id, name: name}, acc) do
     Map.put(acc, id, name)
   end
