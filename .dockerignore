@@ -1,2 +1,5 @@
 assets/node_modules/
 deps/
+_build
+deps
+test

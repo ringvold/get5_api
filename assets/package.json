@@ -3,11 +3,12 @@
     "version": "1.0.0",
     "description": "A project created with elm-spa",
     "scripts": {
-        "start": "elm-spa server",
+        "start": "elm-tooling install && elm-spa server",
         "build": "elm-spa build",
-        "graphql": "elm-graphql http://localhost:4001/api/graphql/v1 --base GetFiveApi --output src/",
+        "graphql": "elm-graphql http://localhost:4000/api/graphql/v1 --base GetFiveApi --output src/",
         "copy": "copyup \"public/**/*\" ../priv/static/",
-        "deploy": "run-s build copy"
+        "deploy": "run-s build copy",
+        "setup": "elm-tooling install"
     },
     "keywords": [],
     "author": "",

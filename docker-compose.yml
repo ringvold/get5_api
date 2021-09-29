@@ -1,7 +1,4 @@
 version: "3"
-volumes:
-  node_modules:
-  build:
 services:
   db:
     image: postgres:12-alpine
@@ -11,19 +8,20 @@ services:
       - 5432:5432
     volumes:
        - db-data:/var/lib/postgresql/data
-  # web:
-  #   image: bitwalker/alpine-elixir-phoenix
-  #   env_file: .env
-  #   command: mix phx.server
-  #   volumes:
-  #     - .:/opt/app
-  #     - build:/opt/app/_build
-  #   ports:
-  #     - "4000:4000"
-  #   depends_on:
-  #     - db
-  #   stdin_open: true
-  #   tty: true
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    env_file: .env
+    command: mix do deps.get, phx.server
+    volumes:
+      - ./:/app
+    ports:
+      - "4000:4000"
+      - "1234:1234"
+    depends_on:
+      - db
+
 
 volumes:
   db-data:

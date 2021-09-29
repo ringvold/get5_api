@@ -1,0 +1,34 @@
+FROM elixir:1.12.3
+
+# Add yarn keys and repo
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    apt-get install -y inotify-tools && \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get install -y yarn --no-install-recommends
+
+RUN mix local.hex --force && \
+    mix archive.install hex phx_new 1.5.3 --force && \
+    mix local.rebar --force
+
+ENV APP_HOME /app
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# Cache elixir deps
+ADD mix.exs mix.lock ./
+RUN mix do deps.get, deps.compile
+
+RUN useradd -rm -d /home/get5 -s /bin/bash -u 1000 get5
+USER get5
+
+# Yes, this need to be twice. I don't know why ¯\_(ツ)_/¯
+RUN mix local.hex --force && \
+    mix archive.install hex phx_new 1.5.3 --force && \
+    mix local.rebar --force
+
+CMD ["mix", "phx.server"]

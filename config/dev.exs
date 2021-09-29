@@ -5,7 +5,7 @@ config :get5_api, Get5Api.Repo,
   username: "postgres",
   password: "",
   database: "get5_api_dev",
-  hostname: "localhost",
+  hostname: System.get_env("DOCKER_PG_HOST") || "localhost" ,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -16,15 +16,15 @@ config :get5_api, Get5Api.Repo,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :get5_api, Get5ApiWeb.Endpoint,
-  http: [port: 4001],
+  http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
   watchers: [
     # Yup this is weird, but necessery for the elm-spa server to exit when the phoenix dev sever exists
     "#{Path.expand("../assets", __DIR__) <> "/stdin-shim.sh"}": [
-      "node_modules/.bin/elm-spa",
-      "server",
+      "yarn",
+      "start",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]
