@@ -29,13 +29,13 @@ type alias AddPlayerRequiredArguments =
     }
 
 
-{-| Add player to team
+{-| Add player to a team
 -}
 addPlayer :
     (AddPlayerOptionalArguments -> AddPlayerOptionalArguments)
     -> AddPlayerRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.Player
-    -> SelectionSet (Maybe (List (Maybe decodesTo))) RootMutation
+    -> SelectionSet (List decodesTo) RootMutation
 addPlayer fillInOptionals____ requiredArgs____ object____ =
     let
         filledInOptionals____ =
@@ -45,7 +45,7 @@ addPlayer fillInOptionals____ requiredArgs____ object____ =
             [ Argument.optional "name" filledInOptionals____.name Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "addPlayer" (optionalArgs____ ++ [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ]) object____ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+    Object.selectionForCompositeField "addPlayer" (optionalArgs____ ++ [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ]) object____ (identity >> Decode.list)
 
 
 type alias CreateGameServerRequiredArguments =
@@ -127,3 +127,19 @@ createTeam fillInOptionals____ requiredArgs____ object____ =
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "createTeam" (optionalArgs____ ++ [ Argument.required "name" requiredArgs____.name Encode.string ]) object____ (identity >> Decode.nullable)
+
+
+type alias RemovePlayerRequiredArguments =
+    { steamId : String
+    , teamId : String
+    }
+
+
+{-| Remove player from a team
+-}
+removePlayer :
+    RemovePlayerRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.Player
+    -> SelectionSet (List decodesTo) RootMutation
+removePlayer requiredArgs____ object____ =
+    Object.selectionForCompositeField "removePlayer" [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ] object____ (identity >> Decode.list)

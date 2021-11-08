@@ -55,12 +55,19 @@ defmodule Get5ApiWeb.Schema do
       resolve(&TeamResolver.create_team/3)
     end
 
-    @desc "Add player to team"
-    field :add_player, type: list_of(non_null(:player)) do
+    @desc "Add player to a team"
+    field :add_player, type: non_null(list_of(non_null(:player))) do
       arg(:team_id, non_null(:string))
       arg(:steam_id, non_null(:string))
       arg(:name, :string)
       resolve(&TeamResolver.add_player/3)
+    end
+
+    @desc "Remove player from a team"
+    field :remove_player, type: non_null(list_of(non_null(:player))) do
+      arg(:team_id, non_null(:string))
+      arg(:steam_id, non_null(:string))
+      resolve(&TeamResolver.remove_player/3)
     end
 
     @desc "Create a match"

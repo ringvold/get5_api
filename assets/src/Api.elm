@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, addPlayer, createTeam, getAllServers, getAllTeams, getServer, getTeam)
+module Api exposing (GraphqlData, addPlayer, createTeam, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
@@ -17,7 +17,7 @@ import Team exposing (Player, Team, Teams)
 
 
 type alias GraphqlData a =
-    RemoteData (Graphql.Http.Error a) a
+    RemoteData (Graphql.Http.Error ()) a
 
 
 url : String -> String
@@ -27,6 +27,8 @@ url baseUrl =
 
 
 -- Request
+-- Use of `discardParsedErrorData` is a hack for now.
+-- Probably need to handle error properly at a point.
 
 
 getAllTeams : String -> Cmd (GraphqlData Teams)
@@ -43,14 +45,20 @@ getTeam baseUrl id =
 addPlayer baseUrl teamId player =
     addPlayerMutation teamId player
         |> Graphql.Http.mutationRequest (url baseUrl)
-        |> Graphql.Http.send RemoteData.fromResult
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
+removePlayer baseUrl teamId player =
+    removePlayerMutation teamId player
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
 createTeam : String -> { a | name : String } -> Cmd (RemoteData (Graphql.Http.Error (Maybe Team)) (Maybe Team))
 createTeam baseUrl team =
     createTeamMutation team
         |> Graphql.Http.mutationRequest (url baseUrl)
-        |> Graphql.Http.send RemoteData.fromResult
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
 getAllServers : String -> Cmd (GraphqlData Servers)
@@ -65,11 +73,11 @@ getServer baseUrl id =
         |> sendRequest baseUrl
 
 
-sendRequest : String -> SelectionSet a RootQuery -> Cmd (RemoteData (Graphql.Http.Error a) a)
+sendRequest : String -> SelectionSet a RootQuery -> Cmd (GraphqlData a)
 sendRequest baseUrl query =
     query
         |> Graphql.Http.queryRequest (url baseUrl)
-        |> Graphql.Http.send RemoteData.fromResult
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
 
@@ -152,10 +160,19 @@ createTeamMutation team =
         teamSelectionSet
 
 
-addPlayerMutation : String -> Player -> SelectionSet (Maybe (List Player)) RootMutation
+addPlayerMutation : String -> Player -> SelectionSet (List Player) RootMutation
 addPlayerMutation teamId player =
     Mutation.addPlayer
         identity
+        { steamId = player.id
+        , teamId = teamId
+        }
+        playerSelectionSet
+
+
+removePlayerMutation : String -> Player -> SelectionSet (List Player) RootMutation
+removePlayerMutation teamId player =
+    Mutation.removePlayer
         { steamId = player.id
         , teamId = teamId
         }

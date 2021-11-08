@@ -34,14 +34,38 @@ defmodule Get5ApiWeb.TeamResolver do
       team ->
         players = input_player_to_map(player, team.players)
 
-        IO.inspect(players)
+        case Teams.update_team(team, %{players: players}) do
+          {:ok, updated_team} ->
+            {:ok,
+             Enum.map(
+               updated_team.players,
+               &map_to_player/1
+             )}
+
+          {:error, changeset} ->
+            {:error, "Could not add player to team"}
+        end
+    end
+  end
+
+  def remove_player(_parent, player, _context) do
+    case Teams.get_team(player.team_id) do
+      nil ->
+        {:error, "Team not found"}
+
+      team ->
+        IO.inspect(team.players)
+        players = Map.delete(team.players, player.steam_id)
 
         case Teams.update_team(team, %{players: players}) do
           {:ok, updated_team} ->
-            IO.inspect(updated_team)
+            IO.inspect(updated_team.players)
 
-            IO.puts("GOT HERE!!!!!!!!!!!")
-            {:ok, updated_team.players}
+            {:ok,
+             Enum.map(
+               updated_team.players,
+               &map_to_player/1
+             )}
 
           {:error, changeset} ->
             {:error, "Could not add player to team"}

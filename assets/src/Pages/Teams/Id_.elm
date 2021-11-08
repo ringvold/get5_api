@@ -38,7 +38,7 @@ type alias Model =
     , showForm : Bool
     , playerSteamId : String
     , playerName : String
-    , newPlayer : GraphqlData (Maybe Player)
+    , newPlayer : GraphqlData (List Player)
     }
 
 
@@ -66,7 +66,8 @@ type Msg
     | PlayerIdChanged String
     | PlayerNameChanged String
     | PlayerSubmit
-    | PlayerAddedReceived (GraphqlData (Maybe Player))
+    | PlayerAddedReceived (GraphqlData (List Player))
+    | RemovePlayerClicked String
 
 
 update : Shared.Model -> Msg -> Model -> ( Model, Cmd Msg )
@@ -109,29 +110,43 @@ update shared msg model =
 
         PlayerAddedReceived webdata ->
             let
+                errorTeam =
+                    Team "id" "team" []
+
                 fixedPlayer =
-                    RemoteData.mapError (always Just []) model.newPlayer
+                    RemoteData.mapError identity webdata
 
                 fixedTeam =
-                    RemoteData.mapError (always Nothing) model.team
+                    RemoteData.mapError identity model.team
 
                 newTeam =
                     RemoteData.map2
                         addPlayerToTeam
-                        fixedPlayer
-                        fixedTeam
+                        webdata
+                        model.team
             in
             ( { model | newPlayer = webdata, team = newTeam }, Cmd.none )
 
+        RemovePlayerClicked steam_id ->
+            case model.team of
+                Success team ->
+                    ( model
+                    , Cmd.batch
+                        [ Cmd.map PlayerAddedReceived <|
+                            Api.removePlayer
+                                shared.baseUrl
+                                team.id
+                                { id = steam_id, name = Nothing }
+                        ]
+                    )
 
-addPlayerToTeam : Maybe Player -> Team -> RemoteData e Team
-addPlayerToTeam mPlayer team =
-    case mPlayer of
-        Just player ->
-            RemoteData.succeed { team | players = List.append team.players [ player ] }
+                _ ->
+                    ( { model | showForm = not model.showForm }, Cmd.none )
 
-        Nothing ->
-            RemoteData.succeed team
+
+addPlayerToTeam : List Player -> Team -> Team
+addPlayerToTeam players team =
+    { team | players = players }
 
 
 
@@ -186,12 +201,19 @@ viewTeam model team =
         ]
 
 
-newPlayerView : Bool -> GraphqlData (Maybe Player) -> Html Msg
+newPlayerView : Bool -> GraphqlData (List Player) -> Html Msg
 newPlayerView show newPlayer =
     if show then
         case newPlayer of
             Success _ ->
-                div [] [ text "Player added" ]
+                div
+                    [ Attr.css
+                        [ Tw.bg_green_200
+                        , Tw.p_2
+                        , Tw.rounded
+                        ]
+                    ]
+                    [ text "Player added" ]
 
             Failure _ ->
                 div [] [ text "Failed to add player" ]
@@ -266,7 +288,7 @@ newPlayerView show newPlayer =
                             , Css.focus [ Tw.outline_none ]
                             , Css.hover [ Tw.bg_green_400 ]
                             ]
-                        , Attr.type_ "button"
+                        , Attr.type_ "submit"
                         , Events.onClick PlayerSubmit
                         ]
                         [ text "Add player" ]
@@ -287,12 +309,20 @@ viewPlayers team =
         team.players
             |> List.map
                 (\player ->
-                    case player.name of
-                        Just name ->
-                            div [] [ name ++ ": " ++ player.id |> text ]
+                    div []
+                        [ text <|
+                            case player.name of
+                                Just name ->
+                                    name ++ ": " ++ player.id
 
-                        Nothing ->
-                            div [] [ "Steam ID: " ++ player.id |> text ]
+                                Nothing ->
+                                    "Steam ID: " ++ player.id
+                        , span
+                            [ Attr.css [ Tw.cursor_pointer ]
+                            , Events.onClick <| RemovePlayerClicked player.id
+                            ]
+                            [ text "Delete" ]
+                        ]
                 )
             |> List.append [ h1 [] [ text "Players:" ] ]
             |> div []
