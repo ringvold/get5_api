@@ -74,11 +74,11 @@ defmodule Get5ApiWeb.TeamResolver do
   end
 
   defp input_player_to_map(%{steam_id: id, team_id: team_id}, acc) do
-    Map.put(acc, id, nil)
+    Map.put(acc || Map.new(), id, nil)
   end
 
   defp input_player_to_map(%{steam_id: id, team_id: team_id, name: name}, acc) do
-    Map.put(acc, id, name)
+    Map.put(acc || Map.new(), id, name)
   end
 
   defp to_graphql({:ok, team = %Teams.Team{}}) do
