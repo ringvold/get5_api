@@ -110,20 +110,15 @@ update shared msg model =
 
         PlayerAddedReceived webdata ->
             let
-                errorTeam =
-                    Team "id" "team" []
-
-                fixedPlayer =
-                    RemoteData.mapError identity webdata
-
-                fixedTeam =
-                    RemoteData.mapError identity model.team
+                newPlayerTeam =
+                    RemoteData.map2 addPlayerToTeam webdata model.team
 
                 newTeam =
-                    RemoteData.map2
-                        addPlayerToTeam
-                        webdata
+                    if RemoteData.isFailure newPlayerTeam then
                         model.team
+
+                    else
+                        newPlayerTeam
             in
             ( { model | newPlayer = webdata, team = newTeam }, Cmd.none )
 
