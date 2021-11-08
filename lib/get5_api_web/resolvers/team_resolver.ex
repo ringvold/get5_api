@@ -26,31 +26,35 @@ defmodule Get5ApiWeb.TeamResolver do
     end
   end
 
-  def create_team(_parent, %{name: name, players: input_players}, _context) do
-    players =
-      input_players
-      |> Enum.reduce(Map.new(), &input_player_to_map/2)
+  def add_player(_parent, player, _context) do
+    case Teams.get_team(player.team_id) do
+      nil ->
+        {:error, "Team not found"}
 
-    case Teams.create_team(%{name: name, players: players}) do
-      {:ok, team} ->
-        {:ok, to_graphql(team)}
+      team ->
+        players = input_player_to_map(player, team.players)
 
-      err ->
-        err
+        IO.inspect(players)
+
+        case Teams.update_team(team, %{players: players}) do
+          {:ok, updated_team} ->
+            IO.inspect(updated_team)
+
+            IO.puts("GOT HERE!!!!!!!!!!!")
+            {:ok, updated_team.players}
+
+          {:error, changeset} ->
+            {:error, "Could not add player to team"}
+        end
     end
   end
 
-  def add_player(_parent, %{steam_id: steam_id, team_id: team_id}, _context) do
-    # { :ok, %{ steam_id: steam_id} }
-    { :error, "Not implemented"}
-  end
-
-  defp input_player_to_map(%{id: id, name: name}, acc) do
-    Map.put(acc, id, name)
-  end
-
-  defp input_player_to_map(%{id: id}, acc) do
+  defp input_player_to_map(%{steam_id: id, team_id: team_id}, acc) do
     Map.put(acc, id, nil)
+  end
+
+  defp input_player_to_map(%{steam_id: id, team_id: team_id, name: name}, acc) do
+    Map.put(acc, id, name)
   end
 
   defp to_graphql({:ok, team = %Teams.Team{}}) do
@@ -77,7 +81,7 @@ defmodule Get5ApiWeb.TeamResolver do
     }
   end
 
-  defp map_to_player({id}), do: %{id: id}
+  defp map_to_player({id}), do: %{steam_id: id}
 
-  defp map_to_player({id, name}), do: %{id: id, name: name}
+  defp map_to_player({id, name}), do: %{steam_id: id, name: name}
 end

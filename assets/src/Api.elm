@@ -40,7 +40,6 @@ getTeam baseUrl id =
         |> sendRequest baseUrl
 
 
-addPlayer : String -> String -> Player -> Cmd (GraphqlData (Maybe Player))
 addPlayer baseUrl teamId player =
     addPlayerMutation teamId player
         |> Graphql.Http.mutationRequest (url baseUrl)
@@ -153,7 +152,7 @@ createTeamMutation team =
         teamSelectionSet
 
 
-addPlayerMutation : String -> Player -> SelectionSet (Maybe Player) RootMutation
+addPlayerMutation : String -> Player -> SelectionSet (Maybe (List Player)) RootMutation
 addPlayerMutation teamId player =
     Mutation.addPlayer
         identity

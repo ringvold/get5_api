@@ -29,11 +29,13 @@ type alias AddPlayerRequiredArguments =
     }
 
 
+{-| Add player to team
+-}
 addPlayer :
     (AddPlayerOptionalArguments -> AddPlayerOptionalArguments)
     -> AddPlayerRequiredArguments
     -> SelectionSet decodesTo GetFiveApi.Object.Player
-    -> SelectionSet (Maybe decodesTo) RootMutation
+    -> SelectionSet (Maybe (List (Maybe decodesTo))) RootMutation
 addPlayer fillInOptionals____ requiredArgs____ object____ =
     let
         filledInOptionals____ =
@@ -43,7 +45,7 @@ addPlayer fillInOptionals____ requiredArgs____ object____ =
             [ Argument.optional "name" filledInOptionals____.name Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "addPlayer" (optionalArgs____ ++ [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ]) object____ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "addPlayer" (optionalArgs____ ++ [ Argument.required "steamId" requiredArgs____.steamId Encode.string, Argument.required "teamId" requiredArgs____.teamId Encode.string ]) object____ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
 
 
 type alias CreateGameServerRequiredArguments =
