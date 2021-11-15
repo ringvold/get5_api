@@ -18,5 +18,7 @@ defmodule Get5Api.Teams.Team do
     team
     |> cast(attrs, [:name, :players])
     |> validate_required([:name])
+    |> foreign_key_constraint(:matches_team1_id_fkey)
+    |> foreign_key_constraint(:matches_team2_id_fkey)
   end
 end

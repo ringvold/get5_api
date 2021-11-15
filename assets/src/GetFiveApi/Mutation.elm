@@ -110,7 +110,7 @@ type alias CreateTeamRequiredArguments =
     { name : String }
 
 
-{-| Create a team
+{-| Create team
 -}
 createTeam :
     (CreateTeamOptionalArguments -> CreateTeamOptionalArguments)
@@ -127,6 +127,20 @@ createTeam fillInOptionals____ requiredArgs____ object____ =
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "createTeam" (optionalArgs____ ++ [ Argument.required "name" requiredArgs____.name Encode.string ]) object____ (identity >> Decode.nullable)
+
+
+type alias DeleteTeamRequiredArguments =
+    { id : String }
+
+
+{-| Delete team
+-}
+deleteTeam :
+    DeleteTeamRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.Team
+    -> SelectionSet (Maybe decodesTo) RootMutation
+deleteTeam requiredArgs____ object____ =
+    Object.selectionForCompositeField "deleteTeam" [ Argument.required "id" requiredArgs____.id Encode.string ] object____ (identity >> Decode.nullable)
 
 
 type alias RemovePlayerRequiredArguments =

@@ -26,6 +26,24 @@ defmodule Get5ApiWeb.TeamResolver do
     end
   end
 
+  def delete_team(_parent, %{id: id}, _context) do
+    case Teams.get_team(id) do
+      nil ->
+        {:error, "Team not found"}
+
+      team ->
+        case Teams.delete_team(team) do
+          {:ok, struct} ->
+            {:ok, struct}
+
+          {:error, changeset} ->
+            IO.inspect(changeset)
+
+            {:error, changeset}
+        end
+    end
+  end
+
   def add_player(_parent, player, _context) do
     case Teams.get_team(player.team_id) do
       nil ->
@@ -73,11 +91,11 @@ defmodule Get5ApiWeb.TeamResolver do
     end
   end
 
-  defp input_player_to_map(%{steam_id: id, team_id: team_id}, acc) do
+  defp input_player_to_map(%{steam_id: id, team_id: _}, acc) do
     Map.put(acc || Map.new(), id, nil)
   end
 
-  defp input_player_to_map(%{steam_id: id, team_id: team_id, name: name}, acc) do
+  defp input_player_to_map(%{steam_id: id, team_id: _, name: name}, acc) do
     Map.put(acc || Map.new(), id, name)
   end
 

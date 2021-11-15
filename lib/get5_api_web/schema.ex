@@ -47,12 +47,17 @@ defmodule Get5ApiWeb.Schema do
       resolve(&GameServerResolver.create_game_server/3)
     end
 
-    @desc "Create a team"
+    @desc "Create team"
     field :create_team, type: :team do
       arg(:name, non_null(:string))
       arg(:players, list_of(:player_input))
-
       resolve(&TeamResolver.create_team/3)
+    end
+
+    @desc "Delete team"
+    field :delete_team, type: :team do
+      arg(:id, non_null(:string))
+      resolve(&TeamResolver.delete_team/3)
     end
 
     @desc "Add player to a team"

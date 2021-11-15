@@ -5,6 +5,7 @@ import Gen.Params.Teams exposing (Params)
 import Gen.Route as Route exposing (Route(..))
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr exposing (..)
+import Html.Styled.Events as Events
 import Page
 import RemoteData exposing (RemoteData(..))
 import Request
@@ -19,7 +20,7 @@ page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
         { init = init shared
-        , update = update
+        , update = update shared
         , view = view
         , subscriptions = subscriptions
         }
@@ -47,13 +48,26 @@ init shared =
 
 type Msg
     = TeamsReceived (Api.GraphqlData Teams)
+    | DeleteTeamClicked String
+    | TeamDeletedReceived (Api.GraphqlData (Maybe Team))
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Shared.Model -> Msg -> Model -> ( Model, Cmd Msg )
+update shared msg model =
     case msg of
         TeamsReceived teams ->
             ( { model | teams = teams }, Cmd.none )
+
+        DeleteTeamClicked id ->
+            ( model
+            , Cmd.batch
+                [ Api.deleteTeam shared.baseUrl id
+                    |> Cmd.map TeamDeletedReceived
+                ]
+            )
+
+        TeamDeletedReceived _ ->
+            ( model, Cmd.map TeamsReceived <| Api.getAllTeams shared.baseUrl )
 
 
 subscriptions : Model -> Sub Msg
@@ -82,17 +96,25 @@ view model =
     }
 
 
-viewTeams : Teams -> Html msg
+viewTeams : Teams -> Html Msg
 viewTeams teams =
     List.map teamView teams
         |> div []
 
 
-teamView : Team -> Html msg
+teamView : Team -> Html Msg
 teamView team =
-    a
-        [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
-        , Attr.css
-            [ Tw.block ]
+    div []
+        [ a
+            [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
+            , Attr.css
+                [ Tw.block ]
+            ]
+            [ text team.name ]
+        , button
+            [ Events.onClick <| DeleteTeamClicked team.id
+            , Attr.css
+                [ Tw.pl_1 ]
+            ]
+            [ text "Delete" ]
         ]
-        [ text team.name ]

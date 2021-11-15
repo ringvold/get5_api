@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, addPlayer, createTeam, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
+module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
@@ -57,6 +57,13 @@ removePlayer baseUrl teamId player =
 createTeam : String -> { a | name : String } -> Cmd (RemoteData (Graphql.Http.Error (Maybe Team)) (Maybe Team))
 createTeam baseUrl team =
     createTeamMutation team
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
+deleteTeam : String -> String -> Cmd (RemoteData (Graphql.Http.Error ()) (Maybe Team))
+deleteTeam baseUrl team =
+    deleteTeamMutation team
         |> Graphql.Http.mutationRequest (url baseUrl)
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
@@ -157,6 +164,13 @@ createTeamMutation team =
     Mutation.createTeam
         identity
         { name = team.name }
+        teamSelectionSet
+
+
+deleteTeamMutation : String -> SelectionSet (Maybe Team) RootMutation
+deleteTeamMutation teamId =
+    Mutation.deleteTeam
+        { id = teamId }
         teamSelectionSet
 
 

@@ -88,7 +88,9 @@ defmodule Get5Api.Teams do
 
   """
   def delete_team(%Team{} = team) do
-    Repo.delete(team)
+    team
+    |> Team.changeset(%{})
+    |> Repo.delete()
   end
 
   @doc """
