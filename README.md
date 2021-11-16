@@ -15,8 +15,8 @@ the frontend written in [Elm](https://elm-lang.org/).
 1. [ ] Make the basics it work
 2. [ ] Make it pretty
 3. [ ] Make more stuff work
-4. ???
-5. World domination
+4. [ ] ???
+5. [ ] World domination
 
 # Why
 
