@@ -13,6 +13,12 @@ defmodule Get5ApiWeb.Schema do
       resolve(&TeamResolver.all_teams/3)
     end
 
+    @desc "Get a team"
+    field :team, non_null(:team) do
+      arg(:id, non_null(:id))
+      resolve(&TeamResolver.get_team/3)
+    end
+
     @desc "Get all game server"
     field :all_game_servers, non_null(list_of(non_null(:game_server))) do
       resolve(&GameServerResolver.all_game_servers/3)
@@ -24,15 +30,15 @@ defmodule Get5ApiWeb.Schema do
       resolve(&GameServerResolver.get_game_sever/3)
     end
 
-    @desc "Get a team"
-    field :team, non_null(:team) do
-      arg(:id, non_null(:id))
-      resolve(&TeamResolver.get_team/3)
-    end
-
     @desc "Get all matches"
     field :all_matches, non_null(list_of(non_null(:match))) do
       resolve(&MatchResolver.all_matches/3)
+    end
+
+    @desc "Get match"
+    field :match, non_null(:match) do
+      arg(:id, non_null(:id))
+      resolve(&MatchResolver.get_match/3)
     end
   end
 

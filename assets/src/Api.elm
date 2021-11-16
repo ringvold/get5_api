@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllMatches, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
+module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllMatches, getAllServers, getAllTeams, getMatch, getServer, getTeam, removePlayer)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
@@ -88,6 +88,12 @@ getAllMatches baseUrl =
         |> sendRequest baseUrl
 
 
+getMatch : String -> String -> Cmd (GraphqlData Match)
+getMatch baseUrl id =
+    matchQuery id
+        |> sendRequest baseUrl
+
+
 sendRequest : String -> SelectionSet a RootQuery -> Cmd (GraphqlData a)
 sendRequest baseUrl query =
     query
@@ -170,6 +176,16 @@ allMatches =
             (SelectionSet.map scalarIdToString GMatch.id)
             GMatch.seriesType
             GMatch.status
+
+
+matchQuery : String -> SelectionSet Match RootQuery
+matchQuery id =
+    Query.match { id = Id id } <|
+        (SelectionSet.succeed Match
+            |> with (SelectionSet.map scalarIdToString GMatch.id)
+            |> with GMatch.seriesType
+            |> with GMatch.status
+        )
 
 
 

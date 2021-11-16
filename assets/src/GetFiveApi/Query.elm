@@ -60,6 +60,20 @@ gameServer requiredArgs____ object____ =
     Object.selectionForCompositeField "gameServer" [ Argument.required "id" requiredArgs____.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object____ identity
 
 
+type alias MatchRequiredArguments =
+    { id : GetFiveApi.ScalarCodecs.Id }
+
+
+{-| Get match
+-}
+match :
+    MatchRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.Match
+    -> SelectionSet decodesTo RootQuery
+match requiredArgs____ object____ =
+    Object.selectionForCompositeField "match" [ Argument.required "id" requiredArgs____.id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId) ] object____ identity
+
+
 type alias TeamRequiredArguments =
     { id : GetFiveApi.ScalarCodecs.Id }
 

@@ -1,16 +1,23 @@
 module Pages.Matches.Id_ exposing (Model, Msg, page)
 
+import Api exposing (GraphqlData)
 import Gen.Params.Matches.Id_ exposing (Params)
+import Gen.Params.Servers.Id_ exposing (Params)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
+import Match exposing (Match, Matches)
 import Page
+import RemoteData exposing (RemoteData(..))
 import Request
 import Shared
+import Styling
 import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
     Page.element
-        { init = init
+        { init = init shared req.params
         , update = update
         , view = view
         , subscriptions = subscriptions
@@ -22,12 +29,16 @@ page shared req =
 
 
 type alias Model =
-    {}
+    { match : GraphqlData Match }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+init : Shared.Model -> Params -> ( Model, Cmd Msg )
+init shared params =
+    ( { match = Loading }
+    , Cmd.batch
+        [ Cmd.map MatchReceived (Api.getMatch shared.baseUrl params.id)
+        ]
+    )
 
 
 
@@ -35,14 +46,14 @@ init =
 
 
 type Msg
-    = ReplaceMe
+    = MatchReceived (GraphqlData Match)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReplaceMe ->
-            ( model, Cmd.none )
+        MatchReceived match ->
+            ( { model | match = match }, Cmd.none )
 
 
 
@@ -60,4 +71,26 @@ subscriptions model =
 
 view : Model -> View Msg
 view model =
-    View.placeholder "Matches.Id_"
+    { title =
+        RemoteData.map .id model.match
+            |> RemoteData.withDefault "Unknown match"
+    , body = [ View.graphDataView matchView model.match ]
+    }
+
+
+matchView : Match -> Html Msg
+matchView match =
+    div []
+        [ h1 [ Styling.header ] [ text match.id ]
+        , div [] [ text ("Series type: " ++ match.seriesType) ]
+        , div [] [ text ("Status: " ++ match.status) ]
+        ]
+
+
+boolToString : Bool -> String
+boolToString bool =
+    if bool then
+        "Yes"
+
+    else
+        "No"

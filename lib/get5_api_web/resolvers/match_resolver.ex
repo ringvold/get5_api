@@ -6,6 +6,16 @@ defmodule Get5ApiWeb.MatchResolver do
     {:ok, matches}
   end
 
+  def get_match(_root, args, _info) do
+    case Matches.get_match(args.id) do
+      nil ->
+        {:error, "Match not found"}
+
+      team ->
+        {:ok, team}
+    end
+  end
+
   def create_match(_parent, args, _context) do
     Matches.create_match(args)
   end

@@ -40,6 +40,8 @@ defmodule Get5Api.Matches do
   """
   def get_match!(id), do: Repo.get!(Match, id) |> Repo.preload([:team1, :team2])
 
+  def get_match(id), do: Repo.get(Match, id) |> Repo.preload([:team1, :team2])
+
   @doc """
   Creates a match.
 
