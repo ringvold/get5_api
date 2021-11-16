@@ -1,8 +1,9 @@
-module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
+module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllMatches, getAllServers, getAllTeams, getServer, getTeam, removePlayer)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
 import GetFiveApi.Object.GameServer as GServer
+import GetFiveApi.Object.Match as GMatch
 import GetFiveApi.Object.Player as GPlayer
 import GetFiveApi.Object.Team as GTeam
 import GetFiveApi.Query as Query
@@ -11,6 +12,7 @@ import Graphql.Http
 import Graphql.Operation exposing (RootMutation, RootQuery)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
+import Match exposing (Match, Matches)
 import RemoteData exposing (RemoteData)
 import Server exposing (Server, Servers)
 import Team exposing (Player, Team, Teams)
@@ -77,6 +79,12 @@ getAllServers baseUrl =
 getServer : String -> String -> Cmd (GraphqlData Server)
 getServer baseUrl id =
     serverQuery id
+        |> sendRequest baseUrl
+
+
+getAllMatches : String -> Cmd (GraphqlData Matches)
+getAllMatches baseUrl =
+    allMatches
         |> sendRequest baseUrl
 
 
@@ -153,6 +161,15 @@ allServers =
             GServer.host
             GServer.port_
             GServer.inUse
+
+
+allMatches : SelectionSet Matches RootQuery
+allMatches =
+    Query.allMatches <|
+        SelectionSet.map3 Match
+            (SelectionSet.map scalarIdToString GMatch.id)
+            GMatch.seriesType
+            GMatch.status
 
 
 

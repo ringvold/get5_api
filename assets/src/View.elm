@@ -72,6 +72,7 @@ toBrowserDocument view =
                     ]
                     [ li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Home_ ] [ text "Homepage" ] ]
                     , li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Teams ] [ text "Teams" ] ]
+                    , li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Matches ] [ text "Matches" ] ]
                     , li [ Styling.menuLinks ] [ a [ Attr.href <| Route.toHref Route.Servers ] [ text "Servers" ] ]
                     , Html.li
                         [ Attr.css
