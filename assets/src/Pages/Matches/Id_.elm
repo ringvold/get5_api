@@ -72,7 +72,11 @@ subscriptions model =
 view : Model -> View Msg
 view model =
     { title =
-        RemoteData.map .id model.match
+        RemoteData.map
+            (\match ->
+                match.team1.name ++ " vs " ++ match.team2.name
+            )
+            model.match
             |> RemoteData.withDefault "Unknown match"
     , body = [ View.graphDataView matchView model.match ]
     }
@@ -81,7 +85,9 @@ view model =
 matchView : Match -> Html Msg
 matchView match =
     div []
-        [ h1 [ Styling.header ] [ text match.id ]
+        [ h1 [ Styling.header ] [ text <| match.team1.name ++ " vs " ++ match.team2.name ]
+        , div [] [ text ("Team1: " ++ match.team1.name) ]
+        , div [] [ text ("Team2: " ++ match.team2.name) ]
         , div [] [ text ("Series type: " ++ match.seriesType) ]
         , div [] [ text ("Status: " ++ match.status) ]
         ]

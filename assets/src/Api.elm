@@ -12,7 +12,7 @@ import Graphql.Http
 import Graphql.Operation exposing (RootMutation, RootQuery)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
-import Match exposing (Match, Matches)
+import Match exposing (Match, MatchLight, Matches)
 import RemoteData exposing (RemoteData)
 import Server exposing (Server, Servers)
 import Team exposing (Player, Team, Teams)
@@ -82,7 +82,7 @@ getServer baseUrl id =
         |> sendRequest baseUrl
 
 
-getAllMatches : String -> Cmd (GraphqlData Matches)
+getAllMatches : String -> Cmd (GraphqlData (List MatchLight))
 getAllMatches baseUrl =
     allMatches
         |> sendRequest baseUrl
@@ -169,13 +169,16 @@ allServers =
             GServer.inUse
 
 
-allMatches : SelectionSet Matches RootQuery
+allMatches : SelectionSet (List MatchLight) RootQuery
 allMatches =
     Query.allMatches <|
-        SelectionSet.map3 Match
-            (SelectionSet.map scalarIdToString GMatch.id)
-            GMatch.seriesType
-            GMatch.status
+        (SelectionSet.succeed MatchLight
+            |> with (SelectionSet.map scalarIdToString GMatch.id)
+            --|> with (GMatch.team1 teamSelectionSet)
+            --|> with (GMatch.team2 teamSelectionSet)
+            |> with GMatch.seriesType
+            |> with GMatch.status
+        )
 
 
 matchQuery : String -> SelectionSet Match RootQuery
@@ -183,6 +186,8 @@ matchQuery id =
     Query.match { id = Id id } <|
         (SelectionSet.succeed Match
             |> with (SelectionSet.map scalarIdToString GMatch.id)
+            |> with (GMatch.team1 teamSelectionSet)
+            |> with (GMatch.team2 teamSelectionSet)
             |> with GMatch.seriesType
             |> with GMatch.status
         )

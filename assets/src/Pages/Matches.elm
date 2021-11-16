@@ -6,7 +6,7 @@ import Gen.Route as Route exposing (Route(..))
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr exposing (..)
 import Html.Styled.Events as Events
-import Match exposing (Match, Matches)
+import Match exposing (Match, MatchLight, Matches)
 import Page
 import RemoteData exposing (RemoteData(..))
 import Request
@@ -32,7 +32,7 @@ page shared req =
 
 
 type alias Model =
-    { matches : GraphqlData Matches }
+    { matches : GraphqlData (List MatchLight) }
 
 
 init : Shared.Model -> ( Model, Cmd Msg )
@@ -48,7 +48,7 @@ init shared =
 
 
 type Msg
-    = MatchesReceived (Api.GraphqlData Matches)
+    = MatchesReceived (Api.GraphqlData (List MatchLight))
 
 
 update : Shared.Model -> Msg -> Model -> ( Model, Cmd Msg )
@@ -84,13 +84,13 @@ view model =
     }
 
 
-matchesView : Matches -> Html Msg
+matchesView : List MatchLight -> Html Msg
 matchesView matches =
     List.map matchView matches
         |> div []
 
 
-matchView : Match -> Html Msg
+matchView : MatchLight -> Html Msg
 matchView match =
     div []
         [ a
