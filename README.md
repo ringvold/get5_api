@@ -10,6 +10,13 @@ and implement new feature as needs arise.
 This application is written in Elixir with Phoenix, Graphql and Postresql, with 
 the frontend written in [Elm](https://elm-lang.org/).
 
+# Plan (short version)
+
+1. [ ] Make the basics it work
+2. [ ] Make it pretty
+3. [ ] Make more stuff work
+4. ???
+5. World domination
 
 # Why
 
