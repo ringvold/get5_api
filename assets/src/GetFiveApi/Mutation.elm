@@ -129,6 +129,20 @@ createTeam fillInOptionals____ requiredArgs____ object____ =
     Object.selectionForCompositeField "createTeam" (optionalArgs____ ++ [ Argument.required "name" requiredArgs____.name Encode.string ]) object____ (identity >> Decode.nullable)
 
 
+type alias DeleteGameServerRequiredArguments =
+    { id : String }
+
+
+{-| Delete server
+-}
+deleteGameServer :
+    DeleteGameServerRequiredArguments
+    -> SelectionSet decodesTo GetFiveApi.Object.GameServer
+    -> SelectionSet (Maybe decodesTo) RootMutation
+deleteGameServer requiredArgs____ object____ =
+    Object.selectionForCompositeField "deleteGameServer" [ Argument.required "id" requiredArgs____.id Encode.string ] object____ (identity >> Decode.nullable)
+
+
 type alias DeleteTeamRequiredArguments =
     { id : String }
 

@@ -1,4 +1,6 @@
-module Server exposing (..)
+module Server exposing (Server, Servers)
+
+import ServerId exposing (ServerId)
 
 
 type alias Servers =
@@ -6,7 +8,7 @@ type alias Servers =
 
 
 type alias Server =
-    { id : String
+    { id : ServerId
     , name : String
     , host : String
     , port_ : String

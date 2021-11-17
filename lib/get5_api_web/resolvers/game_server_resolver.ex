@@ -13,4 +13,22 @@ defmodule Get5ApiWeb.GameServerResolver do
   def create_game_server(_parent, args, _context) do
     GameServers.create_game_server(args)
   end
+
+  def delete_game_server(_parent, %{id: id}, _context) do
+    case GameServers.get_game_server(id) do
+      nil ->
+        {:error, "Team not found"}
+
+      game_server ->
+        case GameServers.delete_game_server(game_server) do
+          {:ok, struct} ->
+            {:ok, struct}
+
+          {:error, changeset} ->
+            IO.inspect(changeset)
+
+            {:error, changeset}
+        end
+    end
+  end
 end

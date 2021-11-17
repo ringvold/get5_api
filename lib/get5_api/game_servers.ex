@@ -37,6 +37,8 @@ defmodule Get5Api.GameServers do
   """
   def get_game_server!(id), do: Repo.get!(GameServer, id)
 
+  def get_game_server(id), do: Repo.get(GameServer, id)
+
   @doc """
   Creates a game_server.
 

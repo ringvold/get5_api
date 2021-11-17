@@ -74,7 +74,7 @@ view model =
         [ h1 [ Styling.header ]
             [ text "Matches"
             , a
-                [ Attr.href <| Route.toHref Route.Teams__New
+                [ Attr.href <| Route.toHref Route.Matches__New
                 , Styling.header_inline_link
                 ]
                 [ text "New match" ]
@@ -96,7 +96,9 @@ matchView match =
         [ a
             [ Attr.href <| Route.toHref (Route.Matches__Id_ { id = match.id })
             , Attr.css
-                [ Tw.block ]
+                [ Tw.block
+                , Tw.cursor_pointer
+                ]
             ]
             [ text match.id ]
         ]

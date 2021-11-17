@@ -1,4 +1,4 @@
-module Api exposing (GraphqlData, addPlayer, createTeam, deleteTeam, getAllMatches, getAllServers, getAllTeams, getMatch, getServer, getTeam, removePlayer)
+module Api exposing (GraphqlData, addPlayer, createServer, createTeam, deleteServer, deleteTeam, getAllMatches, getAllServers, getAllTeams, getMatch, getServer, getTeam, removePlayer)
 
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
@@ -15,6 +15,7 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import Match exposing (Match, MatchLight, Matches)
 import RemoteData exposing (RemoteData)
 import Server exposing (Server, Servers)
+import ServerId exposing (ServerId)
 import Team exposing (Player, Team, Teams)
 
 
@@ -28,7 +29,9 @@ url baseUrl =
 
 
 
--- Request
+--
+-- Requests
+--
 -- Use of `discardParsedErrorData` is a hack for now.
 -- Probably need to handle error properly at a point.
 
@@ -82,6 +85,23 @@ getServer baseUrl id =
         |> sendRequest baseUrl
 
 
+createServer :
+    String
+    -> { a | name : String, host : String, port_ : String, password : String }
+    -> Cmd (RemoteData (Graphql.Http.Error ()) (Maybe Server))
+createServer baseUrl server =
+    createGameServerMutation server
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
+deleteServer : String -> ServerId -> Cmd (RemoteData (Graphql.Http.Error ()) (Maybe Server))
+deleteServer baseUrl id =
+    deleteServerMutation id
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
 getAllMatches : String -> Cmd (GraphqlData (List MatchLight))
 getAllMatches baseUrl =
     allMatches
@@ -102,7 +122,9 @@ sendRequest baseUrl query =
 
 
 
+--
 -- Queries
+-----------
 
 
 teamQuery : String -> SelectionSet Team RootQuery
@@ -124,13 +146,17 @@ teamSelectionSet =
 serverQuery : String -> SelectionSet Server RootQuery
 serverQuery id =
     Query.gameServer { id = Id id } <|
-        (SelectionSet.succeed Server
-            |> with (SelectionSet.map scalarIdToString GServer.id)
-            |> with GServer.name
-            |> with GServer.host
-            |> with GServer.port_
-            |> with GServer.inUse
-        )
+        gameServerSelectionSet
+
+
+gameServerSelectionSet : SelectionSet Server GObject.GameServer
+gameServerSelectionSet =
+    SelectionSet.succeed Server
+        |> with (SelectionSet.map ServerId.scalarToId GServer.id)
+        |> with GServer.name
+        |> with GServer.host
+        |> with GServer.port_
+        |> with GServer.inUse
 
 
 playersSelectionSet : SelectionSet (Maybe (List (Maybe Player))) GObject.Team
@@ -162,7 +188,7 @@ allServers : SelectionSet Servers RootQuery
 allServers =
     Query.allGameServers <|
         SelectionSet.map5 Server
-            (SelectionSet.map scalarIdToString GServer.id)
+            (SelectionSet.map ServerId.scalarToId GServer.id)
             GServer.name
             GServer.host
             GServer.port_
@@ -194,7 +220,12 @@ matchQuery id =
 
 
 
+--
 -- Mutations
+--
+-------------
+--
+---- Team mutations
 
 
 createTeamMutation : { a | name : String } -> SelectionSet (Maybe Team) RootMutation
@@ -229,6 +260,30 @@ removePlayerMutation teamId player =
         , teamId = teamId
         }
         playerSelectionSet
+
+
+
+---- Server mutations
+
+
+createGameServerMutation :
+    { a | name : String, host : String, port_ : String, password : String }
+    -> SelectionSet (Maybe Server) RootMutation
+createGameServerMutation server =
+    Mutation.createGameServer
+        { name = server.name
+        , host = server.host
+        , port_ = server.port_
+        , rconPassword = server.password
+        }
+        gameServerSelectionSet
+
+
+deleteServerMutation : ServerId -> SelectionSet (Maybe Server) RootMutation
+deleteServerMutation id =
+    Mutation.deleteGameServer
+        { id = ServerId.toString id }
+        gameServerSelectionSet
 
 
 

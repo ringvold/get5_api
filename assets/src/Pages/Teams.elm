@@ -108,13 +108,15 @@ teamView team =
         [ a
             [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
             , Attr.css
-                [ Tw.block ]
+                []
             ]
             [ text team.name ]
         , button
             [ Events.onClick <| DeleteTeamClicked team.id
             , Attr.css
-                [ Tw.pl_1 ]
+                [ Tw.pl_1
+                , Tw.cursor_pointer
+                ]
             ]
             [ text "Delete" ]
         ]
