@@ -13,9 +13,10 @@ services:
       context: .
       dockerfile: Dockerfile-dev
     env_file: .env
-    command: mix do deps.get, phx.server
     volumes:
       - ./:/app
+      - /app/assets/node_modules
+      - /app/deps
     ports:
       - "4000:4000"
       - "1234:1234"

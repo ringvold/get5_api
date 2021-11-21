@@ -23,12 +23,8 @@ WORKDIR $APP_HOME
 ADD mix.exs mix.lock ./
 RUN mix do deps.get, deps.compile
 
-RUN useradd -rm -d /home/get5 -s /bin/bash -u 1000 get5
-USER get5
-
-# Yes, this need to be twice. I don't know why ¯\_(ツ)_/¯
-RUN mix local.hex --force && \
-    mix archive.install hex phx_new 1.5.3 --force && \
-    mix local.rebar --force
+ADD assets/package.json ./assets/
+RUN yarn --cwd assets
+RUN yarn global add elm@latest-0.19.1
 
 CMD ["mix", "phx.server"]
