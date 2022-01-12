@@ -16,6 +16,7 @@ import Styling
 import Tailwind.Breakpoints as Breakpoints
 import Tailwind.Utilities as Tw
 import Team exposing (Team)
+import TeamId
 import View exposing (View)
 
 
@@ -69,7 +70,7 @@ update req msg model =
     case msg of
         TeamCreated (Success (Just team)) ->
             ( model
-            , Request.pushRoute (Route.Teams__Id_ { id = team.id }) req
+            , Request.pushRoute (Route.Teams__Id_ { id = TeamId.toString team.id }) req
             )
 
         TeamCreated result ->
@@ -196,7 +197,7 @@ successView mteam =
     case mteam of
         Just team ->
             a
-                [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
+                [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = TeamId.toString team.id })
                 , Attr.css
                     [ Tw.block ]
                 ]

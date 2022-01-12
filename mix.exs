@@ -48,6 +48,7 @@ defmodule Get5Api.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:absinthe, "~> 1.6"},
       {:absinthe_plug, "~> 1.5"},
+      {:absinthe_error_payload, "~> 1.1"},
       {:poison, "~> 2.1.0"},
       {:cors_plug, "~> 2.0"}
     ]

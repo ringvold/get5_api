@@ -38,9 +38,9 @@ defmodule Get5Api.Matches do
       ** (Ecto.NoResultsError)
 
   """
-  def get_match!(id), do: Repo.get!(Match, id) |> Repo.preload([:team1, :team2])
+  def get_match!(id), do: Repo.get!(Match, id) |> Repo.preload([:team1, :team2, :game_server])
 
-  def get_match(id), do: Repo.get(Match, id) |> Repo.preload([:team1, :team2])
+  def get_match(id), do: Repo.get(Match, id) |> Repo.preload([:team1, :team2, :game_server])
 
   @doc """
   Creates a match.
@@ -55,9 +55,15 @@ defmodule Get5Api.Matches do
 
   """
   def create_match(attrs \\ %{}) do
-    %Match{}
-    |> Match.changeset(attrs)
-    |> Repo.insert()
+    case %Match{}
+         |> Match.changeset(attrs)
+         |> Repo.insert() do
+      {:ok, match} ->
+        {:ok, Repo.preload(match, [:game_server, :team1, :team2] )}
+
+      result ->
+        result
+    end
   end
 
   @doc """

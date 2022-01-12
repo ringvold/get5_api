@@ -1,11 +1,15 @@
-module Api exposing (GraphqlData, addPlayer, createServer, createTeam, deleteServer, deleteTeam, getAllMatches, getAllServers, getAllTeams, getMatch, getServer, getTeam, removePlayer)
+module Api exposing (GraphqlData, GraphqlMutationData, MatchPayload, MutationPayload, ValidationMessage, addPlayer, createMatch, createServer, createTeam, deleteServer, deleteTeam, getAllMatches, getAllServers, getAllServersLight, getAllTeams, getAllTeamsLight, getMatch, getServer, getTeam, removePlayer)
 
+import GetFiveApi.Enum.SeriesType as GSeriesType
+import GetFiveApi.Enum.SideType as GSideType
 import GetFiveApi.Mutation as Mutation
 import GetFiveApi.Object as GObject
 import GetFiveApi.Object.GameServer as GServer
 import GetFiveApi.Object.Match as GMatch
+import GetFiveApi.Object.MatchPayload as GMatchPayload
 import GetFiveApi.Object.Player as GPlayer
 import GetFiveApi.Object.Team as GTeam
+import GetFiveApi.Object.ValidationMessage as GValidationMessage
 import GetFiveApi.Query as Query
 import GetFiveApi.Scalar exposing (Id(..))
 import Graphql.Http
@@ -14,13 +18,35 @@ import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
 import Match exposing (Match, MatchLight, Matches)
 import RemoteData exposing (RemoteData)
-import Server exposing (Server, Servers)
+import Server exposing (Server, ServerLight, Servers)
 import ServerId exposing (ServerId)
-import Team exposing (Player, Team, Teams)
+import Team exposing (Player, Team, TeamLight, Teams)
+import TeamId exposing (TeamId)
 
 
 type alias GraphqlData a =
     RemoteData (Graphql.Http.Error ()) a
+
+
+type alias GraphqlMutationData a =
+    RemoteData (Graphql.Http.Error ()) (Maybe a)
+
+
+type alias MatchPayload =
+    MutationPayload Match
+
+
+type alias MutationPayload a =
+    { messages : Maybe (List (Maybe ValidationMessage))
+    , result : Maybe a
+    }
+
+
+type alias ValidationMessage =
+    { code : String
+    , field : Maybe String
+    , message : Maybe String
+    }
 
 
 url : String -> String
@@ -41,18 +67,25 @@ getAllTeams baseUrl =
     sendRequest baseUrl allTeams
 
 
+getAllTeamsLight : String -> Cmd (GraphqlData (List TeamLight))
+getAllTeamsLight baseUrl =
+    sendRequest baseUrl allTeamsLight
+
+
 getTeam : String -> String -> Cmd (GraphqlData Team)
 getTeam baseUrl id =
     teamQuery id
         |> sendRequest baseUrl
 
 
+addPlayer : String -> TeamId -> Player -> Cmd (RemoteData (Graphql.Http.Error ()) (List Player))
 addPlayer baseUrl teamId player =
     addPlayerMutation teamId player
         |> Graphql.Http.mutationRequest (url baseUrl)
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
+removePlayer : String -> TeamId -> Player -> Cmd (RemoteData (Graphql.Http.Error ()) (List Player))
 removePlayer baseUrl teamId player =
     removePlayerMutation teamId player
         |> Graphql.Http.mutationRequest (url baseUrl)
@@ -66,9 +99,9 @@ createTeam baseUrl team =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
-deleteTeam : String -> String -> Cmd (RemoteData (Graphql.Http.Error ()) (Maybe Team))
-deleteTeam baseUrl team =
-    deleteTeamMutation team
+deleteTeam : String -> TeamId -> Cmd (RemoteData (Graphql.Http.Error ()) (Maybe Team))
+deleteTeam baseUrl teamId =
+    deleteTeamMutation teamId
         |> Graphql.Http.mutationRequest (url baseUrl)
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
@@ -76,6 +109,12 @@ deleteTeam baseUrl team =
 getAllServers : String -> Cmd (GraphqlData Servers)
 getAllServers baseUrl =
     allServers
+        |> sendRequest baseUrl
+
+
+getAllServersLight : String -> Cmd (GraphqlData (List ServerLight))
+getAllServersLight baseUrl =
+    allServersLight
         |> sendRequest baseUrl
 
 
@@ -114,6 +153,16 @@ getMatch baseUrl id =
         |> sendRequest baseUrl
 
 
+createMatch :
+    String
+    -> Match.CreateMatch
+    -> Cmd (GraphqlMutationData (MutationPayload Match))
+createMatch baseUrl match =
+    createMatchMutation match
+        |> Graphql.Http.mutationRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
 sendRequest : String -> SelectionSet a RootQuery -> Cmd (GraphqlData a)
 sendRequest baseUrl query =
     query
@@ -136,7 +185,7 @@ teamQuery id =
 teamSelectionSet : SelectionSet Team GObject.Team
 teamSelectionSet =
     SelectionSet.map3 Team
-        (SelectionSet.map scalarIdToString GTeam.id)
+        (SelectionSet.map TeamId.scalarToId GTeam.id)
         GTeam.name
         (SelectionSet.withDefault [] playersSelectionSet
             |> SelectionSet.map (List.filterMap identity)
@@ -179,9 +228,17 @@ allTeams : SelectionSet Teams RootQuery
 allTeams =
     Query.allTeams <|
         SelectionSet.map3 Team
-            (SelectionSet.map scalarIdToString GTeam.id)
+            (SelectionSet.map TeamId.scalarToId GTeam.id)
             GTeam.name
             (SelectionSet.succeed [])
+
+
+allTeamsLight : SelectionSet (List TeamLight) RootQuery
+allTeamsLight =
+    Query.allTeams <|
+        SelectionSet.map2 TeamLight
+            (SelectionSet.map TeamId.scalarToId GTeam.id)
+            GTeam.name
 
 
 allServers : SelectionSet Servers RootQuery
@@ -195,28 +252,51 @@ allServers =
             GServer.inUse
 
 
+allServersLight : SelectionSet (List ServerLight) RootQuery
+allServersLight =
+    Query.allGameServers <|
+        SelectionSet.map2 ServerLight
+            (SelectionSet.map ServerId.scalarToId GServer.id)
+            GServer.name
+
+
 allMatches : SelectionSet (List MatchLight) RootQuery
 allMatches =
     Query.allMatches <|
         (SelectionSet.succeed MatchLight
             |> with (SelectionSet.map scalarIdToString GMatch.id)
-            --|> with (GMatch.team1 teamSelectionSet)
-            --|> with (GMatch.team2 teamSelectionSet)
-            |> with GMatch.seriesType
-            |> with GMatch.status
         )
 
 
 matchQuery : String -> SelectionSet Match RootQuery
 matchQuery id =
     Query.match { id = Id id } <|
-        (SelectionSet.succeed Match
-            |> with (SelectionSet.map scalarIdToString GMatch.id)
-            |> with (GMatch.team1 teamSelectionSet)
-            |> with (GMatch.team2 teamSelectionSet)
-            |> with GMatch.seriesType
-            |> with GMatch.status
-        )
+        matchSelectionSet
+
+
+matchSelectionSet : SelectionSet Match GObject.Match
+matchSelectionSet =
+    SelectionSet.succeed Match
+        |> with (SelectionSet.map scalarIdToString GMatch.id)
+        |> with (GMatch.team1 teamSelectionSet)
+        |> with (GMatch.team2 teamSelectionSet)
+        |> with (SelectionSet.map Match.seriesTypeFromGraphql GMatch.seriesType)
+        |> with (GMatch.gameServer gameServerSelectionSet)
+
+
+matchPayloadSelectionSet : SelectionSet (MutationPayload Match) GObject.MatchPayload
+matchPayloadSelectionSet =
+    SelectionSet.succeed MutationPayload
+        |> with (GMatchPayload.messages validationMessageSelectionSet)
+        |> with (GMatchPayload.result matchSelectionSet)
+
+
+validationMessageSelectionSet : SelectionSet ValidationMessage GObject.ValidationMessage
+validationMessageSelectionSet =
+    SelectionSet.succeed ValidationMessage
+        |> with GValidationMessage.code
+        |> with GValidationMessage.field
+        |> with GValidationMessage.message
 
 
 
@@ -236,28 +316,28 @@ createTeamMutation team =
         teamSelectionSet
 
 
-deleteTeamMutation : String -> SelectionSet (Maybe Team) RootMutation
+deleteTeamMutation : TeamId -> SelectionSet (Maybe Team) RootMutation
 deleteTeamMutation teamId =
     Mutation.deleteTeam
-        { id = teamId }
+        { id = TeamId.toString teamId }
         teamSelectionSet
 
 
-addPlayerMutation : String -> Player -> SelectionSet (List Player) RootMutation
+addPlayerMutation : TeamId -> Player -> SelectionSet (List Player) RootMutation
 addPlayerMutation teamId player =
     Mutation.addPlayer
         identity
         { steamId = player.id
-        , teamId = teamId
+        , teamId = TeamId.toString teamId
         }
         playerSelectionSet
 
 
-removePlayerMutation : String -> Player -> SelectionSet (List Player) RootMutation
+removePlayerMutation : TeamId -> Player -> SelectionSet (List Player) RootMutation
 removePlayerMutation teamId player =
     Mutation.removePlayer
         { steamId = player.id
-        , teamId = teamId
+        , teamId = TeamId.toString teamId
         }
         playerSelectionSet
 
@@ -284,6 +364,18 @@ deleteServerMutation id =
     Mutation.deleteGameServer
         { id = ServerId.toString id }
         gameServerSelectionSet
+
+
+
+---- Match mutations
+
+
+createMatchMutation : Match.CreateMatch -> SelectionSet (Maybe MatchPayload) RootMutation
+createMatchMutation match =
+    Mutation.createMatch
+        (Match.createToOptionalArgs match)
+        (Match.createToRequiredArgs match)
+        matchPayloadSelectionSet
 
 
 

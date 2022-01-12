@@ -1,10 +1,11 @@
-module View exposing (View, graphDataView, graphDataView2, map, none, placeholder, toBrowserDocument)
+module View exposing (View, graphDataView, graphDataView2, map, none, payloadView, placeholder, toBrowserDocument)
 
 import Api exposing (GraphqlData)
 import Browser
 import Css
 import Css.Global
 import Gen.Route as Route
+import Graphql.Http exposing (Error)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr
 import RemoteData exposing (RemoteData(..))
@@ -121,3 +122,24 @@ graphDataView2 successView notAskedView graphData =
 
         Success data ->
             successView data
+
+
+payloadView : (Maybe a -> Html msg) -> Html msg -> GraphqlData (Maybe (Api.MutationPayload a)) -> Html msg
+payloadView successView notAskedView graphData =
+    case graphData of
+        NotAsked ->
+            notAskedView
+
+        Loading ->
+            div [] [ Styling.loader ]
+
+        Failure error ->
+            div [ Styling.header ] [ Html.text "Error loading data from server" ]
+
+        Success data ->
+            case data of
+                Just payload ->
+                    successView payload.result
+
+                Nothing ->
+                    div [ Styling.header ] [ Html.text "Here be validation errors" ]

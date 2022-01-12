@@ -13,9 +13,21 @@ type Match
     = Match
 
 
+type MatchPayload
+    = MatchPayload
+
+
 type Player
     = Player
 
 
 type Team
     = Team
+
+
+type ValidationMessage
+    = ValidationMessage
+
+
+type ValidationOption
+    = ValidationOption

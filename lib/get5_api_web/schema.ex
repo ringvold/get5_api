@@ -5,6 +5,8 @@ defmodule Get5ApiWeb.Schema do
   alias Get5ApiWeb.GameServerResolver
   alias Get5ApiWeb.MatchResolver
 
+  import AbsintheErrorPayload.Payload
+  import_types(AbsintheErrorPayload.ValidationMessageTypes)
   import_types(Get5ApiWeb.Schema.Types)
 
   query do
@@ -112,18 +114,25 @@ defmodule Get5ApiWeb.Schema do
     #
 
     @desc "Create a match"
-    field :create_match, type: :match do
-      arg(:team1, non_null(:string))
-      arg(:team2, non_null(:string))
-      arg(:title, :string)
-      arg(:game_server, non_null(:string))
-      arg(:veto_map_pool, non_null(list_of(:string)))
-      arg(:series_type, non_null(:string))
+    field :create_match, type: :match_payload do
+      arg(:team1_id, non_null(:id))
+      arg(:team2_id, non_null(:id))
+      arg(:game_server_id, non_null(:id))
+      arg(:veto_map_pool, non_null(list_of(non_null(:string))))
+      arg(:series_type, :series_type)
+      arg(:side_type, :side_type)
       arg(:spectator_ids, list_of(:string))
       arg(:enforce_teams, :boolean)
-      arg(:veto_first, :string)
+      arg(:veto_first, :match_team)
 
       resolve(&MatchResolver.create_match/3)
+      middleware(&build_payload/2)
     end
   end
+
+  #
+  # Payloads
+  #
+
+  payload_object(:match_payload, :match)
 end

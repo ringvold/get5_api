@@ -4,6 +4,9 @@
 
 module GetFiveApi.Object.Match exposing (..)
 
+import GetFiveApi.Enum.MatchTeam
+import GetFiveApi.Enum.SeriesType
+import GetFiveApi.Enum.SideType
 import GetFiveApi.InputObject
 import GetFiveApi.Interface
 import GetFiveApi.Object
@@ -56,14 +59,14 @@ minPlayerReady =
     Object.selectionForField "Int" "minPlayerReady" [] Decode.int
 
 
-seriesType : SelectionSet String GetFiveApi.Object.Match
+seriesType : SelectionSet GetFiveApi.Enum.SeriesType.SeriesType GetFiveApi.Object.Match
 seriesType =
-    Object.selectionForField "String" "seriesType" [] Decode.string
+    Object.selectionForField "Enum.SeriesType.SeriesType" "seriesType" [] GetFiveApi.Enum.SeriesType.decoder
 
 
-sideType : SelectionSet String GetFiveApi.Object.Match
+sideType : SelectionSet GetFiveApi.Enum.SideType.SideType GetFiveApi.Object.Match
 sideType =
-    Object.selectionForField "String" "sideType" [] Decode.string
+    Object.selectionForField "Enum.SideType.SideType" "sideType" [] GetFiveApi.Enum.SideType.decoder
 
 
 spectatorIds : SelectionSet (Maybe (List (Maybe String))) GetFiveApi.Object.Match
@@ -110,9 +113,9 @@ title =
     Object.selectionForField "String" "title" [] Decode.string
 
 
-vetoFirst : SelectionSet String GetFiveApi.Object.Match
+vetoFirst : SelectionSet GetFiveApi.Enum.MatchTeam.MatchTeam GetFiveApi.Object.Match
 vetoFirst =
-    Object.selectionForField "String" "vetoFirst" [] Decode.string
+    Object.selectionForField "Enum.MatchTeam.MatchTeam" "vetoFirst" [] GetFiveApi.Enum.MatchTeam.decoder
 
 
 vetoMapPool : SelectionSet (Maybe (List (Maybe String))) GetFiveApi.Object.Match

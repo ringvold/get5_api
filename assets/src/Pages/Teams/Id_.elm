@@ -16,6 +16,7 @@ import Styling
 import Tailwind.Breakpoints as Breakpoints
 import Tailwind.Utilities as Tw
 import Team exposing (Player, Team)
+import TeamId
 import View exposing (View)
 
 

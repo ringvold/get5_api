@@ -4,6 +4,9 @@
 
 module GetFiveApi.Mutation exposing (..)
 
+import GetFiveApi.Enum.MatchTeam
+import GetFiveApi.Enum.SeriesType
+import GetFiveApi.Enum.SideType
 import GetFiveApi.InputObject
 import GetFiveApi.Interface
 import GetFiveApi.Object
@@ -68,18 +71,18 @@ createGameServer requiredArgs____ object____ =
 
 type alias CreateMatchOptionalArguments =
     { enforceTeams : OptionalArgument Bool
+    , seriesType : OptionalArgument GetFiveApi.Enum.SeriesType.SeriesType
+    , sideType : OptionalArgument GetFiveApi.Enum.SideType.SideType
     , spectatorIds : OptionalArgument (List (Maybe String))
-    , title : OptionalArgument String
-    , vetoFirst : OptionalArgument String
+    , vetoFirst : OptionalArgument GetFiveApi.Enum.MatchTeam.MatchTeam
     }
 
 
 type alias CreateMatchRequiredArguments =
-    { gameServer : String
-    , seriesType : String
-    , team1 : String
-    , team2 : String
-    , vetoMapPool : List (Maybe String)
+    { gameServerId : GetFiveApi.ScalarCodecs.Id
+    , team1Id : GetFiveApi.ScalarCodecs.Id
+    , team2Id : GetFiveApi.ScalarCodecs.Id
+    , vetoMapPool : List String
     }
 
 
@@ -88,18 +91,18 @@ type alias CreateMatchRequiredArguments =
 createMatch :
     (CreateMatchOptionalArguments -> CreateMatchOptionalArguments)
     -> CreateMatchRequiredArguments
-    -> SelectionSet decodesTo GetFiveApi.Object.Match
+    -> SelectionSet decodesTo GetFiveApi.Object.MatchPayload
     -> SelectionSet (Maybe decodesTo) RootMutation
 createMatch fillInOptionals____ requiredArgs____ object____ =
     let
         filledInOptionals____ =
-            fillInOptionals____ { enforceTeams = Absent, spectatorIds = Absent, title = Absent, vetoFirst = Absent }
+            fillInOptionals____ { enforceTeams = Absent, seriesType = Absent, sideType = Absent, spectatorIds = Absent, vetoFirst = Absent }
 
         optionalArgs____ =
-            [ Argument.optional "enforceTeams" filledInOptionals____.enforceTeams Encode.bool, Argument.optional "spectatorIds" filledInOptionals____.spectatorIds (Encode.string |> Encode.maybe |> Encode.list), Argument.optional "title" filledInOptionals____.title Encode.string, Argument.optional "vetoFirst" filledInOptionals____.vetoFirst Encode.string ]
+            [ Argument.optional "enforceTeams" filledInOptionals____.enforceTeams Encode.bool, Argument.optional "seriesType" filledInOptionals____.seriesType (Encode.enum GetFiveApi.Enum.SeriesType.toString), Argument.optional "sideType" filledInOptionals____.sideType (Encode.enum GetFiveApi.Enum.SideType.toString), Argument.optional "spectatorIds" filledInOptionals____.spectatorIds (Encode.string |> Encode.maybe |> Encode.list), Argument.optional "vetoFirst" filledInOptionals____.vetoFirst (Encode.enum GetFiveApi.Enum.MatchTeam.toString) ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "createMatch" (optionalArgs____ ++ [ Argument.required "gameServer" requiredArgs____.gameServer Encode.string, Argument.required "seriesType" requiredArgs____.seriesType Encode.string, Argument.required "team1" requiredArgs____.team1 Encode.string, Argument.required "team2" requiredArgs____.team2 Encode.string, Argument.required "vetoMapPool" requiredArgs____.vetoMapPool (Encode.string |> Encode.maybe |> Encode.list) ]) object____ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "createMatch" (optionalArgs____ ++ [ Argument.required "gameServerId" requiredArgs____.gameServerId (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId), Argument.required "team1Id" requiredArgs____.team1Id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId), Argument.required "team2Id" requiredArgs____.team2Id (GetFiveApi.ScalarCodecs.codecs |> GetFiveApi.Scalar.unwrapEncoder .codecId), Argument.required "vetoMapPool" requiredArgs____.vetoMapPool (Encode.string |> Encode.list) ]) object____ (identity >> Decode.nullable)
 
 
 type alias CreateTeamOptionalArguments =
@@ -133,7 +136,7 @@ type alias DeleteGameServerRequiredArguments =
     { id : String }
 
 
-{-| Delete server
+{-| Delete game server
 -}
 deleteGameServer :
     DeleteGameServerRequiredArguments

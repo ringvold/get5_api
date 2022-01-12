@@ -22,7 +22,10 @@ defmodule Get5Api.Matches.Match do
       values: [:standard, :always_knife, :never_knife],
       default: :standard
 
-    field :series_type, Ecto.Enum, values: [:bo1_preset, :bo1, :bo2, :bo3, :bo5, :bo7]
+    field :series_type, Ecto.Enum,
+      values: [:bo1_preset, :bo1, :bo2, :bo3, :bo5, :bo7],
+      default: :bo1_preset
+
     field :spectator_ids, {:array, :string}
     field :start_time, :utc_datetime
     field :status, :string
@@ -44,26 +47,29 @@ defmodule Get5Api.Matches.Match do
   def changeset(match, attrs) do
     match
     |> cast(attrs, [
+      :team1_id,
+      :team2_id,
+      :game_server_id,
+      :veto_map_pool,
       :api_key,
       :title,
       :series_type,
-      :veto_map_pool,
       :veto_first,
       :spectator_ids,
       :enforce_teams,
       :min_player_ready,
       :status,
-      :team1_id,
-      :team2_id,
       :team1_score,
       :team2_score
     ])
-    |> cast_assoc(:team1, required: true)
-    |> cast_assoc(:team2, required: true)
+    |> cast_assoc(:team1)
+    |> cast_assoc(:team2)
+    |> cast_assoc(:game_server)
     |> validate_required([
-      :series_type,
-      :veto_map_pool,
-      :veto_first
+      :team1_id,
+      :team2_id,
+      :game_server_id,
+      :veto_map_pool
     ])
     |> validate_map_pool()
     |> validate_different_teams()

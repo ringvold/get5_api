@@ -1,4 +1,4 @@
-module Server exposing (Server, Servers)
+module Server exposing (Server, ServerLight, Servers)
 
 import ServerId exposing (ServerId)
 
@@ -13,4 +13,10 @@ type alias Server =
     , host : String
     , port_ : String
     , inUse : Bool
+    }
+
+
+type alias ServerLight =
+    { id : ServerId
+    , name : String
     }

@@ -88,8 +88,8 @@ matchView match =
         [ h1 [ Styling.header ] [ text <| match.team1.name ++ " vs " ++ match.team2.name ]
         , div [] [ text ("Team1: " ++ match.team1.name) ]
         , div [] [ text ("Team2: " ++ match.team2.name) ]
-        , div [] [ text ("Series type: " ++ match.seriesType) ]
-        , div [] [ text ("Status: " ++ match.status) ]
+        , div [] [ text ("Series type: " ++ Match.seriesTypeToString match.seriesType) ]
+        , div [] [ text ("Server: " ++ match.server.name) ]
         ]
 
 

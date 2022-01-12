@@ -13,6 +13,7 @@ import Shared
 import Styling
 import Tailwind.Utilities as Tw
 import Team exposing (Team, Teams)
+import TeamId exposing (TeamId)
 import View exposing (View)
 
 
@@ -48,7 +49,7 @@ init shared =
 
 type Msg
     = TeamsReceived (Api.GraphqlData Teams)
-    | DeleteTeamClicked String
+    | DeleteTeamClicked TeamId
     | TeamDeletedReceived (Api.GraphqlData (Maybe Team))
 
 
@@ -106,7 +107,7 @@ teamView : Team -> Html Msg
 teamView team =
     div []
         [ a
-            [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = team.id })
+            [ Attr.href <| Route.toHref (Route.Teams__Id_ { id = TeamId.toString team.id })
             , Attr.css
                 []
             ]

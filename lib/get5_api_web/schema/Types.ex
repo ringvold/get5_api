@@ -16,18 +16,18 @@ defmodule Get5ApiWeb.Schema.Types do
     field :title, non_null(:string)
     field :game_server, non_null(:game_server)
     field :veto_map_pool, list_of(:string)
-    field :series_type, non_null(:string)
-    field :side_type, non_null(:string)
+    field :series_type, non_null(:series_type)
+    field :side_type, non_null(:side_type)
     field :spectator_ids, list_of(:string)
     field :start_time, non_null(:string)
     field :end_time, non_null(:string)
     field :enforce_teams, non_null(:boolean)
     field :max_maps, non_null(:integer)
     field :min_player_ready, non_null(:integer)
-    field :status, non_null(:string)
+    field :status, :match_status
     field :team1_score, :integer
     field :team2_score, :integer
-    field :veto_first, non_null(:string)
+    field :veto_first, non_null(:match_team)
     field :api_key, non_null(:string)
     field :winner, :team
   end
@@ -48,5 +48,30 @@ defmodule Get5ApiWeb.Schema.Types do
   input_object :player_input do
     field :steam_id, non_null(:string)
     field :name, :string
+  end
+
+  enum :side_type do
+    value(:standard)
+    value(:never_knife)
+    value(:always_knife)
+  end
+
+  enum :series_type do
+    value(:bo1_preset)
+    value(:bo1)
+    value(:bo2)
+    value(:bo3)
+    value(:bo5)
+    value(:bo7)
+  end
+
+  enum :match_status do
+    value(:cancelled)
+    value(:forfeit)
+  end
+
+  enum :match_team do
+    value(:team1)
+    value(:team2)
   end
 end
