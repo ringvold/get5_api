@@ -24,6 +24,14 @@ import Team exposing (Player, Team, TeamLight, Teams)
 import TeamId exposing (TeamId)
 
 
+
+-- File organized by Team, Server, Match by:
+-- 1. Requests
+-- 2. Query and selectionsets
+-- 3. Mutations
+-- 4. Helpers
+
+
 type alias GraphqlData a =
     RemoteData (Graphql.Http.Error ()) a
 
@@ -60,6 +68,19 @@ url baseUrl =
 --
 -- Use of `discardParsedErrorData` is a hack for now.
 -- Probably need to handle error properly at a point.
+--
+--
+
+
+sendRequest : String -> SelectionSet a RootQuery -> Cmd (GraphqlData a)
+sendRequest baseUrl query =
+    query
+        |> Graphql.Http.queryRequest (url baseUrl)
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
+
+
+
+-- Team
 
 
 getAllTeams : String -> Cmd (GraphqlData Teams)
@@ -106,6 +127,10 @@ deleteTeam baseUrl teamId =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
+
+-- Server
+
+
 getAllServers : String -> Cmd (GraphqlData Servers)
 getAllServers baseUrl =
     allServers
@@ -141,6 +166,10 @@ deleteServer baseUrl id =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
+
+-- Match
+
+
 getAllMatches : String -> Cmd (GraphqlData (List MatchLight))
 getAllMatches baseUrl =
     allMatches
@@ -163,23 +192,37 @@ createMatch baseUrl match =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
-sendRequest : String -> SelectionSet a RootQuery -> Cmd (GraphqlData a)
-sendRequest baseUrl query =
-    query
-        |> Graphql.Http.queryRequest (url baseUrl)
-        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
-
-
 
 --
--- Queries
+-- Queries and SelectionSets
+--
 -----------
+--
+--
+-- Team
 
 
 teamQuery : String -> SelectionSet Team RootQuery
 teamQuery id =
     Query.team { id = Id id } <|
         teamSelectionSet
+
+
+allTeams : SelectionSet Teams RootQuery
+allTeams =
+    Query.allTeams <|
+        SelectionSet.map3 Team
+            (SelectionSet.map TeamId.scalarToId GTeam.id)
+            GTeam.name
+            (SelectionSet.succeed [])
+
+
+allTeamsLight : SelectionSet (List TeamLight) RootQuery
+allTeamsLight =
+    Query.allTeams <|
+        SelectionSet.map2 TeamLight
+            (SelectionSet.map TeamId.scalarToId GTeam.id)
+            GTeam.name
 
 
 teamSelectionSet : SelectionSet Team GObject.Team
@@ -190,22 +233,6 @@ teamSelectionSet =
         (SelectionSet.withDefault [] playersSelectionSet
             |> SelectionSet.map (List.filterMap identity)
         )
-
-
-serverQuery : String -> SelectionSet Server RootQuery
-serverQuery id =
-    Query.gameServer { id = Id id } <|
-        gameServerSelectionSet
-
-
-gameServerSelectionSet : SelectionSet Server GObject.GameServer
-gameServerSelectionSet =
-    SelectionSet.succeed Server
-        |> with (SelectionSet.map ServerId.scalarToId GServer.id)
-        |> with GServer.name
-        |> with GServer.host
-        |> with GServer.port_
-        |> with GServer.inUse
 
 
 playersSelectionSet : SelectionSet (Maybe (List (Maybe Player))) GObject.Team
@@ -224,21 +251,14 @@ playerSelectionSet =
         GPlayer.name
 
 
-allTeams : SelectionSet Teams RootQuery
-allTeams =
-    Query.allTeams <|
-        SelectionSet.map3 Team
-            (SelectionSet.map TeamId.scalarToId GTeam.id)
-            GTeam.name
-            (SelectionSet.succeed [])
+
+-- Server
 
 
-allTeamsLight : SelectionSet (List TeamLight) RootQuery
-allTeamsLight =
-    Query.allTeams <|
-        SelectionSet.map2 TeamLight
-            (SelectionSet.map TeamId.scalarToId GTeam.id)
-            GTeam.name
+serverQuery : String -> SelectionSet Server RootQuery
+serverQuery id =
+    Query.gameServer { id = Id id } <|
+        gameServerSelectionSet
 
 
 allServers : SelectionSet Servers RootQuery
@@ -260,18 +280,34 @@ allServersLight =
             GServer.name
 
 
-allMatches : SelectionSet (List MatchLight) RootQuery
-allMatches =
-    Query.allMatches <|
-        (SelectionSet.succeed MatchLight
-            |> with (SelectionSet.map scalarIdToString GMatch.id)
-        )
+gameServerSelectionSet : SelectionSet Server GObject.GameServer
+gameServerSelectionSet =
+    SelectionSet.succeed Server
+        |> with (SelectionSet.map ServerId.scalarToId GServer.id)
+        |> with GServer.name
+        |> with GServer.host
+        |> with GServer.port_
+        |> with GServer.inUse
+
+
+
+-- Match
 
 
 matchQuery : String -> SelectionSet Match RootQuery
 matchQuery id =
     Query.match { id = Id id } <|
         matchSelectionSet
+
+
+allMatches : SelectionSet (List MatchLight) RootQuery
+allMatches =
+    Query.allMatches <|
+        (SelectionSet.succeed MatchLight
+            |> with (SelectionSet.map scalarIdToString GMatch.id)
+            |> with (GMatch.team1 GTeam.name)
+            |> with (GMatch.team2 GTeam.name)
+        )
 
 
 matchSelectionSet : SelectionSet Match GObject.Match
@@ -305,7 +341,8 @@ validationMessageSelectionSet =
 --
 -------------
 --
----- Team mutations
+--
+-- Team
 
 
 createTeamMutation : { a | name : String } -> SelectionSet (Maybe Team) RootMutation
@@ -343,7 +380,7 @@ removePlayerMutation teamId steamId =
 
 
 
----- Server mutations
+-- Server
 
 
 createGameServerMutation :
@@ -367,7 +404,7 @@ deleteServerMutation id =
 
 
 
----- Match mutations
+-- Match
 
 
 createMatchMutation : Match.CreateMatch -> SelectionSet (Maybe MatchPayload) RootMutation
@@ -379,7 +416,9 @@ createMatchMutation match =
 
 
 
+--
 -- Helpers
+--
 
 
 scalarIdToString : GetFiveApi.Scalar.Id -> String
