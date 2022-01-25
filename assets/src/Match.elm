@@ -40,6 +40,8 @@ type SeriesType
 
 type alias MatchLight =
     { id : String
+    , team1Name : String
+    , team2Name : String
     }
 
 

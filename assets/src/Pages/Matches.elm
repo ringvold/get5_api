@@ -100,5 +100,5 @@ matchView match =
                 , Tw.cursor_pointer
                 ]
             ]
-            [ text match.id ]
+            [ text (match.team1Name ++ " vs " ++ match.team2Name) ]
         ]
