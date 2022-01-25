@@ -7,6 +7,7 @@ defmodule Get5Api.Teams do
   alias Get5Api.Repo
 
   alias Get5Api.Teams.Team
+  alias Get5Api.Teams.Player
 
   @doc """
   Returns the list of teams.
@@ -73,6 +74,42 @@ defmodule Get5Api.Teams do
     team
     |> Team.changeset(attrs)
     |> Repo.update()
+  end
+
+  def add_player(%Team{} = team, %Player{} = player) do
+    players = [player | team.players]
+
+    result =
+      team
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:players, players)
+      |> Repo.update()
+
+    case result do
+      {:ok, team} ->
+        {:ok, team.players}
+
+      rest ->
+        rest
+    end
+  end
+
+  def remove_player(%Team{} = team, %Player{} = player) do
+    players = Enum.reject(team.players, &(&1.steam_id == player.steam_id))
+
+    result =
+      team
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:players, players)
+      |> Repo.update()
+
+    case result do
+      {:ok, team} ->
+        {:ok, team.players}
+
+      rest ->
+        rest
+    end
   end
 
   @doc """

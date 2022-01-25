@@ -1,8 +1,10 @@
 defmodule Get5ApiWeb.TeamResolver do
   alias Get5Api.Teams
 
+  alias Get5Api.Teams.Player
+
   def all_teams(_root, _args, _info) do
-    teams = Teams.list_teams() |> Enum.map(&to_graphql/1)
+    teams = Teams.list_teams()
     {:ok, teams}
   end
 
@@ -12,18 +14,12 @@ defmodule Get5ApiWeb.TeamResolver do
         {:error, "Team not found"}
 
       team ->
-        {:ok, to_graphql(team)}
+        {:ok, team}
     end
   end
 
   def create_team(_parent, %{name: name}, _context) do
-    case Teams.create_team(%{name: name}) do
-      {:ok, team} ->
-        {:ok, to_graphql(team)}
-
-      err ->
-        err
-    end
+    Teams.create_team(%{name: name})
   end
 
   def delete_team(_parent, %{id: id}, _context) do
@@ -50,19 +46,7 @@ defmodule Get5ApiWeb.TeamResolver do
         {:error, "Team not found"}
 
       team ->
-        players = input_player_to_map(player, team.players)
-
-        case Teams.update_team(team, %{players: players}) do
-          {:ok, updated_team} ->
-            {:ok,
-             Enum.map(
-               updated_team.players,
-               &map_to_player/1
-             )}
-
-          {:error, changeset} ->
-            {:error, "Could not add player to team"}
-        end
+        Teams.add_player(team, %Player{steam_id: player.steam_id, name: ""})
     end
   end
 
@@ -72,58 +56,7 @@ defmodule Get5ApiWeb.TeamResolver do
         {:error, "Team not found"}
 
       team ->
-        IO.inspect(team.players)
-        players = Map.delete(team.players, player.steam_id)
-
-        case Teams.update_team(team, %{players: players}) do
-          {:ok, updated_team} ->
-            IO.inspect(updated_team.players)
-
-            {:ok,
-             Enum.map(
-               updated_team.players,
-               &map_to_player/1
-             )}
-
-          {:error, changeset} ->
-            {:error, "Could not add player to team"}
-        end
+        Teams.remove_player(team, %Player{steam_id: player.steam_id, name: ""})
     end
   end
-
-  defp input_player_to_map(%{steam_id: id, team_id: _}, acc) do
-    Map.put(acc || Map.new(), id, nil)
-  end
-
-  defp input_player_to_map(%{steam_id: id, team_id: _, name: name}, acc) do
-    Map.put(acc || Map.new(), id, name)
-  end
-
-  defp to_graphql({:ok, team = %Teams.Team{}}) do
-    to_graphql(team)
-  end
-
-  defp to_graphql(%Teams.Team{id: id, name: name, players: nil}) do
-    %{
-      id: id,
-      name: name,
-      players: []
-    }
-  end
-
-  defp to_graphql(%Teams.Team{id: id, name: name, players: players}) do
-    %{
-      id: id,
-      name: name,
-      players:
-        Enum.map(
-          players,
-          &map_to_player/1
-        )
-    }
-  end
-
-  defp map_to_player({id}), do: %{steam_id: id}
-
-  defp map_to_player({id, name}), do: %{steam_id: id, name: name}
 end

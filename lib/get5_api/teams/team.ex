@@ -2,12 +2,13 @@ defmodule Get5Api.Teams.Team do
   use Ecto.Schema
   import Ecto.Changeset
   alias Get5Api.Matches.Match
+  alias Get5Api.Teams.Player
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "teams" do
     field :name, :string
-    field :players, :map
+    embeds_many :players, Player, on_replace: :delete
 
     has_many :matches, Match
     timestamps()
@@ -16,7 +17,8 @@ defmodule Get5Api.Teams.Team do
   @doc false
   def changeset(team, attrs) do
     team
-    |> cast(attrs, [:name, :players])
+    |> cast(attrs, [:name])
+    |> cast_embed(:players)
     |> validate_required([:name])
     |> foreign_key_constraint(:matches_team1_id_fkey)
     |> foreign_key_constraint(:matches_team2_id_fkey)

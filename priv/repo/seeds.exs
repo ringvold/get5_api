@@ -11,16 +11,18 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Get5Api.Teams.Team
+alias Get5Api.Teams.Player
 alias Get5Api.Matches.Match
 alias Get5Api.GameServers.GameServer
 alias Get5Api.Repo
 
+
 genesis =
-  %Team{name: "Genesis", players: %{"12340987" => "L0Lpalme", "9832470" => "Madde"}}
+  %Team{name: "Genesis", players: [%Player{steam_id: "12340987", name: "L0Lpalme"}, %Player{steam_id: "9832470", name: "Madde"}]}
   |> Repo.insert!()
 
 astralis =
-  %Team{name: "Astralis", players: %{"98234789234" => "Dupreeh", "83622425197" => "Dev1ce"}}
+  %Team{name: "Astralis", players: [%Player{steam_id: "98234789234", name: "Dupreeh"}, %Player{steam_id: "83622425197", name: "Dev1ce"}]}
   |> Repo.insert!()
 
 server =

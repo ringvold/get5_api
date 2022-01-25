@@ -78,7 +78,11 @@ update shared msg model =
             ( { model | team = team }, Cmd.none )
 
         ShowNewPlayerForm ->
-            ( { model | showForm = not model.showForm, newPlayer = NotAsked }, Cmd.none )
+            let
+                shouldShowForm =
+                    not model.showForm && xor (RemoteData.isSuccess model.newPlayer) (RemoteData.isNotAsked model.newPlayer)
+            in
+            ( { model | showForm = shouldShowForm, newPlayer = NotAsked }, Cmd.none )
 
         PlayerIdChanged id ->
             ( { model | playerSteamId = id }, Cmd.none )
@@ -112,7 +116,7 @@ update shared msg model =
         PlayerAddedReceived webdata ->
             let
                 newPlayerTeam =
-                    RemoteData.map2 addPlayerToTeam webdata model.team
+                    RemoteData.map2 addPlayersToTeam webdata model.team
 
                 newTeam =
                     if RemoteData.isFailure newPlayerTeam then
@@ -132,7 +136,7 @@ update shared msg model =
                             Api.removePlayer
                                 shared.baseUrl
                                 team.id
-                                { id = steam_id, name = Nothing }
+                                steam_id
                         ]
                     )
 
@@ -140,8 +144,8 @@ update shared msg model =
                     ( { model | showForm = not model.showForm }, Cmd.none )
 
 
-addPlayerToTeam : List Player -> Team -> Team
-addPlayerToTeam players team =
+addPlayersToTeam : List Player -> Team -> Team
+addPlayersToTeam players team =
     { team | players = players }
 
 
@@ -285,7 +289,6 @@ newPlayerView show newPlayer =
                             , Css.hover [ Tw.bg_green_400 ]
                             ]
                         , Attr.type_ "submit"
-                        , Events.onClick PlayerSubmit
                         ]
                         [ text "Add player" ]
                     ]

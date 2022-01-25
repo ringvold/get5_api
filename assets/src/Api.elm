@@ -85,9 +85,9 @@ addPlayer baseUrl teamId player =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
 
-removePlayer : String -> TeamId -> Player -> Cmd (RemoteData (Graphql.Http.Error ()) (List Player))
-removePlayer baseUrl teamId player =
-    removePlayerMutation teamId player
+removePlayer : String -> TeamId -> String -> Cmd (RemoteData (Graphql.Http.Error ()) (List Player))
+removePlayer baseUrl teamId steamId =
+    removePlayerMutation teamId steamId
         |> Graphql.Http.mutationRequest (url baseUrl)
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> RemoteData.fromResult)
 
@@ -333,10 +333,10 @@ addPlayerMutation teamId player =
         playerSelectionSet
 
 
-removePlayerMutation : TeamId -> Player -> SelectionSet (List Player) RootMutation
-removePlayerMutation teamId player =
+removePlayerMutation : TeamId -> String -> SelectionSet (List Player) RootMutation
+removePlayerMutation teamId steamId =
     Mutation.removePlayer
-        { steamId = player.id
+        { steamId = steamId
         , teamId = TeamId.toString teamId
         }
         playerSelectionSet
