@@ -19,7 +19,7 @@ defmodule Get5Api.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Get5Api.Application, []},
+      mod: {Get5Api.Application, [:ueberauth_steam]},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -49,8 +49,10 @@ defmodule Get5Api.MixProject do
       {:absinthe, "~> 1.6"},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_error_payload, "~> 1.1"},
-      {:poison, "~> 2.1.0"},
-      {:cors_plug, "~> 2.0"}
+      {:poison, "~> 5.0"},
+      {:cors_plug, "~> 2.0"},
+      {:ueberauth, "~> 0.7"},
+      {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"}
     ]
   end
 

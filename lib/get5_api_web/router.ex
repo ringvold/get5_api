@@ -1,12 +1,15 @@
 defmodule Get5ApiWeb.Router do
   use Get5ApiWeb, :router
 
+  import Get5ApiWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -28,6 +31,13 @@ defmodule Get5ApiWeb.Router do
 
   scope "/api" do
     forward "/graphql/v1", Absinthe.Plug, schema: Get5ApiWeb.Schema
+  end
+
+  scope "/auth", Get5ApiWeb do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
   end
 
   # Other scopes may use custom stacks.
