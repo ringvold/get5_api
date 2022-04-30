@@ -27,7 +27,8 @@ config :get5_api, Get5ApiWeb.Endpoint,
   watchers: [
     {zombie,
      [
-       "node_modules/.bin/elm-spa",
+      "yarn",
+      "elm-spa",
        "server",
        cd: Path.expand("../assets", __DIR__)
      ]}
