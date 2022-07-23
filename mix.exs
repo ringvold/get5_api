@@ -33,6 +33,7 @@ defmodule Get5Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.6.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.7"},
@@ -41,6 +42,7 @@ defmodule Get5Api.MixProject do
       {:phoenix_live_view, "~> 0.16.4"},
       {:phoenix_live_dashboard, "~> 0.5"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 0.5"},
       {:gettext, "~> 0.11"},
@@ -52,7 +54,8 @@ defmodule Get5Api.MixProject do
       {:poison, "~> 5.0"},
       {:cors_plug, "~> 2.0"},
       {:ueberauth, "~> 0.7"},
-      {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"}
+      {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
+      {:swoosh, "~> 1.4"}
     ]
   end
 
@@ -72,7 +75,8 @@ defmodule Get5Api.MixProject do
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"]
     ]
   end
 end

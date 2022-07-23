@@ -42,6 +42,31 @@ defmodule Get5ApiWeb do
     end
   end
 
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {Get5ApiWeb.LayoutView, "live.html"}
+
+      unquote(view_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(view_helpers())
+    end
+  end
+
+  def component do
+    quote do
+      use Phoenix.Component
+
+      unquote(view_helpers())
+    end
+  end
+
   def router do
     quote do
       use Phoenix.Router
@@ -62,6 +87,9 @@ defmodule Get5ApiWeb do
     quote do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
+
+      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
+      import Phoenix.LiveView.Helpers
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View

@@ -24,7 +24,7 @@ defmodule Get5ApiWeb.Endpoint do
     at: "/",
     from: :get5_api,
     gzip: true,
-    only: ~w(css fonts images js favicon.ico robots.txt main.js dist)
+    only: ~w(assets css fonts images js favicon.ico robots.txt main.js dist)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

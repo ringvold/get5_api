@@ -1,7 +1,8 @@
 defmodule Get5Api.Encryption do
   @moduledoc """
-  Documentation for Encryption.
+  This module is used for encrypting password before storing it in the database.
   """
+
   @aad "AES256GCM"
 
   @doc """
@@ -19,9 +20,10 @@ defmodule Get5Api.Encryption do
     iv = :crypto.strong_rand_bytes(16)
 
     {ciphertext, tag} =
-      :crypto.block_encrypt(:aes_gcm, decode_key(key), iv, {@aad, to_string(val), 16})
+      :crypto.crypto_one_time_aead(:aes_gcm, decode_key(key), iv, to_string(val), @aad, 16, true)
 
-    iv <> tag <> ciphertext
+    (iv <> tag <> ciphertext)
+    |> :base64.encode()
   end
 
   @doc """
@@ -30,7 +32,7 @@ defmodule Get5Api.Encryption do
   def decrypt(ciphertext, key) do
     ciphertext = :base64.decode(ciphertext)
     <<iv::binary-16, tag::binary-16, ciphertext::binary>> = ciphertext
-    :crypto.block_decrypt(:aes_gcm, decode_key(key), iv, {@aad, ciphertext, tag})
+    :crypto.crypto_one_time_aead(:aes_gcm, decode_key(key), iv, ciphertext, @aad, tag, false)
   end
 
   def decode_key(key) do

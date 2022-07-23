@@ -25,12 +25,13 @@ config :get5_api, Get5ApiWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    {zombie,
-     [
-       "node_modules/.bin/elm-spa",
-       "server",
-       cd: Path.expand("../assets", __DIR__)
-     ]}
+    # {zombie,
+    #  [
+    #    "node_modules/.bin/elm-spa",
+    #    "server",
+    #    cd: Path.expand("../assets", __DIR__)
+    #  ]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
 config :cors_plug,
