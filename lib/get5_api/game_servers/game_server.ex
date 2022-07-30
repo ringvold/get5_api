@@ -2,6 +2,7 @@ defmodule Get5Api.GameServers.GameServer do
   use Ecto.Schema
   import Ecto.Changeset
   alias Get5Api.Matches.Match
+  alias Get5Api.Encryption
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -10,7 +11,8 @@ defmodule Get5Api.GameServers.GameServer do
     field :in_use, :boolean, default: false
     field :name, :string
     field :port, :string
-    field :rcon_password, :string
+    field :rcon_password, :string, virtual: true, redact: true
+    field :hashed_rcon_password, :string, redact: true
 
     has_many :matches, Match
 
@@ -18,9 +20,42 @@ defmodule Get5Api.GameServers.GameServer do
   end
 
   @doc false
-  def changeset(game_server, attrs) do
+  def changeset(game_server, attrs, opts \\ []) do
     game_server
     |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
     |> validate_required([:name, :host, :port, :rcon_password])
+    |> validate_password(opts)
+  end
+
+  @doc false
+  def update_changeset(game_server, attrs) do
+    game_server
+    |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
+    |> validate_required([:name, :host, :port])
+  end
+
+  def rcon_password_changeset(game_server, attrs, opts \\ []) do
+    game_server
+    |> cast(attrs, [:rcon_password])
+    |> validate_password(opts)
+  end
+
+  defp validate_password(changeset, opts) do
+    changeset
+    |> validate_required([:rcon_password])
+    |> maybe_encrypt_password(opts)
+  end
+
+  defp maybe_encrypt_password(changeset, opts) do
+    hash_password? = Keyword.get(opts, :hash_password, true)
+    password = get_change(changeset, :rcon_password)
+
+    if hash_password? && password && changeset.valid? do
+      changeset
+      |> put_change(:hashed_rcon_password, Encryption.encrypt(password))
+      |> delete_change(:rcon_password)
+    else
+      changeset
+    end
   end
 end

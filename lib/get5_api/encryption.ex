@@ -16,7 +16,7 @@ defmodule Get5Api.Encryption do
   @doc """
   encrypts the given string of text with the given secret key
   """
-  def encrypt(val, key) do
+  def encrypt(val, key \\ find_key()) do
     iv = :crypto.strong_rand_bytes(16)
 
     {ciphertext, tag} =
@@ -29,7 +29,7 @@ defmodule Get5Api.Encryption do
   @doc """
   decrypts the given string of text with the given secret key
   """
-  def decrypt(ciphertext, key) do
+  def decrypt(ciphertext, key \\ find_key()) do
     ciphertext = :base64.decode(ciphertext)
     <<iv::binary-16, tag::binary-16, ciphertext::binary>> = ciphertext
     :crypto.crypto_one_time_aead(:aes_gcm, decode_key(key), iv, ciphertext, @aad, tag, false)
@@ -37,5 +37,10 @@ defmodule Get5Api.Encryption do
 
   def decode_key(key) do
     :base64.decode(key)
+  end
+
+  defp find_key() do
+    <<key::binary-size(16), _>> = System.get_env("SECRET_KEY_BASE")
+    :base64.encode(key)
   end
 end
