@@ -1,0 +1,45 @@
+<h1>Listing Matches</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.match_index_path(@socket, :index)}>
+    <.live_component
+      module={Get5ApiWeb.MatchLive.FormComponent}
+      id={@match.id || :new}
+      title={@page_title}
+      action={@live_action}
+      match={@match}
+      return_to={Routes.match_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Team1</th>
+      <th>Team2</th>
+      <th>Series type</th>
+      <th>Side type</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="matches">
+    <%= for match <- @matches do %>
+      <tr id={"match-#{match.id}"}>
+        <td><%= match.team1.name %></td>
+        <td><%= match.team2.name %></td>
+        <td><%= match.series_type %></td>
+        <td><%= match.side_type %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.match_show_path(@socket, :show, match) %></span>
+          <span><%= live_patch "Edit", to: Routes.match_index_path(@socket, :edit, match) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: match.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Match", to: Routes.match_index_path(@socket, :new) %></span>

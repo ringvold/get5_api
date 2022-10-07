@@ -30,6 +30,13 @@ defmodule Get5ApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/matches", MatchLive.Index, :index
+    live "/matches/new", MatchLive.Index, :new
+    live "/matches/:id/edit", MatchLive.Index, :edit
+
+    live "/matches/:id", MatchLive.Show, :show
+    live "/matches/:id/show/edit", MatchLive.Show, :edit
   end
 
   scope "/app", Get5ApiWeb do

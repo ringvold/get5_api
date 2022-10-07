@@ -12,33 +12,35 @@ defmodule Get5Api.Matches.Match do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "matches" do
-    field :api_key, :string
-    field :end_time, :utc_datetime
-    field :enforce_teams, :boolean, default: false
-    field :max_maps, :integer
-    field :min_player_ready, :integer
+    field(:api_key, :string)
+    field(:end_time, :utc_datetime)
+    field(:enforce_teams, :boolean, default: false)
+    field(:max_maps, :integer)
+    field(:min_player_ready, :integer)
 
-    field :side_type, Ecto.Enum,
+    field(:side_type, Ecto.Enum,
       values: [:standard, :always_knife, :never_knife],
       default: :standard
+    )
 
-    field :series_type, Ecto.Enum,
+    field(:series_type, Ecto.Enum,
       values: [:bo1_preset, :bo1, :bo2, :bo3, :bo5, :bo7],
       default: :bo1_preset
+    )
 
-    field :spectator_ids, {:array, :string}
-    field :start_time, :utc_datetime
-    field :status, :string
-    field :team1_score, :integer
-    field :team2_score, :integer
-    field :title, :string
-    field :veto_first, :string
-    field :veto_map_pool, {:array, :string}
-    field :winner, :binary_id
+    field(:spectator_ids, {:array, :string})
+    field(:start_time, :utc_datetime)
+    field(:status, :string)
+    field(:team1_score, :integer)
+    field(:team2_score, :integer)
+    field(:title, :string)
+    field(:veto_first, :string)
+    field(:veto_map_pool, {:array, :string})
+    field(:winner, :binary_id)
 
-    belongs_to :team1, Team
-    belongs_to :team2, Team
-    belongs_to :game_server, GameServer
+    belongs_to(:team1, Team)
+    belongs_to(:team2, Team)
+    belongs_to(:game_server, GameServer)
 
     timestamps()
   end
@@ -68,8 +70,7 @@ defmodule Get5Api.Matches.Match do
     |> validate_required([
       :team1_id,
       :team2_id,
-      :game_server_id,
-      :veto_map_pool
+      :game_server_id
     ])
     |> validate_map_pool()
     |> validate_different_teams()
@@ -77,13 +78,13 @@ defmodule Get5Api.Matches.Match do
 
   @spec validate_different_teams(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
   def validate_different_teams(changeset, options \\ []) do
-    team1 = get_field(changeset, :team1)
-    team2 = get_field(changeset, :team2)
+    team1 = get_field(changeset, :team1_id)
+    team2 = get_field(changeset, :team2_id)
 
     if team1 != nil &&
          team2 != nil &&
-         team1.name == team2.name do
-      add_error(changeset, :team1, options[:message] || "Team1 and team2 cannot be the same")
+         team1 == team2 do
+      add_error(changeset, :team1_id, options[:message] || "Team1 and team2 cannot be the same")
     else
       changeset
     end
@@ -92,37 +93,54 @@ defmodule Get5Api.Matches.Match do
   @spec validate_map_pool(Ecto.Changeset.t(), Keyword.t()) :: Ecto.Changeset.t()
   def validate_map_pool(changeset, options \\ []) do
     maps = get_field(changeset, :veto_map_pool, [])
-    series_type = get_field(changeset, :series_type)
+    maps = if maps == nil, do: [], else: maps
 
-    with {:maps, true} <- {:maps, maps != nil},
-         {:bo1_preset, false} <- {:bo1_preset, series_type != :bo1_preset and length(maps) != 1},
-         max_maps = series_type_to_max_maps(get_field(changeset, :series_type, :b01)),
-         {:minimum_maps, true, _} <- {:minimum_maps, length(maps) >= max_maps, max_maps} do
+    with :bo1_preset_valid <- is_bo1_preset_with_multiple_maps(changeset, maps),
+         :minimum_maps_valid <- selected_maps_count_matches_series_type(changeset, maps) do
       changeset
     else
-      {:bo1_preset, true} ->
+      :bo1_preset_error ->
         add_error(
           changeset,
           :veto_map_pool,
           options[:bo1_preset_message] ||
-            "must have exactly 1 map selected to do a bo1 with a preset map"
+            "must have exactly 1 map selected to do a bo1_preset"
         )
 
-      {:minimum_maps, false, max_maps} ->
+      {:minimum_maps_error, max_maps} ->
         add_error(
           changeset,
           :veto_map_pool,
           options[:max_maps_message] ||
             "must have at least #{max_maps} maps selected to do a Bo#{max_maps}"
         )
+    end
+  end
 
-      {:maps, false} ->
-        add_error(
-          changeset,
-          :veto_map_pool,
-          options[:message] ||
-            "can't be blank"
-        )
+  def is_bo1_preset_with_multiple_maps(changeset, maps) do
+    series_type = get_field(changeset, :series_type)
+    IO.inspect(maps)
+
+    if(series_type == :bo1_preset and (maps == ["all"] or length(maps) != 1)) do
+      :bo1_preset_error
+    else
+      :bo1_preset_valid
+    end
+  end
+
+  def selected_maps_count_matches_series_type(changeset, ["all"]) do
+    :minimum_maps_valid
+  end
+
+  def selected_maps_count_matches_series_type(changeset, maps) do
+    series_type = get_field(changeset, :series_type)
+    max_maps = series_type_to_max_maps(series_type)
+    maps_size = length(List.delete(maps, "all"))
+
+    if series_type != :bo1_preset and (maps_size < max_maps and maps_size > 0) do
+      {:minimum_maps_error, max_maps}
+    else
+      :minimum_maps_valid
     end
   end
 

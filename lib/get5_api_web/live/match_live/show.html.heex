@@ -1,0 +1,38 @@
+<h1>Show Match</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.match_show_path(@socket, :show, @match)}>
+    <.live_component
+      module={Get5ApiWeb.MatchLive.FormComponent}
+      id={@match.id}
+      title={@page_title}
+      action={@live_action}
+      match={@match}
+      return_to={Routes.match_show_path(@socket, :show, @match)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Team1:</strong>
+    <%= @match.team1.name %>
+  </li>
+  <li>
+    <strong>Team2:</strong>
+    <%= @match.team2.name %>
+  </li>
+  <li>
+    <strong>Series type:</strong>
+    <%= @match.series_type %>
+  </li>
+  <li>
+    <strong>Side type:</strong>
+    <%= @match.side_type %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.match_show_path(@socket, :edit, @match), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.match_index_path(@socket, :index) %></span>
