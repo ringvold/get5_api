@@ -37,6 +37,13 @@ defmodule Get5ApiWeb.Router do
 
     live "/matches/:id", MatchLive.Show, :show
     live "/matches/:id/show/edit", MatchLive.Show, :edit
+
+    live "/game_servers", GameServerLive.Index, :index
+    live "/game_servers/new", GameServerLive.Index, :new
+    live "/game_servers/:id/edit", GameServerLive.Index, :edit
+
+    live "/game_servers/:id", GameServerLive.Show, :show
+    live "/game_servers/:id/show/edit", GameServerLive.Show, :edit
   end
 
   scope "/app", Get5ApiWeb do

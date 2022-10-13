@@ -1,0 +1,41 @@
+<h1>Show Game server</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.game_server_show_path(@socket, :show, @game_server)}>
+    <.live_component
+      module={Get5ApiWeb.GameServerLive.FormComponent}
+      id={@game_server.id}
+      title={@page_title}
+      action={@live_action}
+      game_server={@game_server}
+      return_to={Routes.game_server_show_path(@socket, :show, @game_server)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @game_server.name %>
+  </li>
+
+  <li>
+    <strong>Host:</strong>
+    <%= @game_server.host %>
+  </li>
+
+  <li>
+    <strong>Port:</strong>
+    <%= @game_server.port %>
+  </li>
+
+  <li>
+    <strong>Rcon password:</strong>
+    <%= @game_server.rcon_password %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.game_server_show_path(@socket, :edit, @game_server), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.game_server_index_path(@socket, :index) %></span>
