@@ -10,9 +10,58 @@ defmodule Get5ApiWeb.CoreComponents do
   [heroicons_elixir](https://github.com/mveytsman/heroicons_elixir) project.
   """
   use Phoenix.Component
+  use Get5ApiWeb, :verified_routes
 
   alias Phoenix.LiveView.JS
   import Get5ApiWeb.Gettext
+
+  def user_menu(assigns) do
+    ~H"""
+    <div class="flex items-center gap-4">
+      <ul>
+        <%= if @current_user do %>
+          <li>
+            <%= @current_user.email %>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/settings"}
+              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+            >
+              Settings
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_out"}
+              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              method="delete"
+            >
+              Log out
+            </.link>
+          </li>
+        <% else %>
+          <li>
+            <.link
+              href={~p"/users/register"}
+              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+            >
+              Register
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_in"}
+              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+            >
+              Log in
+            </.link>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    """
+  end
 
   @doc """
   Renders a modal.

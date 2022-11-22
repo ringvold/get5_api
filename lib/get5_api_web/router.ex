@@ -30,26 +30,27 @@ defmodule Get5ApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-
-    live "/matches", MatchLive.Index, :index
-    live "/matches/new", MatchLive.Index, :new
-    live "/matches/:id/edit", MatchLive.Index, :edit
-
-    live "/matches/:id", MatchLive.Show, :show
-    live "/matches/:id/show/edit", MatchLive.Show, :edit
-
-    live "/game_servers", GameServerLive.Index, :index
-    live "/game_servers/new", GameServerLive.Index, :new
-    live "/game_servers/:id/edit", GameServerLive.Index, :edit
-
-    live "/game_servers/:id", GameServerLive.Show, :show
-    live "/game_servers/:id/show/edit", GameServerLive.Show, :edit
   end
 
-  scope "/app", Get5ApiWeb do
-    pipe_through [:app_browser, :require_authenticated_user]
+  scope "/", Get5ApiWeb do
+    pipe_through [:browser]
 
-    get "/*path", PageController, :app
+    live_session :authenticated,
+      on_mount: [{Get5ApiWeb.UserAuth, :ensure_authenticated}] do
+      live "/matches", MatchLive.Index, :index
+      live "/matches/new", MatchLive.Index, :new
+      live "/matches/:id/edit", MatchLive.Index, :edit
+
+      live "/matches/:id", MatchLive.Show, :show
+      live "/matches/:id/show/edit", MatchLive.Show, :edit
+
+      live "/game_servers", GameServerLive.Index, :index
+      live "/game_servers/new", GameServerLive.Index, :new
+      live "/game_servers/:id/edit", GameServerLive.Index, :edit
+
+      live "/game_servers/:id", GameServerLive.Show, :show
+      live "/game_servers/:id/show/edit", GameServerLive.Show, :edit
+    end
   end
 
   scope "/" do

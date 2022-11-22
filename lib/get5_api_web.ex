@@ -22,8 +22,7 @@ defmodule Get5ApiWeb do
 
   def router do
     quote do
-      # , helpers: false
-      use Phoenix.Router
+      use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
