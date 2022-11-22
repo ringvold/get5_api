@@ -16,7 +16,10 @@ config :get5_api,
 config :get5_api, Get5ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1",
-  render_errors: [view: Get5ApiWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: Get5Api.ErrorHTML, json: Get5Api.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: Get5Api.PubSub,
   live_view: [signing_salt: "MfwQGPQ2"]
 
@@ -26,12 +29,24 @@ config :get5_api, Get5Api.Mailer, adapter: Swoosh.Adapters.Local
 config :swoosh, :api_client, false
 
 config :esbuild,
-  version: "0.14.29",
+  version: "0.14.41",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.1.8",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
   ]
 
 # Configures Elixir's Logger

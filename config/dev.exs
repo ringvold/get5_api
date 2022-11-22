@@ -25,13 +25,8 @@ config :get5_api, Get5ApiWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    # {zombie,
-    #  [
-    #    "node_modules/.bin/elm-spa",
-    #    "server",
-    #    cd: Path.expand("../assets", __DIR__)
-    #  ]}
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 config :cors_plug,
@@ -72,6 +67,9 @@ config :get5_api, Get5ApiWeb.Endpoint,
     ]
   ]
 
+# Enable dev routes for dashboard and mailbox
+config :get5_api, dev_routes: true
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
@@ -81,3 +79,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Disable swoosh api client as it is only required for production adapters.
+config :swoosh, :api_client, false

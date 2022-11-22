@@ -1,38 +1,31 @@
-<h1>Show Match</h1>
+<.header>
+  Match <%= @match.id %>
+  <:subtitle>This is a match record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit match</.button>
+    </.link>
+  </:actions>
+</.header>
 
-<%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.match_show_path(@socket, :show, @match)}>
-    <.live_component
-      module={Get5ApiWeb.MatchLive.FormComponent}
-      id={@match.id}
-      title={@page_title}
-      action={@live_action}
-      match={@match}
-      return_to={Routes.match_show_path(@socket, :show, @match)}
-    />
-  </.modal>
-<% end %>
+<.list>
+  <:item title="Series type"><%= @match.series_type %></:item>
+</.list>
 
-<ul>
+<.back navigate={~p"/matches"}>Back to matches</.back>
 
-  <li>
-    <strong>Team1:</strong>
-    <%= @match.team1.name %>
-  </li>
-  <li>
-    <strong>Team2:</strong>
-    <%= @match.team2.name %>
-  </li>
-  <li>
-    <strong>Series type:</strong>
-    <%= @match.series_type %>
-  </li>
-  <li>
-    <strong>Side type:</strong>
-    <%= @match.side_type %>
-  </li>
-
-</ul>
-
-<span><%= live_patch "Edit", to: Routes.match_show_path(@socket, :edit, @match), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.match_index_path(@socket, :index) %></span>
+<.modal
+  :if={@live_action == :edit}
+  id="match-modal"
+  show
+  on_cancel={JS.patch(~p"/matches/#{@match}")}
+>
+  <.live_component
+    module={Get5ApiWeb.MatchLive.FormComponent}
+    id={@match.id}
+    title={@page_title}
+    action={@live_action}
+    match={@match}
+    navigate={~p"/matches/#{@match}"}
+  />
+</.modal>

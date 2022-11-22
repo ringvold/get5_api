@@ -9,6 +9,5 @@ defmodule Get5Api.Repo.Migrations.CreateTeams do
 
       timestamps()
     end
-
   end
 end

@@ -1,8 +1,10 @@
 defmodule Get5ApiWeb.PageController do
   use Get5ApiWeb, :controller
 
-  def index(conn, _params) do
-    render(conn, "index.html")
+  def home(conn, _params) do
+    # The home page is often custom made,
+    # so skip the default app layout.
+    render(conn, :home, layout: false)
   end
 
   def app(conn, _params) do

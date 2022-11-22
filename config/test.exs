@@ -21,5 +21,8 @@ config :get5_api, Get5ApiWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+# Disable swoosh api client as it is only required for production adapters.
+config :swoosh, :api_client, false
+
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning

@@ -19,15 +19,14 @@ defmodule Get5ApiWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint Get5ApiWeb.Endpoint
+      use Get5ApiWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import Get5ApiWeb.ConnCase
-
-      alias Get5ApiWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint Get5ApiWeb.Endpoint
     end
   end
 

@@ -1,45 +1,45 @@
-<h1>Listing Game servers</h1>
+<.header>
+  Listing Game servers
+  <:actions>
+    <.link patch={~p"/game_servers/new"}>
+      <.button>New Game server</.button>
+    </.link>
+  </:actions>
+</.header>
 
-<%= if @live_action in [:new, :edit] do %>
-  <.modal return_to={Routes.game_server_index_path(@socket, :index)}>
-    <.live_component
-      module={Get5ApiWeb.GameServerLive.FormComponent}
-      id={@game_server.id || :new}
-      title={@page_title}
-      action={@live_action}
-      game_server={@game_server}
-      return_to={Routes.game_server_index_path(@socket, :index)}
-    />
-  </.modal>
-<% end %>
+<.table id="game_servers" rows={@game_servers} row_click={&JS.navigate(~p"/game_servers/#{&1}")}>
+  <:col :let={game_server} label="Name"><%= game_server.name %></:col>
+  <:col :let={game_server} label="Host"><%= game_server.host %></:col>
+  <:col :let={game_server} label="Port"><%= game_server.port %></:col>
+  <:col :let={game_server} label="Rcon password"><%= game_server.rcon_password %></:col>
+  <:action :let={game_server}>
+    <div class="sr-only">
+      <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
+    </div>
+    <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={game_server}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: game_server.id})}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Host</th>
-      <th>Port</th>
-      <th>Rcon password</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="game_servers">
-    <%= for game_server <- @game_servers do %>
-      <tr id={"game_server-#{game_server.id}"}>
-        <td><%= game_server.name %></td>
-        <td><%= game_server.host %></td>
-        <td><%= game_server.port %></td>
-        <td><%= game_server.rcon_password %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.game_server_show_path(@socket, :show, game_server) %></span>
-          <span><%= live_patch "Edit", to: Routes.game_server_index_path(@socket, :edit, game_server) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: game_server.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<span><%= live_patch "New Game server", to: Routes.game_server_index_path(@socket, :new) %></span>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="game_server-modal"
+  show
+  on_cancel={JS.navigate(~p"/game_servers")}
+>
+  <.live_component
+    module={Get5ApiWeb.GameServerLive.FormComponent}
+    id={@game_server.id || :new}
+    title={@page_title}
+    action={@live_action}
+    game_server={@game_server}
+    navigate={~p"/game_servers"}
+  />
+</.modal>

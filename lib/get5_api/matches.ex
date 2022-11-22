@@ -59,7 +59,7 @@ defmodule Get5Api.Matches do
          |> Match.changeset(attrs)
          |> Repo.insert() do
       {:ok, match} ->
-        {:ok, Repo.preload(match, [:game_server, :team1, :team2] )}
+        {:ok, Repo.preload(match, [:game_server, :team1, :team2])}
 
       result ->
         result

@@ -3,14 +3,10 @@ defmodule Get5ApiWeb.MatchLive.Index do
 
   alias Get5Api.Matches
   alias Get5Api.Matches.Match
-  alias Get5Api.GameServers
-  alias Get5Api.Teams
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:matches, list_matches())}
+    {:ok, assign(socket, :matches, list_matches())}
   end
 
   @impl true

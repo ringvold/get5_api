@@ -7,7 +7,8 @@ defmodule Get5ApiWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_get5_api_key",
-    signing_salt: "o22tS7he"
+    signing_salt: "o22tS7he",
+    same_site: "Lax"
   ]
 
   socket "/socket", Get5ApiWeb.UserSocket,
@@ -24,7 +25,7 @@ defmodule Get5ApiWeb.Endpoint do
     at: "/",
     from: :get5_api,
     gzip: true,
-    only: ~w(assets css fonts images js favicon.ico robots.txt main.js dist)
+    only: Get5ApiWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

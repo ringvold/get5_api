@@ -4,6 +4,35 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
   alias Get5Api.GameServers
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.header>
+        <%= @title %>
+        <:subtitle>Use this form to manage game_server records in your database.</:subtitle>
+      </.header>
+
+      <.simple_form
+        :let={f}
+        for={@changeset}
+        id="game_server-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.input field={{f, :name}} type="text" label="name" />
+        <.input field={{f, :host}} type="text" label="host" />
+        <.input field={{f, :port}} type="text" label="port" />
+        <.input field={{f, :rcon_password}} type="text" label="rcon_password" />
+        <:actions>
+          <.button phx-disable-with="Saving...">Save Game server</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    """
+  end
+
+  @impl true
   def update(%{game_server: game_server} = assigns, socket) do
     changeset = GameServers.change_game_server(game_server)
 
@@ -33,7 +62,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Game server updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -46,7 +75,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Game server created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

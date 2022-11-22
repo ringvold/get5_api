@@ -13,6 +13,8 @@ defmodule Get5Api.Application do
       Get5ApiWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Get5Api.PubSub},
+      # Start Finch
+      {Finch, name: Get5Api.Finch},
       # Start the Endpoint (http/https)
       Get5ApiWeb.Endpoint
       # Start a worker by calling: Get5Api.Worker.start_link(arg)
