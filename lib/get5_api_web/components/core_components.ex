@@ -21,7 +21,7 @@ defmodule Get5ApiWeb.CoreComponents do
       <ul class="flex items-center gap-4">
         <%= if @current_user do %>
           <li>
-            <p class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+            <p class="text-[0.8125rem] font-semibold leading-6 text-zinc-900">
               <%= @current_user.email %>
             </p>
           </li>
