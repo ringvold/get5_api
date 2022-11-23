@@ -19,7 +19,7 @@ defmodule Get5Api.MixProject do
   def application do
     [
       mod: {Get5Api.Application, [:ueberauth_steam]},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
