@@ -5,9 +5,8 @@ defmodule Get5Api.MixProject do
     [
       app: :get5_api,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -20,7 +19,7 @@ defmodule Get5Api.MixProject do
   def application do
     [
       mod: {Get5Api.Application, [:ueberauth_steam]},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -33,29 +32,32 @@ defmodule Get5Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.6.0"},
+      {:phoenix, "~> 1.7.0-rc.0", override: true},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.7"},
+      {:ecto_sql, "~> 3.8"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.16.4"},
-      {:phoenix_live_dashboard, "~> 0.5"},
+      {:phoenix_html, "~> 3.2"},
+      {:phoenix_live_view, "~> 0.18.3"},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev},
+      {:heroicons, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 0.5"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.20"},
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.5"},
+      {:finch, "~> 0.13"},
+      {:swoosh, "~> 1.4"},
       {:absinthe, "~> 1.6"},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_error_payload, "~> 1.1"},
+      {:bcrypt_elixir, "~> 3.0"},
       {:poison, "~> 5.0"},
       {:cors_plug, "~> 2.0"},
-      {:ueberauth, "~> 0.7"},
-      {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
-      {:swoosh, "~> 1.4"}
+      {:ueberauth, "~> 0.7"}
+      # {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
     ]
   end
 
@@ -69,14 +71,12 @@ defmodule Get5Api.MixProject do
     [
       setup: [
         "deps.get",
-        "ecto.setup",
-        "cmd yarn --cwd assets install",
-        "cmd yarn --cwd assets elm-tooling install"
+        "ecto.setup"
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end

@@ -40,7 +40,7 @@ defmodule Get5Api.Encryption do
   end
 
   defp find_key() do
-    <<key::binary-size(16), _>> = System.get_env("SECRET_KEY_BASE")
+    <<key::binary-size(16), _::bitstring>> = System.get_env("SECRET_KEY_BASE")
     :base64.encode(key)
   end
 end

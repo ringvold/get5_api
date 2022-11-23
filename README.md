@@ -5,12 +5,13 @@
 This will be a web panel for the [splewis/get5](https://github.com/splewis/get5) CSGO sourcemod plugin.
 
 Get5Api aims to replace parts of [splewis/get5-web] and [PhlexPlexico/G5API] 
-and implement new feature as needs arise.
+and implement new feature as needs arise. It is actuallt not just an API but 
+also a web site. There will be a GraphQL API further down the road for chat 
+bots and other use cases.
 
-This application is written in Elixir with Phoenix, Graphql and Postresql, with 
-the frontend written in [Elm](https://elm-lang.org/).
+This application is written with [Phoenix](https://www.phoenixframework.org/) and Postgresql.
 
-# Plan (short version)
+## Plan (short version)
 
 1. [ ] Make the basics it work
 2. [ ] Make it pretty
@@ -18,23 +19,22 @@ the frontend written in [Elm](https://elm-lang.org/).
 4. [ ] ???
 5. [ ] World domination
 
-# Why
+## Why
 
-[Splewis/get5-web] is a proof-of-concept web panel for get5 and was a 
+[Splewis/get5-web] was a proof-of-concept web panel for get5 and was a 
 starting point for a lot of similar projects. It is now old and unmaintained
 so a fresh start is needed.
 
 This project is inspired by [PhlexPlexico/G5API] but with the wish to use other 
 technologies it made sense to create a seperate project. I prefere functional 
-progamming and side projects should be fun so I chose some of my favourite 
-languages, Elixir and Elm. 😄
-
+progamming and Elixir has a great web framework in Phoenix. Using this project 
+to get familiar with LiveView. 😄
 
 [PhlexPlexico/G5API]: https://github.com/PhlexPlexico/G5API
 [splewis/get5-web]: https://github.com/splewis/get5-web
 
 
-# Gettings started
+## Gettings started
 
 For now setup is a bit more involved but as the project matures there will be 
 docker images ready to be used in production. 
@@ -47,11 +47,6 @@ The easies way to get started is to build and run with [docker-compose]:
 2. Start app and db: `docker-compose up`
 3. On first start only: Run db migrations and add test data with `docker-compose run web mix ecto.setup`
 3. Go to http://localhost:4000
-
-Note: In dev mode frontend is continously build and served by elm-spa on a 
-seperate port. The backend will link to this when you to 
-http://localhost:4000.
-In production mode the frontend is pre-build and served by the backend.
 
 ### Production mode
 
@@ -69,7 +64,8 @@ already has the dockerfile and phoenix changes done so start from
 
 [docker-compose]: https://docs.docker.com/compose/
 
-# Contribution
+
+## Contribution
 
 Help is always welcome! 🙌  
 Create a fork of this repo, make your changes, and submit a PR. 
@@ -77,7 +73,6 @@ Before starting any work it might be good to open an issue and explain what you
 need and want to implement to be sure we find the best solution and that it is 
 in alignment with the projects plans. 😄
 
-## Backend
 
 ### Docker only
 
@@ -88,9 +83,10 @@ Enjoy some quiet time while downloading and compiling. 😄
 4. Make some changes and check how it looks!
 
 
-### Backend natively and db in docker
+### Elixir natively and db in docker
 
-To start your Phoenix server (requires elixir installed locally):
+To start your Phoenix server (requires elixir installed locally, see 
+"Installing Elixir and Erlang with asdf"):
 
   * Install dependencies with `mix deps.get`
   * Start database server with `docker-compose up`
@@ -100,9 +96,42 @@ To start your Phoenix server (requires elixir installed locally):
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-This also starts a dev server for the frontend.
 
-### Learn more
+### Installing Elixir and Erlang with asdf
+
+Using the docker image is the easiest way to get started, but installing Elixir 
+locally on you machine can also be beneficial.
+
+Follow the steps outlined below:
+
+```
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+
+# The following steps are for bash. If you’re using something else, do the
+# equivalent for your shell.
+echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc # optional
+source ~/.bashrc
+# for zsh based systems run the following
+echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.zshrc
+echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.zshrc
+source ~/.zshrc
+
+asdf plugin-add erlang
+asdf plugin-add elixir
+
+asdf install elixir 1.14.2-otp-25
+asdf install erlang 25.1.2
+
+# Set the installed versions av default
+asdf global erlang 25.1.2
+asdf global elixir 1.14.2-otp-25
+
+mix local.hex
+mix local.rebar
+```
+
+## Learn more about Phoenix
 
   * Official website: https://www.phoenixframework.org/
   * Guides: https://hexdocs.pm/phoenix/overview.html
@@ -110,22 +139,3 @@ This also starts a dev server for the frontend.
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
 
-## Frontend
-
-The project uses [yarn V1](https://classic.yarnpkg.com/lang/en/) (for now) to manage npm packages and 
-[elm-tooling](https://elm-tooling.github.io/elm-tooling-cli/) for managing Elm-related tooling. [Elm-spa](https://www.elm-spa.dev/) is used to 
-simplify SPA setup with Elm.
-
-As the backend dev server also starts the frontend dev server you might not 
-need to do these steps but this is how you run the frontend seperately:
-
-1. `yarn install`
-2. `yarn setup`
-3. `yarn start`
-4. Go to http://localhost:1234
-
-### Learn more
-
-  * Official Elm language guide: https://guide.elm-lang.org/
-  * elm-spa: https://www.elm-spa.dev/
-  * elm-tooling: https://elm-tooling.github.io/elm-tooling-cli/

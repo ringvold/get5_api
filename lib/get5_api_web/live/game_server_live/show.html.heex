@@ -1,0 +1,34 @@
+<.header>
+  Game server <%= @game_server.name %>
+  <:subtitle>This is a game_server record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/game_servers/#{@game_server}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit game_server</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @game_server.name %></:item>
+  <:item title="Host"><%= @game_server.host %></:item>
+  <:item title="Port"><%= @game_server.port %></:item>
+  <:item title="Rcon password"><%= @game_server.rcon_password %></:item>
+</.list>
+
+<.back navigate={~p"/game_servers"}>Back to game_servers</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="game_server-modal"
+  show
+  on_cancel={JS.patch(~p"/game_servers/#{@game_server}")}
+>
+  <.live_component
+    module={Get5ApiWeb.GameServerLive.FormComponent}
+    id={@game_server.id}
+    title={@page_title}
+    action={@live_action}
+    game_server={@game_server}
+    navigate={~p"/game_servers/#{@game_server}"}
+  />
+</.modal>

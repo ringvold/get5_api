@@ -1,0 +1,35 @@
+<.header>
+  <%= @match.team1.name %> vs <%= @match.team2.name %>
+  <:subtitle>This is a match record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit match</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Team 1"><%= @match.team1.name %></:item>
+  <:item title="Team 2"><%= @match.team2.name %></:item>
+  <:item title="Series type"><%= @match.series_type %></:item>
+  <:item title="Side type"><%= @match.side_type %></:item>
+  <:item title="Map pool"><%= Enum.join(@match.veto_map_pool, ", ") %></:item>
+</.list>
+
+<.back navigate={~p"/matches"}>Back to matches</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="match-modal"
+  show
+  on_cancel={JS.patch(~p"/matches/#{@match}")}
+>
+  <.live_component
+    module={Get5ApiWeb.MatchLive.FormComponent}
+    id={@match.id}
+    title={@page_title}
+    action={@live_action}
+    match={@match}
+    navigate={~p"/matches/#{@match}"}
+  />
+</.modal>

@@ -16,13 +16,24 @@ alias Get5Api.Matches.Match
 alias Get5Api.GameServers.GameServer
 alias Get5Api.Repo
 
-
 genesis =
-  %Team{name: "Genesis", players: [%Player{steam_id: "12340987", name: "L0Lpalme"}, %Player{steam_id: "9832470", name: "Madde"}]}
+  %Team{
+    name: "Genesis",
+    players: [
+      %Player{steam_id: "12340987", name: "L0Lpalme"},
+      %Player{steam_id: "9832470", name: "Madde"}
+    ]
+  }
   |> Repo.insert!()
 
 astralis =
-  %Team{name: "Astralis", players: [%Player{steam_id: "98234789234", name: "Dupreeh"}, %Player{steam_id: "83622425197", name: "Dev1ce"}]}
+  %Team{
+    name: "Astralis",
+    players: [
+      %Player{steam_id: "98234789234", name: "Dupreeh"},
+      %Player{steam_id: "83622425197", name: "Dev1ce"}
+    ]
+  }
   |> Repo.insert!()
 
 server =

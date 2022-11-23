@@ -20,5 +20,4 @@ defmodule Get5ApiWeb.MatchResolver do
   def create_match(_parent, args, _context) do
     Matches.create_match(args)
   end
-
 end

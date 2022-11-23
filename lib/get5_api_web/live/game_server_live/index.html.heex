@@ -1,0 +1,44 @@
+<.header>
+  Listing Game servers
+  <:actions>
+    <.link patch={~p"/game_servers/new"}>
+      <.button>New Game server</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="game_servers" rows={@game_servers} row_click={&JS.navigate(~p"/game_servers/#{&1}")}>
+  <:col :let={game_server} label="Name"><%= game_server.name %></:col>
+  <:col :let={game_server} label="Host"><%= game_server.host %></:col>
+  <:col :let={game_server} label="Port"><%= game_server.port %></:col>
+  <:action :let={game_server}>
+    <div class="sr-only">
+      <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
+    </div>
+    <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={game_server}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: game_server.id})}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="game_server-modal"
+  show
+  on_cancel={JS.navigate(~p"/game_servers")}
+>
+  <.live_component
+    module={Get5ApiWeb.GameServerLive.FormComponent}
+    id={@game_server.id || :new}
+    title={@page_title}
+    action={@live_action}
+    game_server={@game_server}
+    navigate={~p"/game_servers"}
+  />
+</.modal>

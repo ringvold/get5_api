@@ -12,6 +12,5 @@ defmodule Get5Api.Repo.Migrations.CreateGameServers do
 
       timestamps()
     end
-
   end
 end

@@ -1,0 +1,24 @@
+<h1>Log in</h1>
+
+<.form :let={f} for={@conn} action={~p"/users/log_in"} as={:user}>
+  <%= if @error_message do %>
+    <div class="alert alert-danger">
+      <p><%= @error_message %></p>
+    </div>
+  <% end %>
+
+  <.input field={{f, :email}} label="Email" type="email" required />
+
+  <.input field={{f, :password}} label="Password" type="password" required />
+
+  <.input field={{f, :remember_me}} label="Keep me logged in for 60 days" type="checkbox" />
+
+  <div>
+    <.button>Login</.button>
+  </div>
+</.form>
+
+<p>
+  <.link href={~p"/users/register"}>Register</.link>
+  <.link href={~p"/users/reset_password"}>Forgot your password?</.link>
+</p>
