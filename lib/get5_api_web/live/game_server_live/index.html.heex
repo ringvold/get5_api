@@ -11,7 +11,6 @@
   <:col :let={game_server} label="Name"><%= game_server.name %></:col>
   <:col :let={game_server} label="Host"><%= game_server.host %></:col>
   <:col :let={game_server} label="Port"><%= game_server.port %></:col>
-  <:col :let={game_server} label="Rcon password"><%= game_server.rcon_password %></:col>
   <:action :let={game_server}>
     <div class="sr-only">
       <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>

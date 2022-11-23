@@ -8,7 +8,9 @@
 </.header>
 
 <.table id="matches" rows={@matches} row_click={&JS.navigate(~p"/matches/#{&1}")}>
+  <:col :let={match} label="Name"><%= match.team1.name %> vs <%= match.team2.name %></:col>
   <:col :let={match} label="Series type"><%= match.series_type %></:col>
+  <:col :let={match} label="Server"><%= match.game_server.name %></:col>
   <:action :let={match}>
     <div class="sr-only">
       <.link navigate={~p"/matches/#{match}"}>Show</.link>

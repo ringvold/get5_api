@@ -2,8 +2,18 @@
   <div class="flex items-center justify-between border-b border-zinc-100 py-3">
     <div class="flex items-center gap-4">
       <a href="/">
-        <h1>Get5 webpanel</h1>
+        <h1 class="font-semibold text-lg md:text-xl xl:text-2xl">Get5 webpanel</h1>
       </a>
+    </div>
+    <div class="flex gap-4">
+      <.link
+        navigate={~p"/matches"}
+        class="font-bold leading-6 text-zinc-900 hover:text-zinc-700 p-3"
+        >Matches</.link>
+      <.link
+        navigate={~p"/game_servers"}
+        class="font-bold leading-6 text-zinc-900 hover:text-zinc-700 p-3"
+        >Servers</.link>
     </div>
     <.user_menu current_user={@current_user} />
   </div>

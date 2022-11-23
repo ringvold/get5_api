@@ -18,14 +18,16 @@ defmodule Get5ApiWeb.CoreComponents do
   def user_menu(assigns) do
     ~H"""
     <div class="flex items-center gap-4">
-      <ul>
+      <ul class="flex items-center gap-4">
         <%= if @current_user do %>
           <li>
-            <%= @current_user.email %>
+            <p class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+              <%= @current_user.email %>
+            </p>
           </li>
           <li>
             <.link
-              href={~p"/users/settings"}
+              navigate={~p"/users/settings"}
               class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
             >
               Settings
@@ -33,7 +35,7 @@ defmodule Get5ApiWeb.CoreComponents do
           </li>
           <li>
             <.link
-              href={~p"/users/log_out"}
+              navigate={~p"/users/log_out"}
               class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
               method="delete"
             >
@@ -43,7 +45,7 @@ defmodule Get5ApiWeb.CoreComponents do
         <% else %>
           <li>
             <.link
-              href={~p"/users/register"}
+              navigate={~p"/users/register"}
               class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
             >
               Register
@@ -51,7 +53,7 @@ defmodule Get5ApiWeb.CoreComponents do
           </li>
           <li>
             <.link
-              href={~p"/users/log_in"}
+              navigate={~p"/users/log_in"}
               class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
             >
               Log in
