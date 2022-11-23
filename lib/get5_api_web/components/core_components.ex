@@ -35,7 +35,7 @@ defmodule Get5ApiWeb.CoreComponents do
           </li>
           <li>
             <.link
-              navigate={~p"/users/log_out"}
+              href={~p"/users/log_out"}
               class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
               method="delete"
             >
