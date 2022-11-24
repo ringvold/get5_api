@@ -1,8 +1,4 @@
-FROM elixir:1.12.3
-
-# Add yarn keys and repo
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+FROM elixir:1.14.2
 
 RUN apt-get update && \
     apt-get install -y postgresql-client && \
@@ -22,9 +18,5 @@ WORKDIR $APP_HOME
 # Cache elixir deps
 ADD mix.exs mix.lock ./
 RUN mix do deps.get, deps.compile
-
-ADD assets/package.json ./assets/
-RUN yarn --cwd assets
-RUN yarn global add elm@latest-0.19.1
 
 CMD ["mix", "phx.server"]

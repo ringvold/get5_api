@@ -1,10 +1,10 @@
 ###
 ### Fist Stage - Building the Release
 ###
-FROM hexpm/elixir:1.12.1-erlang-24.0.1-alpine-3.13.3 AS build
+FROM hexpm/elixir:1.14.2-erlang-25.1.2-alpine-3.16.2 AS build
 
 # install build dependencies
-RUN apk add --no-cache build-base npm yarn
+RUN apk add --no-cache build-base
 
 # prepare build dir
 WORKDIR /app
@@ -29,20 +29,16 @@ COPY config config
 RUN mix deps.get --only prod && \
     mix deps.compile
 
-# install npm dependencies
-COPY assets/package.json assets/yarn.lock ./assets/
-RUN yarn install --frozen-lockfile --cwd ./assets
-
 COPY priv priv
 COPY assets assets
 
 # NOTE: If using TailwindCSS, it uses a special "purge" step and that requires
 # the code in `lib` to see what is being used. Uncomment that here before
 # running the npm deploy script if that's the case.
-# COPY lib lib
+COPY lib lib
 
 # build assets
-RUN yarn --cwd ./assets deploy
+RUN mix assets.deploy
 RUN mix phx.digest
 
 # copy source here if not using TailwindCSS
@@ -57,7 +53,7 @@ RUN mix do compile, release
 ###
 
 # prepare release docker image
-FROM alpine:3.13.3 AS app
+FROM alpine:3.16.2 AS app
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
 WORKDIR /app

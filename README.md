@@ -34,7 +34,7 @@ to get familiar with LiveView. 😄
 [splewis/get5-web]: https://github.com/splewis/get5-web
 
 
-## Gettings started
+## Getting started
 
 For now setup is a bit more involved but as the project matures there will be 
 docker images ready to be used in production. 

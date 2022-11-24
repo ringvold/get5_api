@@ -15,7 +15,6 @@ services:
     env_file: .env
     volumes:
       - ./:/app
-      - /app/assets/node_modules
       - /app/deps
     ports:
       - "4000:4000"
