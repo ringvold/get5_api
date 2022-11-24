@@ -2,7 +2,7 @@
 
 ***Project status: Pre alpha aka a lot of stuff is not working yet***
 
-This will be a web panel for the [splewis/get5](https://github.com/splewis/get5) CSGO sourcemod plugin.
+This will be a web panel for the [splewis/get5](https://splewis.github.io/get5) CSGO sourcemod plugin.
 
 Get5Api aims to replace parts of [splewis/get5-web] and [PhlexPlexico/G5API] 
 and implement new feature as needs arise. It is actuallt not just an API but 
