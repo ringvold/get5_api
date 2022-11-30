@@ -1,0 +1,27 @@
+<.header>
+  Team <%= @team.id %>
+  <:subtitle>This is a team record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/teams/#{@team}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit team</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @team.name %></:item>
+  <:item title="Players"><%= @team.players %></:item>
+</.list>
+
+<.back navigate={~p"/teams"}>Back to teams</.back>
+
+<.modal :if={@live_action == :edit} id="team-modal" show on_cancel={JS.patch(~p"/teams/#{@team}")}>
+  <.live_component
+    module={Get5ApiWeb.TeamLive.FormComponent}
+    id={@team.id}
+    title={@page_title}
+    action={@live_action}
+    team={@team}
+    navigate={~p"/teams/#{@team}"}
+  />
+</.modal>

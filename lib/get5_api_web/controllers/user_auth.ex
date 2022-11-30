@@ -1,4 +1,4 @@
-defmodule Get5ApiWeb.UserAuth do
+defmodule Get5ApiWeb.UserAuthh do
   import Plug.Conn
   import Phoenix.Controller
 

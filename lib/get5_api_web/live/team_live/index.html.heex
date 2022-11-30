@@ -1,0 +1,41 @@
+<.header>
+  Listing Teams
+  <:actions>
+    <.link patch={~p"/teams/new"}>
+      <.button>New Team</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="teams" rows={@teams} row_click={&JS.navigate(~p"/teams/#{&1}")}>
+  <:col :let={team} label="Name"><%= team.name %></:col>
+  <:col :let={team} label="Players"><%= Enum.map(team.players, fn player -> player.steam_id  end)
+  |> Enum.join(", ") %></:col>
+  <:action :let={team}>
+    <div class="sr-only">
+      <.link navigate={~p"/teams/#{team}"}>Show</.link>
+    </div>
+    <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={team}>
+    <.link phx-click={JS.push("delete", value: %{id: team.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="team-modal"
+  show
+  on_cancel={JS.navigate(~p"/teams")}
+>
+  <.live_component
+    module={Get5ApiWeb.TeamLive.FormComponent}
+    id={@team.id || :new}
+    title={@page_title}
+    action={@live_action}
+    team={@team}
+    navigate={~p"/teams"}
+  />
+</.modal>
