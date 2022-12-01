@@ -47,10 +47,10 @@ defmodule Get5Api.GameServers.GameServer do
   end
 
   defp maybe_encrypt_password(changeset, opts) do
-    hash_password? = Keyword.get(opts, :hash_password, true)
+    encrypt_password? = Keyword.get(opts, :encrypt_password, true)
     password = get_change(changeset, :rcon_password)
 
-    if hash_password? && password && changeset.valid? do
+    if encrypt_password? && password && changeset.valid? do
       changeset
       |> put_change(:hashed_rcon_password, Encryption.encrypt(password))
       |> delete_change(:rcon_password)

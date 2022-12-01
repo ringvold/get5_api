@@ -7,6 +7,7 @@ defmodule Get5Api.GameServers do
   alias Get5Api.Repo
 
   alias Get5Api.GameServers.GameServer
+  alias Get5Api.Encryption
 
   @doc """
   Returns the list of game_servers.
@@ -69,9 +70,9 @@ defmodule Get5Api.GameServers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_game_server(%GameServer{} = game_server, attrs) do
+  def update_game_server(%GameServer{} = game_server, attrs \\ %{}) do
     game_server
-    |> GameServer.changeset(attrs)
+    |> GameServer.changeset(attrs, encrypt_password: false)
     |> Repo.update()
   end
 
@@ -102,5 +103,13 @@ defmodule Get5Api.GameServers do
   """
   def change_game_server(%GameServer{} = game_server, attrs \\ %{}) do
     GameServer.changeset(game_server, attrs)
+  end
+
+  def decrypt_rcon_password(encryptet_password) do
+    if String.strip(encryptet_password) != "" do
+      Encryption.decrypt(encryptet_password)
+    else
+      ""
+    end
   end
 end

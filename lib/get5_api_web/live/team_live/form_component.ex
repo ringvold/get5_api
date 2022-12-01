@@ -21,7 +21,6 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
         phx-submit="save"
       >
         <.input field={{f, :name}} type="text" label="name" />
-        <%#-- .input field={{f, :players}} type="text" label="players" /%>
         <:actions>
           <.button phx-disable-with="Saving...">Save Team</.button>
         </:actions>

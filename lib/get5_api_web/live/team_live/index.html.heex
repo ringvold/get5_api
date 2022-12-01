@@ -9,8 +9,10 @@
 
 <.table id="teams" rows={@teams} row_click={&JS.navigate(~p"/teams/#{&1}")}>
   <:col :let={team} label="Name"><%= team.name %></:col>
-  <:col :let={team} label="Players"><%= Enum.map(team.players, fn player -> player.steam_id  end)
-  |> Enum.join(", ") %></:col>
+  <:col :let={team} label="Players">
+    <%= Enum.map(team.players, fn player -> player.steam_id end)
+    |> Enum.join(", ") %>
+  </:col>
   <:action :let={team}>
     <div class="sr-only">
       <.link navigate={~p"/teams/#{team}"}>Show</.link>
