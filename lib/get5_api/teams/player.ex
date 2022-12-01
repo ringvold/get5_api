@@ -9,6 +9,6 @@ defmodule Get5Api.Teams.Player do
 
   def changeset(player, attrs) do
     player
-    |> cast(attrs, [:stream_id, :name])
+    |> cast(attrs, [:steam_id, :name])
   end
 end

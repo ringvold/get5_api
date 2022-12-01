@@ -23,8 +23,12 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         <.input field={{f, :name}} type="text" label="name" />
         <.input field={{f, :host}} type="text" label="host" />
         <.input field={{f, :port}} type="text" label="port" />
-        <.input field={{f, :rcon_password}} type="password" label="RCON password"
-          placeholder="Fill to change password. Leave blank to keep current" />
+        <.input
+          field={{f, :rcon_password}}
+          type="password"
+          label="RCON password"
+          placeholder="Fill to change password. Leave blank to keep current"
+        />
         <:actions>
           <.button phx-disable-with="Saving...">Save Game server</.button>
         </:actions>

@@ -76,7 +76,8 @@ defmodule Get5Api.Teams do
     |> Repo.update()
   end
 
-  def add_player(%Team{} = team, %Player{} = player) do
+  def add_player(%Team{} = team, %Player{} = player, attrs) do
+    player = change_player(player, attrs)
     players = [player | team.players]
 
     result =
@@ -141,5 +142,9 @@ defmodule Get5Api.Teams do
   """
   def change_team(%Team{} = team, attrs \\ %{}) do
     Team.changeset(team, attrs)
+  end
+
+  def change_player(%Player{} = player, attrs \\ %{}) do
+    Player.changeset(player, attrs)
   end
 end

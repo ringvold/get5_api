@@ -57,6 +57,7 @@ defmodule Get5ApiWeb.Router do
 
       live "/teams/:id", TeamLive.Show, :show
       live "/teams/:id/show/edit", TeamLive.Show, :edit
+      live "/teams/:id/players/new", TeamLive.Show, :add_player
     end
   end
 

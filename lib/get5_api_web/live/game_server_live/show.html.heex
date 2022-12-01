@@ -14,7 +14,6 @@
   <:item title="Port"><%= @game_server.port %></:item>
   <:item title="Rcon password">
     <div class="flex group items-center">
-
       <code class="bg-gray-200 p-1 font-mono cursor-pointer" phx-click="show_password">
         <%= if @show_password do %>
           <%= @rcon_password %>
@@ -22,11 +21,10 @@
           &lt;encrypted&gt;
         <% end %>
       </code>
-     <!--  <div role="tooltip" class=" z-10 mx-3 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 dark:bg-gray-700 group-hover:visible group-hover:opacity-100">
+      <!--  <div role="tooltip" class=" z-10 mx-3 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 dark:bg-gray-700 group-hover:visible group-hover:opacity-100">
         Click to show password
       </div> -->
     </div>
-
   </:item>
 </.list>
 
