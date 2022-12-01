@@ -28,10 +28,21 @@ defmodule Get5Api.GameServers.GameServer do
   end
 
   @doc false
-  def update_changeset(game_server, attrs) do
-    game_server
-    |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
-    |> validate_required([:name, :host, :port])
+  def update_changeset(game_server, attrs, opts \\ []) do
+    changeset =
+      game_server
+      |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
+      |> validate_required([:name, :host, :port])
+
+    password_cs = rcon_password_changeset(game_server, attrs)
+
+    case fetch_change(changeset, :rcon_password) do
+      :error ->
+        changeset
+
+      {:ok, _value} ->
+        merge(changeset, password_cs)
+    end
   end
 
   def rcon_password_changeset(game_server, attrs, opts \\ []) do

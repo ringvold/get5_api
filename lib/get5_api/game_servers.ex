@@ -72,8 +72,9 @@ defmodule Get5Api.GameServers do
   """
   def update_game_server(%GameServer{} = game_server, attrs \\ %{}) do
     game_server
-    |> GameServer.changeset(attrs, encrypt_password: false)
+    |> GameServer.update_changeset(attrs)
     |> Repo.update()
+    |> dbg
   end
 
   @doc """
@@ -102,7 +103,7 @@ defmodule Get5Api.GameServers do
 
   """
   def change_game_server(%GameServer{} = game_server, attrs \\ %{}) do
-    GameServer.changeset(game_server, attrs)
+    GameServer.update_changeset(game_server, attrs)
   end
 
   def decrypt_rcon_password(encryptet_password) do
