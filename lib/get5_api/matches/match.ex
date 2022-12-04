@@ -74,6 +74,18 @@ defmodule Get5Api.Matches.Match do
     ])
     |> validate_map_pool()
     |> validate_different_teams()
+    |> ensure_api_key()
+  end
+
+
+  @spec ensure_api_key(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
+  def ensure_api_key(changeset, options \\ []) do
+    if not get_change(changeset, :api_key) do
+      changeset
+        |> put_change(:api_key, Ecto.UUID.generate)
+    else
+      changeset
+    end
   end
 
   @spec validate_different_teams(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
