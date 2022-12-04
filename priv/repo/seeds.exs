@@ -30,8 +30,25 @@ astralis =
   %Team{
     name: "Astralis",
     players: [
-      %Player{steam_id: "98234789234", name: "Dupreeh"},
-      %Player{steam_id: "83622425197", name: "Dev1ce"}
+      %Player{steam_id: "83622425197", name: "Dev1ce"},
+      %Player{steam_id: "76561198028458803", name: "BlameF"},
+      %Player{steam_id: "76561198010511021", name: "gla1ve"},
+      %Player{steam_id: "76561197979669175", name: "k0nfig"},
+      %Player{steam_id: "76561198028458803", name: "blameF"},
+      %Player{steam_id: "76561197990682262", name: "Xyp9x"},
+    ]
+  }
+  |> Repo.insert!()
+
+astralis =
+  %Team{
+    name: "Faze",
+    players: [
+      %Player{steam_id: "76561197961275685", name: "Broky"},
+      %Player{steam_id: "76561197989430253", name: "karrigan"}
+      %Player{steam_id: "76561197997351207", name: "rain"}
+      %Player{steam_id: "76561197991272318", name: "ropz"}
+      %Player{steam_id: "76561198016255205", name: "Twistzz"}
     ]
   }
   |> Repo.insert!()
