@@ -18,6 +18,14 @@ defmodule Get5ApiWeb.TeamLive.Show do
      |> assign(:player, %Player{})}
   end
 
+  @impl true
+  def handle_event("delete_player", %{"id" => id}, socket) do
+
+    {:ok, team} = Teams.remove_player(socket.assigns.team, %Player{steam_id: id})
+
+    {:noreply, assign(socket, :team, team)}
+  end
+
   defp page_title(:show), do: "Show Team"
   defp page_title(:edit), do: "Edit Team"
   defp page_title(:add_player), do: "Add Player"

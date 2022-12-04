@@ -34,7 +34,6 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
   def update(%{player: player} = assigns, socket) do
     changeset = Teams.change_player(player)
 
-
     {:ok,
      socket
      |> assign(assigns)

@@ -1,5 +1,5 @@
 <.header>
-  Team <%= @team.name %>
+  <%= @team.name %>
   <:subtitle>This is a team record from your database.</:subtitle>
   <:actions>
     <.link patch={~p"/teams/#{@team}/players/new"} phx-click={JS.push_focus()}>
@@ -11,11 +11,26 @@
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Name"><%= @team.name %></:item>
-  <:item title="Players"><%= Enum.map(@team.players, fn player -> player.steam_id end)
-    |> Enum.join(", ") %></:item>
-</.list>
+<.table
+  id="players"
+  rows={
+    Enum.map_reduce(@team.players, 1, fn p, acc ->
+      {Map.put(p, :id, acc), acc + 1}
+    end)
+    |> elem(0)
+  }
+>
+  <:col :let={player} label="Steam ID"><%= player.steam_id %></:col>
+  <:col :let={player} label="Name"><%= player.name %></:col>
+  <:action :let={player}>
+    <.link
+      phx-click={JS.push("delete_player", value: %{id: player.steam_id})}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
 
 <.back navigate={~p"/teams"}>Back to teams</.back>
 
@@ -30,7 +45,12 @@
   />
 </.modal>
 
-<.modal :if={@live_action == :add_player} id="team-player-modal" show on_cancel={JS.patch(~p"/teams/#{@team}")}>
+<.modal
+  :if={@live_action == :add_player}
+  id="team-player-modal"
+  show
+  on_cancel={JS.patch(~p"/teams/#{@team}")}
+>
   <.live_component
     module={Get5ApiWeb.TeamLive.PlayerFormComponent}
     id={@team.id}

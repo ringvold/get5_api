@@ -106,7 +106,7 @@ defmodule Get5Api.Teams do
 
     case result do
       {:ok, team} ->
-        {:ok, team.players}
+        {:ok, team}
 
       rest ->
         rest
