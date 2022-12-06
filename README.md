@@ -74,13 +74,20 @@ need and want to implement to be sure we find the best solution and that it is
 in alignment with the projects plans. 😄
 
 
-### Docker only
+### All in docker
+
+Run both app and database (and csgo server) in docker.
 
 1. Start the database and server with `docker-compose up`. This might take a while. 
 Enjoy some quiet time while downloading and compiling. 😄
 2. Migrate and seed database with `docker-compose run web mix ecto.setup`
 3. Go to http://localhost:4000
 4. Make some changes and check how it looks!
+
+If you also wish to run a CSGO server configured with Get5 you can uncomment
+the csgo service in `docker-compose.yml`. Note that **this image does not work on 
+M1/Apple Silicon** and the server needs to be serves somewhere else.
+Check out the repo for that image on more information about how it works: https://github.com/ringvold/csgo
 
 
 ### Elixir natively and db in docker
