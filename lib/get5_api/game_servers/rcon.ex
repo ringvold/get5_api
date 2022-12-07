@@ -4,10 +4,12 @@ defmodule Get5Api.GameServers.Rcon do
       {:ok, con} ->
         case RCON.Client.authenticate(con, password) do
           {:ok, conn, true} ->
-            {:ok, conn }
-          { :ok, _con, false} ->
+            {:ok, conn}
+
+          {:ok, _con, false} ->
             {:error, :authentication_failed}
-          end
+        end
+
       res ->
         res
         # {:error, msg }

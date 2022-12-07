@@ -2,7 +2,7 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
   alias Get5Api.Matches.Match
 
   @doc """
-
+  Generates json config for a match
   """
   @spec generate_config(%Match{}) :: map()
   def generate_config(match) do

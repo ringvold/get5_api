@@ -3,15 +3,6 @@ defmodule Get5ApiWeb.Router do
 
   import Get5ApiWeb.UserAuth
 
-  pipeline :app_browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :fetch_current_user
-  end
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -30,6 +21,11 @@ defmodule Get5ApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
+
+  scope "/", Get5ApiWeb do
+    pipe_through :api
+    get "/matches/:id/match_config", MatchController, :match_config
   end
 
   scope "/", Get5ApiWeb do
