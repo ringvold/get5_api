@@ -12,6 +12,3 @@ defmodule Get5Api.Teams.Player do
     |> cast(attrs, [:steam_id, :name])
   end
 end
-
-require Protocol
-Protocol.derive(Jason.Encoder, Get5Api.Teams.Player)

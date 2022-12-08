@@ -79,11 +79,11 @@ defmodule Get5Api.Matches.Match do
 
   @spec ensure_api_key(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
   def ensure_api_key(changeset, options \\ []) do
-    if not get_change(changeset, :api_key) do
+    if get_change(changeset, :api_key) do
       changeset
-      |> put_change(:api_key, Ecto.UUID.generate())
     else
       changeset
+      |> put_change(:api_key, Ecto.UUID.generate())
     end
   end
 
@@ -130,7 +130,6 @@ defmodule Get5Api.Matches.Match do
 
   def is_bo1_preset_with_multiple_maps(changeset, maps) do
     series_type = get_field(changeset, :series_type)
-    IO.inspect(maps)
 
     if(series_type == :bo1_preset and (maps == ["all"] or length(maps) != 1)) do
       :bo1_preset_error
@@ -139,7 +138,7 @@ defmodule Get5Api.Matches.Match do
     end
   end
 
-  def selected_maps_count_matches_series_type(changeset, ["all"]) do
+  def selected_maps_count_matches_series_type(_changeset, ["all"]) do
     :minimum_maps_valid
   end
 

@@ -24,11 +24,6 @@ defmodule Get5ApiWeb.Router do
   end
 
   scope "/", Get5ApiWeb do
-    pipe_through :api
-    get "/matches/:id/match_config", MatchController, :match_config
-  end
-
-  scope "/", Get5ApiWeb do
     pipe_through [:browser]
 
     live_session :authenticated,
@@ -55,6 +50,11 @@ defmodule Get5ApiWeb.Router do
       live "/teams/:id/show/edit", TeamLive.Show, :edit
       live "/teams/:id/players/new", TeamLive.Show, :add_player
     end
+  end
+
+  scope "/", Get5ApiWeb do
+    pipe_through :api
+    get "/matches/:id/match_config", MatchController, :match_config
   end
 
   scope "/" do
