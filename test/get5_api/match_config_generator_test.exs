@@ -16,7 +16,7 @@ defmodule Get5Api.MatchConfigGeneratorTest do
     id: "id-123-1223-uuid",
     series_type: :bo1,
     side_type: :standard,
-    veto_map_pool: ["de_mirage", "de_inferno", "de_dust"],
+    maplist: ["de_mirage", "de_inferno", "de_dust"],
     team1: @team1,
     team2: @team2
   }

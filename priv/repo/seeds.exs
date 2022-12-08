@@ -31,7 +31,6 @@ astralis =
     name: "Astralis",
     players: [
       %Player{steam_id: "83622425197", name: "Dev1ce"},
-      %Player{steam_id: "76561198028458803", name: "BlameF"},
       %Player{steam_id: "76561198010511021", name: "gla1ve"},
       %Player{steam_id: "76561197979669175", name: "k0nfig"},
       %Player{steam_id: "76561198028458803", name: "blameF"},
