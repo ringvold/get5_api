@@ -4,7 +4,8 @@
 FROM hexpm/elixir:1.14.2-erlang-25.1.2-alpine-3.16.2 AS build
 
 # install build dependencies
-RUN apk add --no-cache build-base
+# git needed for getting ueberauth_steam
+RUN apk add --no-cache build-base git
 
 # prepare build dir
 WORKDIR /app
