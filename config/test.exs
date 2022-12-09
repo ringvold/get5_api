@@ -26,3 +26,6 @@ config :swoosh, :api_client, false
 
 # Print only warnings and errors during test
 config :logger, level: :warning
+
+
+System.put_env("SECRET_KEY_BASE", "+kftAeXQN4AFyY0ROBKkx62sd1AxJxk37jvAp8iN0MFm3cs13rXbEX2jtCS0P2xf")

@@ -1,4 +1,5 @@
 defmodule Get5Api.GameServers.Rcon do
+
   def connect(host, password, port \\ 27015) do
     case RCON.Client.connect(host, port, multi: false) do
       {:ok, con} ->
