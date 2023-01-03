@@ -74,7 +74,6 @@ defmodule Get5Api.GameServers do
     game_server
     |> GameServer.update_changeset(attrs)
     |> Repo.update()
-    |> dbg
   end
 
   @doc """

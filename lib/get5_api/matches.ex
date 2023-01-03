@@ -7,6 +7,7 @@ defmodule Get5Api.Matches do
   alias Get5Api.Repo
 
   alias Get5Api.Matches.Match
+  alias Get5Api.GameServers.Get5Client
 
   @doc """
   Returns the list of matches.
@@ -59,7 +60,16 @@ defmodule Get5Api.Matches do
          |> Match.changeset(attrs)
          |> Repo.insert() do
       {:ok, match} ->
-        {:ok, Repo.preload(match, [:game_server, :team1, :team2])}
+        preloaded = Repo.preload(match, [:game_server, :team1, :team2])
+
+        case Get5Client.start_match(match) do
+          {:ok, _con} ->
+            # TODO: Finish this
+            {:ok, preloaded}
+
+          res ->
+            res
+        end
 
       result ->
         result

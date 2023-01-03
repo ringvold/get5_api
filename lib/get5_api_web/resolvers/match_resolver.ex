@@ -1,6 +1,5 @@
 defmodule Get5ApiWeb.MatchResolver do
   alias Get5Api.Matches
-  alias Get5Api.Teams
 
   def all_matches(_root, _args, _info) do
     matches = Matches.list_matches()
