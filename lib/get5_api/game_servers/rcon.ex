@@ -25,17 +25,4 @@ defmodule Get5Api.GameServers.Rcon do
   def status(conn) do
     RCON.Client.exec(conn, "status")
   end
-
-  def get5_status(conn) do
-    case RCON.Client.exec(conn, "get5_status") do
-      {:ok, _con, response} ->
-        response
-        |> String.split("\nL")
-        |> hd
-        |> Jason.decode!
-
-      error ->
-        error
-    end
-  end
 end

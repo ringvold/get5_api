@@ -1,5 +1,14 @@
 import Config
 
+# Uncomment and modify if needed to get correct IP for testing locally
+# My machine has the local network IP that my test csgo server can reach at
+# index 1 in the list
+# {:ok, [_,{ip,_,_},_] } = :inet.getif
+# {a,b,c,d} = ip
+# ip = "#{a}.#{b}.#{c}.#{d}"
+# config :get5_api, Get5ApiWeb.Endpoint,
+#   url: [host: ip]
+
 if config_env() == :prod do
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||

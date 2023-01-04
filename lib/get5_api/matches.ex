@@ -56,23 +56,12 @@ defmodule Get5Api.Matches do
 
   """
   def create_match(attrs \\ %{}) do
-    case %Match{}
-         |> Match.changeset(attrs)
-         |> Repo.insert() do
-      {:ok, match} ->
-        preloaded = Repo.preload(match, [:game_server, :team1, :team2])
-
-        case Get5Client.start_match(match) do
-          {:ok, _con} ->
-            # TODO: Finish this
-            {:ok, preloaded}
-
-          res ->
-            res
-        end
-
-      result ->
-        result
+    with {:ok, match} <- %Match{}
+           |> Match.changeset(attrs)
+           |> Repo.insert(),
+        preloaded = Repo.preload(match, [:game_server, :team1, :team2]),
+        {:ok, _res } <- Get5Client.start_match(match) do
+          {:ok, match}
     end
   end
 
