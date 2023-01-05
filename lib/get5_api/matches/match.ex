@@ -75,10 +75,12 @@ defmodule Get5Api.Matches.Match do
     |> validate_map_pool()
     |> validate_different_teams()
     |> ensure_api_key()
+    # Set manually for now
+    |> put_change(:start_time, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 
   @spec ensure_api_key(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()
-  def ensure_api_key(changeset, options \\ []) do
+  def ensure_api_key(changeset, _options \\ []) do
     if get_change(changeset, :api_key) do
       changeset
     else

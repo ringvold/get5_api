@@ -56,12 +56,25 @@ defmodule Get5Api.Matches do
 
   """
   def create_match(attrs \\ %{}) do
+    # TODO: check to match before starting new (or put in match validation)
     with {:ok, match} <- %Match{}
            |> Match.changeset(attrs)
            |> Repo.insert(),
-        preloaded = Repo.preload(match, [:game_server, :team1, :team2]),
-        {:ok, _res } <- Get5Client.start_match(match) do
-          {:ok, match}
+        preloaded = Repo.preload(match, [:game_server, :team1, :team2]) do
+          start_match_if_time(preloaded)
+    end
+  end
+
+  defp start_match_if_time(match) do
+    if DateTime.compare(DateTime.utc_now(), match.start_time) == :gt do
+      case Get5Client.start_match(match) do
+        {:ok, match} ->
+          {:ok, :started, match}
+        err ->
+           err
+       end
+    else
+      {:ok, :delayed, match.start_time}
     end
   end
 

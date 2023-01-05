@@ -132,10 +132,16 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
 
   defp save_match(socket, :new, match_params) do
     case Matches.create_match(match_params) do
-      {:ok, _match} ->
+      {:ok, :delayed, time} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Match created successfully")
+         |> put_flash(:info, "Match created successfully. Match starts at #{time}")
+         |> push_navigate(to: socket.assigns.navigate)}
+
+      {:ok, :started, _match} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Match created and started on the server")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
