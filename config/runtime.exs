@@ -1,13 +1,18 @@
 import Config
 
-# Uncomment and modify if needed to get correct IP for testing locally
+# Get correct IP for testing locally. You might need to modify this for your machine.
 # My machine has the local network IP that my test csgo server can reach at
-# index 1 in the list
-# {:ok, [_,{ip,_,_},_] } = :inet.getif
-# {a,b,c,d} = ip
-# ip = "#{a}.#{b}.#{c}.#{d}"
-# config :get5_api, Get5ApiWeb.Endpoint,
-#   url: [host: ip]
+# index 1 in the list.
+if System.get_env("GET5API_IP_FIX") == "true" do
+  IO.puts "Using IP fix for local testing"
+  {:ok, [_,{ip,_,_},_] } = :inet.getif
+  {a,b,c,d} = ip
+  ip = "#{a}.#{b}.#{c}.#{d}"
+  IO.puts "IP address: #{ip}"
+  config :get5_api, Get5ApiWeb.Endpoint,
+  url: [host: ip]
+end
+
 
 if config_env() == :prod do
   secret_key_base =
