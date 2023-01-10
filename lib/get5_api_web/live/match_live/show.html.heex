@@ -2,11 +2,35 @@
   <%= @match.team1.name %> vs <%= @match.team2.name %>
   <:subtitle>This is a match record from your database.</:subtitle>
   <:actions>
+    <.button
+      phx-click="start_match"
+      phx-disable-with="Loading..."
+      data-confirm="Are you sure you want to end the match?">
+        Start match
+    </.button>
+    <.button
+      phx-click="end_match"
+      phx-disable-with="Loading..."
+      data-confirm="Are you sure you want start the match?">
+        End match
+    </.button>
+    <.button phx-click="get_status" phx-disable-with="Loading...">Check status</.button>
     <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit match</.button>
     </.link>
   </:actions>
 </.header>
+
+<%= if @status do %>
+  <%= if @status["gamestate"] == "none" do %>
+    <div>Match is not running on server</div>
+  <% else %>
+    <!-- Check if match id matches the one on the server -->
+    <!-- Show some of the info -->
+    <p>Match is running on server.</p>
+    <p>Game state: <%= @status["gamestate"] %></p>
+  <% end %>
+<% end %>
 
 <.list>
   <:item title="Team 1"><%= @match.team1.name %></:item>

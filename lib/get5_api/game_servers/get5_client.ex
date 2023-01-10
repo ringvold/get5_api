@@ -8,36 +8,50 @@ defmodule Get5Api.GameServers.Get5Client do
   def start_match(match) do
     url = "#{Endpoint.url()}/matches/#{match.id}/match_config"
     command = "get5_loadmatch_url \"#{url}\" \"Authorization\" \"Bearer #{match.api_key}\""
+    Logger.info("Starting match on server #{match.game_server.name}")
 
     with {:ok, conn} <- connect(match.game_server),
          {:ok, con, _result} <- Rcon.exec(conn, command),
-         {:ok, result} <- status(con, sleep: true) do
+         # Wait for match config to be fetched and match started before checking status
+         # This should maybe be polling for status until the match is started
+         Process.sleep(1000),
+         {:ok, result} <- status(match.game_server, con) do
       {:ok, result}
     end
   end
 
   def end_match(match) do
-    {:ok, conn} = connect(match.game_server)
-    case Rcon.exec(conn, "get5_endmatch") do
-      {:ok, _con, res} ->
-        if String.contains?(res, "An admin force-ended the match") do
+    with {:ok, conn} <- connect(match.game_server),
+         {:ok, _con, res} <- Rcon.exec(conn, "get5_endmatch") do
+      cond do
+        String.contains?(res, "An admin force-ended the match") ->
           {:ok, "Match ended"}
-        else
-          {:error, "Failed to end match"}
-        end
 
+        String.contains?(res, "No match is configured; nothing to end") ->
+          {:error, "No match is configured; nothing to end"}
+
+        true ->
+          {:error, "Failed to end match"}
+      end
+    else
       err ->
         Logger.error("Failed to end match: #{inspect(err)}")
         {:error, "Failed to end match"}
     end
   end
 
-  def status(conn, opt \\ []) do
-    # Do polling instead?
-    if opt[:sleep] == true do
-      Process.sleep(1000)
+  def status(game_server, conn \\ nil) do
+    if conn != nil do
+      _status(conn)
+    else
+      case connect(game_server) do
+        {:ok, conn} -> _status(conn)
+        err -> err
+      end
     end
+  end
 
+  defp _status(conn) do
     with {:ok, _con, response} <- RCON.Client.exec(conn, "get5_status"),
          {:ok, response} <- response_to_json(response) do
       {:ok, response}
@@ -54,6 +68,14 @@ defmodule Get5Api.GameServers.Get5Client do
   @spec connect(%GameServer{}) :: tuple()
   def connect(server) do
     password = Encryption.decrypt(server.hashed_rcon_password)
-    Rcon.connect(server.host, password, server.port)
+
+    case Rcon.connect(server.host, password, server.port) do
+      {:ok, conn} ->
+        {:ok, conn}
+
+      {:error, :econnrefused} ->
+        # Move to connect func?
+        {:error, "Server refused the connection. Is it online?"}
+    end
   end
 end

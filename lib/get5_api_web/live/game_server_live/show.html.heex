@@ -1,9 +1,16 @@
 <.header>
-  Game server <%= @game_server.name %>
-  <:subtitle>This is a game_server record from your database.</:subtitle>
+  <%= @game_server.name %>
+  <:subtitle>
+    <%= if @status do %>
+      <%= if @status["gamestate"] == "none" do %>
+        No active match.
+      <% end %>
+      Plugin version: <%= @status["plugin_version"] %>
+    <% end %>
+  </:subtitle>
   <:actions>
     <.link patch={~p"/game_servers/#{@game_server}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit game_server</.button>
+      <.button>Edit server</.button>
     </.link>
   </:actions>
 </.header>
