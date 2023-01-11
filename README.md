@@ -4,12 +4,12 @@
 
 This will be a web panel for the [splewis/get5](https://splewis.github.io/get5) CSGO sourcemod plugin.
 
-Get5Api aims to replace parts of [splewis/get5-web] and [PhlexPlexico/G5API] 
-and implement new feature as needs arise. It is actuallt not just an API but 
-also a web site. There will be a GraphQL API further down the road for chat 
+Get5Api aims to replace parts of [splewis/get5-web] and [PhlexPlexico/G5API]/[PhlexPlexico/G5V] 
+and implement new features as needs arise. It is actuallt not just an API but 
+also a web site. There will be a GraphQL-based API further down the road for chat 
 bots and other use cases.
 
-This application is written with [Phoenix](https://www.phoenixframework.org/) and Postgresql.
+This application is written with [Phoenix](https://www.phoenixframework.org/) and PostgreSQL.
 
 ## Plan (short version)
 
@@ -26,12 +26,13 @@ starting point for a lot of similar projects. It is now old and unmaintained
 so a fresh start is needed.
 
 This project is inspired by [PhlexPlexico/G5API] but with the wish to use other 
-technologies it made sense to create a seperate project. I prefere functional 
+technologies it made sense to create a seperate project. I prefer functional 
 progamming and Elixir has a great web framework in Phoenix. Using this project 
 to get familiar with LiveView. 😄
 
-[PhlexPlexico/G5API]: https://github.com/PhlexPlexico/G5API
 [splewis/get5-web]: https://github.com/splewis/get5-web
+[PhlexPlexico/G5API]: https://github.com/PhlexPlexico/G5API
+[PhlexPlexico/G5V]: https://github.com/PhlexPlexico/G5V
 
 
 ## Getting started
@@ -85,8 +86,8 @@ Enjoy some quiet time while downloading and compiling. 😄
 4. Make some changes and check how it looks!
 
 If you also wish to run a CSGO server configured with Get5 you can uncomment
-the csgo service in `docker-compose.yml`. Note that **this image does not work on 
-M1/Apple Silicon** and the server needs to be serves somewhere else.
+the csgo service in `docker-compose.yml`. ***Note:** this image does not work on 
+M1/Apple Silicon and the server needs to be serves somewhere else.*
 Check out the repo for that image on more information about how it works: https://github.com/ringvold/csgo
 
 
