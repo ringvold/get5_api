@@ -21,14 +21,14 @@ defmodule Get5ApiWeb.CoreComponents do
       <ul class="flex items-center gap-4">
         <%= if @current_user do %>
           <li>
-            <p class="text-[0.8125rem] font-semibold leading-6 text-zinc-900">
+            <p class="text-[0.8125rem] font-semibold leading-6">
               <%= @current_user.email %>
             </p>
           </li>
           <li>
             <.link
               navigate={~p"/users/settings"}
-              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              class="text-[0.8125rem] font-semibold leading-6 hover:text-zinc-700 dark:hover:text-white"
             >
               Settings
             </.link>
@@ -36,7 +36,7 @@ defmodule Get5ApiWeb.CoreComponents do
           <li>
             <.link
               href={~p"/users/log_out"}
-              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              class="text-[0.8125rem] font-semibold leading-6 hover:text-zinc-700 dark:hover:text-white"
               method="delete"
             >
               Log out
@@ -46,7 +46,7 @@ defmodule Get5ApiWeb.CoreComponents do
           <li>
             <.link
               navigate={~p"/users/register"}
-              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              class="text-[0.8125rem] font-semibold leading-6 hover:text-zinc-700 dark:hover:text-white"
             >
               Register
             </.link>
@@ -54,7 +54,7 @@ defmodule Get5ApiWeb.CoreComponents do
           <li>
             <.link
               navigate={~p"/users/log_in"}
-              class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              class="text-[0.8125rem] font-semibold leading-6 hover:text-zinc-700 dark:hover:text-white"
             >
               Log in
             </.link>
@@ -99,7 +99,7 @@ defmodule Get5ApiWeb.CoreComponents do
   def modal(assigns) do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} class="relative z-50 hidden">
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 dark:bg-zinc-700/90 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -116,7 +116,7 @@ defmodule Get5ApiWeb.CoreComponents do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-white p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+              class={["hidden relative rounded-2xl bg-white dark:bg-zinc-900 p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"]}
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -130,10 +130,10 @@ defmodule Get5ApiWeb.CoreComponents do
               </div>
               <div id={"#{@id}-content"}>
                 <header :if={@title != []}>
-                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800">
+                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800 dark:text-zinc-100">
                     <%= render_slot(@title) %>
                   </h1>
-                  <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+                  <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                     <%= render_slot(@subtitle) %>
                   </p>
                 </header>
@@ -151,7 +151,7 @@ defmodule Get5ApiWeb.CoreComponents do
                   <.link
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
-                    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover-text-white"
                   >
                     <%= render_slot(cancel) %>
                   </.link>
@@ -242,7 +242,7 @@ defmodule Get5ApiWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 bg-white mt-10">
+      <div class="space-y-8 bg-white dark:bg-zinc-900 mt-10">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           <%= render_slot(action, f) %>
@@ -273,6 +273,7 @@ defmodule Get5ApiWeb.CoreComponents do
       class={[
         "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:hover:text-black",
         @class
       ]}
       {@rest}
@@ -331,7 +332,7 @@ defmodule Get5ApiWeb.CoreComponents do
     assigns = assign_new(assigns, :checked, fn -> input_equals?(assigns.value, "true") end)
 
     ~H"""
-    <label phx-feedback-for={@name} class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+    <label phx-feedback-for={@name} class="flex items-center gap-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
       <input type="hidden" name={@name} value="false" />
       <input
         type="checkbox"
@@ -339,7 +340,7 @@ defmodule Get5ApiWeb.CoreComponents do
         name={@name}
         value="true"
         checked={@checked}
-        class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+        class="rounded border-zinc-300 text-zinc-900 dark:text-zinc-100 focus:ring-zinc-900"
         {@rest}
       />
       <%= @label %>
@@ -354,7 +355,7 @@ defmodule Get5ApiWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
+        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white dark:bg-zinc-900 rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >
@@ -377,7 +378,8 @@ defmodule Get5ApiWeb.CoreComponents do
           input_border(@errors),
           "mt-2 block min-h-[6rem] w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
           "text-zinc-900 focus:border-zinc-400 focus:outline-none focus:ring-4 focus:ring-zinc-800/5 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5"
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
+          "dark:text-zinc-100 dark:bg-zinc-900"
         ]}
         {@rest}
       >
@@ -401,7 +403,8 @@ defmodule Get5ApiWeb.CoreComponents do
           input_border(@errors),
           "mt-2 block w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5"
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
+          "dark:text-zinc-100 dark:bg-zinc-900 dark:placeholder:text"
         ]}
         {@rest}
       />
@@ -424,7 +427,7 @@ defmodule Get5ApiWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 dark:text-zinc-300">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -437,7 +440,7 @@ defmodule Get5ApiWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-rose-600">
+    <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-rose-600 dark:text-rose-500">
       <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-rose-500" />
       <%= render_slot(@inner_block) %>
     </p>
@@ -457,10 +460,10 @@ defmodule Get5ApiWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-xl font-semibold leading-8 text-zinc-800 dark:text-zinc-100">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
@@ -493,17 +496,20 @@ defmodule Get5ApiWeb.CoreComponents do
     ~H"""
     <div id={@id} class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="mt-11 w-[40rem] sm:w-full">
-        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
+        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500 dark:text-zinc-100">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
-        <tbody class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700">
+        <tbody class={[
+          "relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700",
+          "dark:divide-zinc-700 dark:text-zinc-100"
+        ]}>
           <tr
             :for={row <- @rows}
             id={"#{@id}-#{Phoenix.Param.to_param(row)}"}
-            class="relative group hover:bg-zinc-50"
+            class="relative group hover:bg-zinc-50 dark:hover:bg-zinc-900"
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
@@ -511,11 +517,14 @@ defmodule Get5ApiWeb.CoreComponents do
               class={["p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div :if={i == 0}>
-                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-900 sm:rounded-l-xl" />
+                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-900 sm:rounded-r-xl" />
               </div>
               <div class="block py-4 pr-6">
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class={[
+                  "relative",
+                  i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100 dark:hover:text-white"
+                ]}>
                   <%= render_slot(col, row) %>
                 </span>
               </div>
@@ -524,7 +533,10 @@ defmodule Get5ApiWeb.CoreComponents do
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class={[
+                    "relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700",
+                    "dark:text-zinc-100 dark:hover:text-white"
+                  ]}
                 >
                   <%= render_slot(action, row) %>
                 </span>
@@ -556,8 +568,13 @@ defmodule Get5ApiWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500"><%= item.title %></dt>
-          <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500 dark:text-zinc-400"><%= item.title %></dt>
+          <dd class={[
+            "text-sm leading-6 text-zinc-700",
+            "dark:text-zinc-200 "
+          ]}>
+            <%= render_slot(item) %>
+          </dd>
         </div>
       </dl>
     </div>
@@ -579,7 +596,10 @@ defmodule Get5ApiWeb.CoreComponents do
     <div class="mt-16">
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        class={[
+          "text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700",
+          "dark:text-zinc-200 dark:hover:text-white"
+        ]}
       >
         <Heroicons.arrow_left solid class="w-3 h-3 stroke-current inline" />
         <%= render_slot(@inner_block) %>

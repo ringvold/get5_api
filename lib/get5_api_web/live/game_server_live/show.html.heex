@@ -21,7 +21,7 @@
   <:item title="Port"><%= @game_server.port %></:item>
   <:item title="Rcon password">
     <div class="flex group items-center">
-      <code class="bg-gray-200 p-1 font-mono cursor-pointer" phx-click="show_password">
+      <code class="bg-gray-200 dark:bg-gray-700 p-1 font-mono cursor-pointer" phx-click="show_password">
         <%= if @show_password do %>
           <%= @rcon_password %>
         <% else %>
