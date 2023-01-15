@@ -15,6 +15,7 @@ defmodule Get5Api.Matches.Match do
     field(:api_key, :string)
     field(:end_time, :utc_datetime)
     field(:enforce_teams, :boolean, default: false)
+    field(:matchid, :integer)
     field(:max_maps, :integer)
     field(:min_player_ready, :integer)
 

@@ -4,17 +4,17 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
   @doc """
   Generates json config for a match
 
-  matchid is optional
   From the Get5 documentation about matchid:
   The ID of the match. This determines the matchid parameter in all forwards and
   events. If you use the MySQL extension, you should leave this field blank
   (or omit it), as match IDs will be assigned automatically. If you do want to
-  assign match IDs from another source, they must be integers (in a string) and
+  assign match IDs from another source, they **must** be integers (in a string) and
   must increment between matches.
   """
   @spec generate_config(%Match{}) :: map()
   def generate_config(match) do
     %{
+      matchid: Integer.to_string(match.matchid),
       maplist: match.veto_map_pool,
       num_maps: Match.series_type_to_max_maps(match.series_type)
     }

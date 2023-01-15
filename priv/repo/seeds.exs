@@ -67,6 +67,7 @@ match =
     title: "Genesis vs Astralis",
     series_type: :bo1,
     spectator_ids: ["92034275", "02340435934"],
-    game_server_id: server.id
+    game_server_id: server.id,
+    veto_map_pool: ["de_dust2"]
   }
   |> Repo.insert!()

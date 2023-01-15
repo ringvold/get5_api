@@ -4,6 +4,7 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
   def change do
     create table(:matches, primary_key: false) do
       add :id, :binary_id, primary_key: true
+      add :matchid, :serial
       add :title, :string
       add :series_type, :string
       add :side_type, :string
