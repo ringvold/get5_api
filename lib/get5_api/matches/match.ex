@@ -76,8 +76,6 @@ defmodule Get5Api.Matches.Match do
     |> validate_map_pool()
     |> validate_different_teams()
     |> ensure_api_key()
-    # Set manually for now
-    |> put_change(:start_time, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 
   @spec ensure_api_key(Ecto.Changeset.t(), any) :: Ecto.Changeset.t()

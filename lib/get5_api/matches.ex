@@ -61,20 +61,12 @@ defmodule Get5Api.Matches do
            |> Match.changeset(attrs)
            |> Repo.insert(),
         preloaded = Repo.preload(match, [:game_server, :team1, :team2]) do
-          start_match_if_time(preloaded)
-    end
-  end
-
-  defp start_match_if_time(match) do
-    if DateTime.compare(DateTime.utc_now(), match.start_time) == :gt do
-      case Get5Client.start_match(match) do
+          case Get5Client.start_match(preloaded) do
         {:ok, match} ->
           {:ok, :started, match}
         err ->
            err
        end
-    else
-      {:ok, :delayed, match.start_time}
     end
   end
 
