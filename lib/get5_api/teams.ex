@@ -19,7 +19,10 @@ defmodule Get5Api.Teams do
 
   """
   def list_teams do
-    Repo.all(Team)
+    Repo.all(
+      from t in Team,
+        order_by: [asc: :inserted_at]
+    )
   end
 
   @doc """

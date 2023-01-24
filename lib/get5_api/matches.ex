@@ -21,7 +21,8 @@ defmodule Get5Api.Matches do
   def list_matches do
     Repo.all(
       from m in Match,
-        preload: [:team1, :team2, :game_server]
+        preload: [:team1, :team2, :game_server],
+        order_by: [asc: :inserted_at]
     )
   end
 

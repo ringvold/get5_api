@@ -19,7 +19,8 @@ defmodule Get5Api.GameServers do
 
   """
   def list_game_servers do
-    Repo.all(GameServer)
+    Repo.all(from g in GameServer,
+        order_by: [asc: :inserted_at])
   end
 
   @doc """
