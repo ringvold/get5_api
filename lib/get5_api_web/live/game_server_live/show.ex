@@ -22,6 +22,7 @@ defmodule Get5ApiWeb.GameServerLive.Show do
      |> assign(:rcon_password, "")}
   end
 
+  @impl true
   def handle_event("show_password", _params, socket) do
     if socket.assigns.show_password do
       {:noreply,
