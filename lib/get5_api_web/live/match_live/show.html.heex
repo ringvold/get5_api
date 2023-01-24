@@ -4,10 +4,9 @@
     <%= if @status do %>
       <%= if @status["gamestate"] != "none" and @status["matchid"] == Integer.to_string(@match.matchid
       ) do %>
-        <p>Match is running on server.</p>
-        <p>Game state: <%= @status["gamestate"] %></p>
+        Match is running on server. Game state: <%= @status["gamestate"] %>
       <% else %>
-        <div>Match is not running on server</div>
+        Match is not running on server
       <% end %>
     <% end %>
   </:subtitle>
