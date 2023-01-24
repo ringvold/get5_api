@@ -1,6 +1,16 @@
 <.header>
   <%= @match.team1.name %> vs <%= @match.team2.name %>
-  <:subtitle>This is a match record from your database.</:subtitle>
+  <:subtitle>
+    <%= if @status do %>
+      <%= if @status["gamestate"] != "none" and @status["matchid"] == Integer.to_string(@match.matchid
+      ) do %>
+        <p>Match is running on server.</p>
+        <p>Game state: <%= @status["gamestate"] %></p>
+      <% else %>
+        <div>Match is not running on server</div>
+      <% end %>
+    <% end %>
+  </:subtitle>
   <:actions>
     <.button
       phx-click="start_match"
@@ -23,15 +33,7 @@
   </:actions>
 </.header>
 
-<%= if @status do %>
-  <%= if @status["gamestate"] != "none" and @status["matchid"] == Integer.to_string(@match.matchid
-  ) do %>
-    <p>Match is running on server.</p>
-    <p>Game state: <%= @status["gamestate"] %></p>
-  <% else %>
-    <div>Match is not running on server</div>
-  <% end %>
-<% end %>
+
 
 <.list>
   <:item title="Matchid"><%= @match.matchid %></:item>
