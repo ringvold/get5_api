@@ -55,7 +55,7 @@ defmodule Get5Api.MixProject do
       {:absinthe_error_payload, "~> 1.1"},
       {:bcrypt_elixir, "~> 3.0"},
       {:poison, "~> 5.0"},
-      {:cors_plug, "~> 2.0"},
+      {:cors_plug, "~> 3.0"},
       {:ueberauth, "~> 0.7"},
       {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
       {:rcon, "~> 0.4.0"}
