@@ -509,7 +509,7 @@ defmodule Get5ApiWeb.CoreComponents do
           <tr
             :for={row <- @rows}
             id={"#{@id}-#{Phoenix.Param.to_param(row)}"}
-            class="relative group hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            class="relative group hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
@@ -517,8 +517,8 @@ defmodule Get5ApiWeb.CoreComponents do
               class={["p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div :if={i == 0}>
-                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-900 sm:rounded-l-xl" />
-                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-900 sm:rounded-r-xl" />
+                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-800 sm:rounded-l-xl" />
+                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-800 sm:rounded-r-xl" />
               </div>
               <div class="block py-4 pr-6">
                 <span class={[
