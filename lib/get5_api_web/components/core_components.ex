@@ -60,6 +60,10 @@ defmodule Get5ApiWeb.CoreComponents do
             </.link>
           </li>
         <% end %>
+          <li id="theme" phx-click={JS.dispatch("toggle_darkmode")}>
+            <Heroicons.moon mini class="hidden dark:block w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all" />
+            <Heroicons.sun mini class="dark:hidden w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all" />
+          </li>
       </ul>
     </div>
     """
@@ -517,8 +521,8 @@ defmodule Get5ApiWeb.CoreComponents do
               class={["p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div :if={i == 0}>
-                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-800 sm:rounded-l-xl" />
-                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 group-hover:dark:bg-zinc-800 sm:rounded-r-xl" />
+                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-l-xl" />
+                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-r-xl" />
               </div>
               <div class="block py-4 pr-6">
                 <span class={[

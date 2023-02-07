@@ -42,3 +42,24 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+
+// Theme / Dark mode
+
+// Use manually selected theme or use system settings
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark')
+} else {
+    document.documentElement.classList.remove('dark')
+}
+
+// Toggle theme and store preference
+window.addEventListener("toggle_darkmode", (event) => {
+    if (localStorage.theme === 'dark') {
+        localStorage.theme = 'light'
+        document.documentElement.classList.remove('dark')
+    } else {
+        localStorage.theme = 'dark'
+        document.documentElement.classList.add('dark')
+    }
+});
+
