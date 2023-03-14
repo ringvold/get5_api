@@ -19,7 +19,7 @@ defmodule Get5Api.Application do
       Get5ApiWeb.Endpoint,
       # Start a worker by calling: Get5Api.Worker.start_link(arg)
       # {Get5Api.Worker, arg}
-    ] ++ env_children(Mix.env())
+    ] ++ env_children(System.get_env("MIX_ENV"))
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -34,7 +34,7 @@ defmodule Get5Api.Application do
     :ok
   end
 
-  defp env_children(:test) do
+  defp env_children("test") do
     [
       # TCP lib for Rcon mock
       {ThousandIsland, port: 27015, handler_module: Get5Api.RconServerMock}
