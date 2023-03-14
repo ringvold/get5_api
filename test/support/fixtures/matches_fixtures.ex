@@ -12,7 +12,6 @@ defmodule Get5Api.MatchesFixtures do
   Generate a match.
   """
   def match_fixture(attrs \\ %{}) do
-    {:ok, match} =
       attrs
       |> Enum.into(%{
         api_key: "some api_key",
@@ -24,7 +23,5 @@ defmodule Get5Api.MatchesFixtures do
         game_server_id: game_server_fixture().id
       })
       |> Get5Api.Matches.create_match()
-
-    match
   end
 end

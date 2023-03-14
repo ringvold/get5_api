@@ -6,6 +6,21 @@ defmodule Get5ApiWeb.FallbackController do
   """
   use Get5ApiWeb, :controller
 
+
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: Get5ApiWeb.ChangesetJSON)
+    |> render("error.json", changeset: changeset)
+  end
+
+  def call(conn, {:error, :invalid_payload}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON)
+    |> render(:invalid_payload)
+  end
+
   def call(conn, {:error, :bad_request}) do
     conn
     |> put_status(:bad_request)
@@ -33,4 +48,29 @@ defmodule Get5ApiWeb.FallbackController do
     |> put_view(html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON)
     |> render(:"404")
   end
+
+  def call(conn, {:error, :internal_server_error}) do
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON)
+    |> render(:"500")
+  end
+
+  def call(conn, {:error, :validation, errors}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON)
+    |> assign(:errors, errors)
+    |> render(:validation_error)
+  end
+
+  def call(conn, data) do
+    IO.inspect "Unkown fallback: #{data}"
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON)
+    |> render(:"500")
+  end
+
+
 end

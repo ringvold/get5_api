@@ -2,6 +2,7 @@ defmodule Get5Api.Matches do
   @moduledoc """
   The Matches context.
   """
+  require Logger
 
   import Ecto.Query, warn: false
   alias Get5Api.Repo
@@ -57,17 +58,27 @@ defmodule Get5Api.Matches do
 
   """
   def create_match(attrs \\ %{}) do
-    # TODO: check to match before starting new (or put in match validation)
-    with {:ok, match} <- %Match{}
+    with {:ok, match} <-
+           %Match{}
            |> Match.changeset(attrs)
-           |> Repo.insert(),
-        preloaded = Repo.preload(match, [:game_server, :team1, :team2]) do
-          case Get5Client.start_match(preloaded) do
-        {:ok, match} ->
-          {:ok, :started, match}
-        err ->
-           err
-       end
+           |> Repo.insert() do
+      {:ok, Repo.preload(match, [:game_server, :team1, :team2])}
+    else
+      err ->
+        err
+    end
+  end
+
+  def create_and_start_match(attrs \\ %{}) do
+    with {:ok, match} <-
+           create_match(attrs) do
+      case Get5Client.start_match(match) do
+        {:ok, result} -> {:ok, match, result}
+      end
+    else
+      err ->
+        Logger.error("Failed to start match: #{inspect(err)}")
+        {:error, "Something went wrong. Check the logs."}
     end
   end
 

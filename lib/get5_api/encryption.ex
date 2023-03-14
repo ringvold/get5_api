@@ -29,6 +29,8 @@ defmodule Get5Api.Encryption do
     |> :base64.encode()
   end
 
+  def decrypt(nil = _ciphertext), do: ""
+
   @doc """
   decrypts the given string of text with the given secret key
   """

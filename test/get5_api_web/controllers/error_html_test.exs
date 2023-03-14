@@ -1,13 +1,13 @@
-defmodule MyAppWeb.ErrorHTMLTest do
-  use MyAppWeb.ConnCase, async: true
+defmodule Get5ApiWeb.ErrorHTMLTest do
+  use Get5ApiWeb.ConnCase, async: true
   # Bring render_to_string/3 for testing custom views
   import Phoenix.Template
 
   test "renders 404.html" do
-    assert render_to_string(MyAppWeb.ErrorHTML, "404", "html", []) == "Not Found"
+    assert render_to_string(Get5ApiWeb.ErrorHTML, "404", "html", []) == "Not Found"
   end
 
   test "renders 500.html" do
-    assert render_to_string(MyAppWeb.ErrorHTML, "500", "html", []) == "Internal Server Error"
+    assert render_to_string(Get5ApiWeb.ErrorHTML, "500", "html", []) == "Internal Server Error"
   end
 end

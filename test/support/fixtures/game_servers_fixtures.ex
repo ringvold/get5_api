@@ -11,10 +11,10 @@ defmodule Get5Api.GameServersFixtures do
     {:ok, game_server} =
       attrs
       |> Enum.into(%{
-        host: "some host",
+        host: "localhost",
         name: "some name",
-        port: "some port",
-        rcon_password: "some rcon_password"
+        port: "27015",
+        rcon_password: "le-password"
       })
       |> Get5Api.GameServers.create_game_server()
 

@@ -4,7 +4,7 @@ defmodule Get5ApiWeb.Router do
   import Get5ApiWeb.UserAuth
 
   pipeline :browser do
-    plug :accepts, ["html"]
+    plug :accepts, ["html", "json"]
     plug :fetch_session
     plug :fetch_flash
     plug :put_root_layout, {Get5ApiWeb.Layouts, :root}
@@ -54,7 +54,8 @@ defmodule Get5ApiWeb.Router do
 
   scope "/", Get5ApiWeb do
     pipe_through :api
-    get "/matches/:id/match_config", MatchController, :match_config
+    get "/matches/:id/match-config", MatchController, :match_config
+    post "/matches/:id/series-start", MatchController, :series_start
   end
 
   scope "/" do

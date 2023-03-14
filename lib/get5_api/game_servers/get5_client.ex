@@ -76,6 +76,9 @@ defmodule Get5Api.GameServers.Get5Client do
       {:error, :econnrefused} ->
         # Move to connect func?
         {:error, "Server refused the connection. Is it online?"}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 end

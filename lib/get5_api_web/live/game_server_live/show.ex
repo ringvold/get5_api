@@ -13,12 +13,13 @@ defmodule Get5ApiWeb.GameServerLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     game_server = GameServers.get_game_server!(id)
+    send(self(), {:get_status, game_server})
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:game_server, game_server)
-     |> get_status(game_server)
      |> assign(:show_password, false)
+     |> assign(:status, :loading)
      |> assign(:rcon_password, "")}
   end
 
@@ -39,17 +40,17 @@ defmodule Get5ApiWeb.GameServerLive.Show do
     end
   end
 
-  defp get_status(socket, game_server) do
+  @impl true
+  def handle_info({:get_status, game_server}, socket) do
     case Get5Client.status(game_server) do
       {:ok, resp} ->
-         socket
-         |> assign(status: resp)
+         {:noreply,socket
+         |> assign(status: resp)}
 
       {:error, _msg} ->
-        socket
+        {:noreply, socket
           |> assign(status: nil)
-          |> put_flash(:error, "Could not fetch get5 status on server")
-
+          |> put_flash(:error, "Could not fetch get5 status from server")}
     end
   end
 

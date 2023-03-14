@@ -32,7 +32,7 @@ defmodule Get5Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.0-rc.2", override: true},
+      {:phoenix, "~> 1.7.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.8"},
       {:postgrex, ">= 0.0.0"},
@@ -58,7 +58,10 @@ defmodule Get5Api.MixProject do
       {:cors_plug, "~> 2.0"},
       {:ueberauth, "~> 0.7"},
       {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
-      {:rcon, "~> 0.4.0"}
+      {:rcon, "~> 0.4.0"},
+      {:thousand_island, "~> 0.6.2"},
+      {:tarams, "~> 1.7"},
+      {:floki, ">= 0.30.0", only: :test}
     ]
   end
 

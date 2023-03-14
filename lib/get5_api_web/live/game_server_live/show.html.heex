@@ -1,11 +1,16 @@
 <.header>
   <%= @game_server.name %>
   <:subtitle>
-    <%= if @status do %>
-      <%= if @status["gamestate"] == "none" do %>
-        No active match.
-      <% end %>
-      Plugin version: <%= @status["plugin_version"] %>
+    <%= case @status do %>
+      <% :loading -> %>
+        Loading status
+      <% nil -> %>
+        <span></span>
+      <% _ -> %>
+        <%= if @status["gamestate"] == "none" do %>
+          No active match.
+        <% end %>
+        Plugin version: <%= @status["plugin_version"] %>
     <% end %>
   </:subtitle>
   <:actions>

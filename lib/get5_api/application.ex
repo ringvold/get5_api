@@ -16,10 +16,10 @@ defmodule Get5Api.Application do
       # Start Finch
       {Finch, name: Get5Api.Finch},
       # Start the Endpoint (http/https)
-      Get5ApiWeb.Endpoint
+      Get5ApiWeb.Endpoint,
       # Start a worker by calling: Get5Api.Worker.start_link(arg)
       # {Get5Api.Worker, arg}
-    ]
+    ] ++ env_children(Mix.env())
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -33,4 +33,12 @@ defmodule Get5Api.Application do
     Get5ApiWeb.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  defp env_children(:test) do
+    [
+      # TCP lib for Rcon mock
+      {ThousandIsland, port: 27015, handler_module: Get5Api.RconServerMock}
+    ]
+  end
+  defp env_children(_), do: []
 end
