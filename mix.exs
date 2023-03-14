@@ -18,7 +18,7 @@ defmodule Get5Api.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Get5Api.Application, [:ueberauth_steam]},
+      mod: {Get5Api.Application, []},
       extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
@@ -56,11 +56,11 @@ defmodule Get5Api.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:poison, "~> 5.0"},
       {:cors_plug, "~> 2.0"},
-      {:ueberauth, "~> 0.7"},
-      {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
+      # {:ueberauth, "~> 0.7"},
+      # {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
       {:rcon, "~> 0.4.0"},
       {:socket, "~> 0.3"}, # rcon depencency
-      {:thousand_island, "~> 0.6.2"},
+      {:thousand_island, "~> 0.6.2"}, # For mocking rcon
       {:tarams, "~> 1.7"},
       {:floki, ">= 0.30.0", only: :test}
     ]
