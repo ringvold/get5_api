@@ -59,6 +59,7 @@ defmodule Get5Api.MixProject do
       {:ueberauth, "~> 0.7"},
       {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
       {:rcon, "~> 0.4.0"},
+      {:socket, "~> 0.3"}, # rcon depencency
       {:thousand_island, "~> 0.6.2"},
       {:tarams, "~> 1.7"},
       {:floki, ">= 0.30.0", only: :test}
