@@ -15,7 +15,7 @@ defmodule Get5ApiWeb.Schema.Types do
     field :team2, non_null(:team)
     field :title, non_null(:string)
     field :game_server, non_null(:game_server)
-    field :veto_map_pool, list_of(:string)
+    field :map_list, list_of(:string)
     field :series_type, non_null(:series_type)
     field :side_type, non_null(:side_type)
     field :spectator_ids, list_of(:string)

@@ -16,10 +16,10 @@ defmodule Get5ApiWeb.MatchController do
   end
 
   @series_start_params %{
-    event: [type: :string, required: true],
-    matchid: [type: :integer, required: true],
-    team1_name: [type: :string, required: true],
-    team2_name: [type: :string, required: true]
+    match_id: [type: :integer, required: true],
+    map_number: [type: :string, required: true],
+    map_name: [type: :string, required: true],
+    version_number: [type: :string, required: true]
   }
   def series_start(conn, params) do
     with {:ok, _valid_params} <- Tarams.cast(params, @series_start_params) do

@@ -15,7 +15,7 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
   def generate_config(match) do
     %{
       matchid: Integer.to_string(match.matchid),
-      maplist: match.veto_map_pool,
+      map_list: match.map_list,
       num_maps: Match.series_type_to_max_maps(match.series_type)
     }
     |> with_team(:team1, match.team1)

@@ -118,7 +118,7 @@ defmodule Get5ApiWeb.Schema do
       arg(:team1_id, non_null(:id))
       arg(:team2_id, non_null(:id))
       arg(:game_server_id, non_null(:id))
-      arg(:veto_map_pool, non_null(list_of(non_null(:string))))
+      arg(:map_list, non_null(list_of(non_null(:string))))
       arg(:series_type, :series_type)
       arg(:side_type, :side_type)
       arg(:spectator_ids, list_of(:string))

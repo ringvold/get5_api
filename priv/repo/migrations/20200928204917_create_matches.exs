@@ -8,7 +8,7 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
       add :title, :string
       add :series_type, :string
       add :side_type, :string
-      add :veto_map_pool, {:array, :string}
+      add :map_list, {:array, :string}
       add :veto_first, :string
       add :spectator_ids, {:array, :string}
       add :enforce_teams, :boolean, default: true, null: false
@@ -23,6 +23,7 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
       add :team1_id, references(:teams, on_delete: :nothing, type: :binary_id)
       add :team2_id, references(:teams, on_delete: :nothing, type: :binary_id)
       add :winner, references(:teams, on_delete: :nothing, type: :binary_id)
+      add :plugin_version, :string, default: :unknown, null: false
 
       timestamps()
     end

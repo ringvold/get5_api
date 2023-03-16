@@ -12,8 +12,8 @@ defmodule Get5Api.GameServers.Get5Client do
 
     with {:ok, conn} <- connect(match.game_server),
          {:ok, con, _result} <- Rcon.exec(conn, command),
-         # Wait for match config to be fetched and match started before checking status
-         # This should maybe be polling for status until the match is started
+         # Wait for match config to be fetched and match started before checking status.
+         # Later we will get event from server and can skip the waiting.
          Process.sleep(1000),
          {:ok, result} <- status(match.game_server, con) do
       {:ok, result}

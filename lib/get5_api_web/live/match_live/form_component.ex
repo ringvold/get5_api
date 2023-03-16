@@ -64,9 +64,9 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :veto_map_pool}}
+          field={{f, :map_list}}
           type="select"
-          label="veto_map_pool"
+          label="map_list"
           prompt="Choose a value"
           options={[
             :all,

@@ -44,7 +44,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
     status: "some status",
     title: "some title",
     veto_first: "some veto_first",
-    veto_map_pool: ["de_dust"],
+    map_list: ["de_dust"],
     team1_score: 0,
     team2_score: 0
   }
@@ -65,7 +65,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
     } do
       conn = put_req_header(conn, "authorization", "Bearer some api_key")
       conn = get(conn, ~p"/matches/#{match.id}/match-config")
-      assert %{"maplist" => ["de_dust"]} = json_response(conn, 200)
+      assert %{"map_list" => ["de_dust"]} = json_response(conn, 200)
     end
 
     test "renders errors when api_key is invalid", %{conn: conn, match: match} do

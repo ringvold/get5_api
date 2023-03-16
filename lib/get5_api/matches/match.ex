@@ -5,9 +5,10 @@ defmodule Get5Api.Matches.Match do
   alias Get5Api.GameServers.GameServer
 
   @type series_type() :: :bo1_preset | :bo1 | :bo2 | :bo3 | :bo5 | :bo7
-
-  # Side type is defined by Get5 in match schema https://github.com/splewis/get5#match-schema
+  # Side type is defined by Get5 in match schema https://splewis.github.io/get5/latest/match_schema/#schema
   @type side_type() :: :standard | :always_knife | :never_knife
+  @type status() :: :pending | :live | :cancelled | :finished
+  @type veto_first() :: :team1 | :team2 | :random
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -35,9 +36,13 @@ defmodule Get5Api.Matches.Match do
     field(:team1_score, :integer)
     field(:team2_score, :integer)
     field(:title, :string)
-    field(:veto_first, :string)
-    field(:veto_map_pool, {:array, :string})
+    field(:veto_first, Ecto.Enum,
+      values: [:team1, :team2, :random],
+      default: :team1
+      )
+    field(:map_list, {:array, :string})
     field(:winner, :binary_id)
+    field(:plugin_version, :string)
 
     belongs_to(:team1, Team)
     belongs_to(:team2, Team)
@@ -53,7 +58,7 @@ defmodule Get5Api.Matches.Match do
       :team1_id,
       :team2_id,
       :game_server_id,
-      :veto_map_pool,
+      :map_list,
       :api_key,
       :title,
       :series_type,
@@ -104,7 +109,7 @@ defmodule Get5Api.Matches.Match do
 
   @spec validate_map_pool(Ecto.Changeset.t(), Keyword.t()) :: Ecto.Changeset.t()
   def validate_map_pool(changeset, options \\ []) do
-    maps = get_field(changeset, :veto_map_pool, [])
+    maps = get_field(changeset, :map_list, [])
     maps = if maps == nil, do: [], else: maps
 
     with :bo1_preset_valid <- is_bo1_preset_with_multiple_maps(changeset, maps),
@@ -114,7 +119,7 @@ defmodule Get5Api.Matches.Match do
       :bo1_preset_error ->
         add_error(
           changeset,
-          :veto_map_pool,
+          :map_list,
           options[:bo1_preset_message] ||
             "must have exactly 1 map selected to do a bo1_preset"
         )
@@ -122,7 +127,7 @@ defmodule Get5Api.Matches.Match do
       {:minimum_maps_error, max_maps} ->
         add_error(
           changeset,
-          :veto_map_pool,
+          :map_list,
           options[:max_maps_message] ||
             "must have at least #{max_maps} maps selected to do a Bo#{max_maps}"
         )

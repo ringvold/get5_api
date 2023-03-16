@@ -41,7 +41,7 @@ defmodule Get5Api.MatchesTest do
       status: "some status",
       title: "some title",
       veto_first: "some veto_first",
-      veto_map_pool: ["de_dust"],
+      map_list: ["de_dust"],
       team1_score: 0,
       team2_score: 0,
       team1: @team1,
@@ -60,7 +60,7 @@ defmodule Get5Api.MatchesTest do
       team1_score: 0,
       team2_score: 0,
       veto_first: "some updated veto_first",
-      veto_map_pool: ["de_inferno"]
+      map_list: ["de_inferno"]
     }
     @invalid_attrs %{
       api_key: nil,
@@ -75,7 +75,7 @@ defmodule Get5Api.MatchesTest do
       status: nil,
       title: nil,
       veto_first: nil,
-      veto_map_pool: nil
+      map_list: nil
     }
 
     def match_fixture(_state \\ %{}, attrs \\ %{}) do
@@ -107,7 +107,7 @@ defmodule Get5Api.MatchesTest do
       assert match.status == "some status"
       assert match.title == "some title"
       assert match.veto_first == "some veto_first"
-      assert match.veto_map_pool == ["de_dust"]
+      assert match.map_list == ["de_dust"]
     end
 
     test "create_match/1 with invalid data returns error changeset" do
@@ -124,7 +124,7 @@ defmodule Get5Api.MatchesTest do
       assert match.spectator_ids == []
       assert match.title == "some updated title"
       assert match.veto_first == "some updated veto_first"
-      assert match.veto_map_pool == ["de_inferno"]
+      assert match.map_list == ["de_inferno"]
     end
 
     test "update_match/2 with invalid data returns error changeset" do
@@ -150,7 +150,7 @@ defmodule Get5Api.MatchesTest do
 
   #   import Get5Api.MatchesFixtures
 
-  #   @invalid_attrs %{api_key: nil, series_type: nil, side_type: nil, veto_map_pool: nil}
+  #   @invalid_attrs %{api_key: nil, series_type: nil, side_type: nil, map_list: nil}
 
   #   test "list_matches/0 returns all matches" do
   #     match = match_fixture()
@@ -163,13 +163,13 @@ defmodule Get5Api.MatchesTest do
   #   end
 
   #   test "create_match/1 with valid data creates a match" do
-  #     valid_attrs = %{api_key: "some api_key", series_type: :bo1_preset, side_type: :standard, veto_map_pool: []}
+  #     valid_attrs = %{api_key: "some api_key", series_type: :bo1_preset, side_type: :standard, map_list: []}
 
   #     assert {:ok, %Match{} = match} = Matches.create_match(valid_attrs)
   #     assert match.api_key == "some api_key"
   #     assert match.series_type == :bo1_preset
   #     assert match.side_type == :standard
-  #     assert match.veto_map_pool == []
+  #     assert match.map_list == []
   #   end
 
   #   test "create_match/1 with invalid data returns error changeset" do
@@ -178,13 +178,13 @@ defmodule Get5Api.MatchesTest do
 
   #   test "update_match/2 with valid data updates the match" do
   #     match = match_fixture()
-  #     update_attrs = %{api_key: "some updated api_key", series_type: :bo1, side_type: :always_knife, veto_map_pool: []}
+  #     update_attrs = %{api_key: "some updated api_key", series_type: :bo1, side_type: :always_knife, map_list: []}
 
   #     assert {:ok, %Match{} = match} = Matches.update_match(match, update_attrs)
   #     assert match.api_key == "some updated api_key"
   #     assert match.series_type == :bo1
   #     assert match.side_type == :always_knife
-  #     assert match.veto_map_pool == []
+  #     assert match.map_list == []
   #   end
 
   #   test "update_match/2 with invalid data returns error changeset" do

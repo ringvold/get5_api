@@ -45,7 +45,7 @@
   <:item title="Team 2"><%= @match.team2.name %></:item>
   <:item title="Series type"><%= @match.series_type %></:item>
   <:item title="Side type"><%= @match.side_type %></:item>
-  <:item title="Map pool"><%= Enum.join(@match.veto_map_pool, ", ") %></:item>
+  <:item title="Map list"><%= Enum.join(@match.map_list, ", ") %></:item>
 </.list>
 
 <.back navigate={~p"/matches"}>Back to matches</.back>
