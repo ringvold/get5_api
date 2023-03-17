@@ -4,8 +4,6 @@ defmodule Get5Api.GameServers.GameServer do
   alias Get5Api.Matches.Match
   alias Get5Api.Encryption
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "game_servers" do
     field :host, :string
     field :in_use, :boolean, default: false

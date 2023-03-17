@@ -35,7 +35,7 @@ defmodule Get5ApiWeb.GameServerLive.Show do
        |> assign(:show_password, true)
        |> assign(
          :rcon_password,
-         Encryption.decrypt(socket.assigns.game_server.hashed_rcon_password)
+         Encryption.decrypt(socket.assigns.game_server.encrypted_password)
        )}
     end
   end

@@ -53,7 +53,7 @@ astralis =
   |> Repo.insert!()
 
 server =
-  %GameServer{name: "MyServer", host: "192.168.1.2", port: "27015", rcon_password: "1234"}
+  %GameServer{name: "MyServer", host: "192.168.1.2", port: 27015, rcon_password: "1234"}
   |> Repo.insert!()
 
 match =

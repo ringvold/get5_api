@@ -4,7 +4,7 @@ defmodule Get5Api.Repo.Migrations.CreateGameServers do
   def change do
     create table(:game_servers) do
       add :name, :string
-      add :host, :string
+      add :host, :string, null: false
       add :port, :integer, default: 27015, null: false
       add :gotv_port, :integer, default: 27020, null: false
       add :encrypted_password, :string

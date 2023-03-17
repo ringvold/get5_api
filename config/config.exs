@@ -9,7 +9,6 @@ import Config
 
 config :get5_api,
   ecto_repos: [Get5Api.Repo],
-  generators: [binary_id: true],
   env: config_env(),
   encryption_key: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1"
 

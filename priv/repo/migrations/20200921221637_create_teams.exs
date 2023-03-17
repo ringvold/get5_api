@@ -3,7 +3,7 @@ defmodule Get5Api.Repo.Migrations.CreateTeams do
 
   def change do
     create table(:teams) do
-      add :name, :string
+      add :name, :string, null: false
       add :players, :map
 
       timestamps()
