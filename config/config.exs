@@ -59,13 +59,13 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 # Uberauth
-config :ueberauth, Ueberauth,
-  providers: [
-    steam: {Ueberauth.Strategy.Steam, []}
-  ]
+# config :ueberauth, Ueberauth,
+#   providers: [
+#     steam: {Ueberauth.Strategy.Steam, []}
+#   ]
 
 # Uberauth Steam strategy
-config :ueberauth, Ueberauth.Strategy.Steam, api_key: System.get_env("STEAM_API_KEY")
+# config :ueberauth, Ueberauth.Strategy.Steam, api_key: System.get_env("STEAM_API_KEY")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
