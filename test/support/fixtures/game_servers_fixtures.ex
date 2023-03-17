@@ -13,7 +13,7 @@ defmodule Get5Api.GameServersFixtures do
       |> Enum.into(%{
         host: "localhost",
         name: "some name",
-        port: "27015",
+        port: 27015,
         rcon_password: "le-password"
       })
       |> Get5Api.GameServers.create_game_server()

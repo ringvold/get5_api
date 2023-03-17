@@ -10,8 +10,6 @@ defmodule Get5Api.Matches.Match do
   @type status() :: :pending | :live | :cancelled | :finished
   @type veto_first() :: :team1 | :team2 | :random
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "matches" do
     field(:api_key, :string)
     field(:end_time, :utc_datetime)

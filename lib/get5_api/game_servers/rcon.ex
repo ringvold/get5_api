@@ -5,9 +5,7 @@ defmodule Get5Api.GameServers.Rcon do
 
   @spec connect(Socket.Address.t(), :inet.port_number()) ::
           {:ok, connection} | {:error, %Socket.Error{} | term()}
-  def connect(host, password, port \\ "27015") do
-    {port, _} = Integer.parse(port)
-
+  def connect(host, password, port \\ 27015) do
     case RCON.Client.connect(host, port, multi: true, timeout: 3000) do
       {:ok, con} ->
         case RCON.Client.authenticate(con, password) |> dbg do

@@ -2,9 +2,7 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
   use Ecto.Migration
 
   def change do
-    create table(:matches, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :matchid, :serial
+    create table(:matches) do
       add :title, :string
       add :series_type, :string
       add :side_type, :string
@@ -20,9 +18,10 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
       add :max_maps, :integer
       add :team1_score, :integer, default: 0
       add :team2_score, :integer, default: 0
-      add :team1_id, references(:teams, on_delete: :nothing, type: :binary_id)
-      add :team2_id, references(:teams, on_delete: :nothing, type: :binary_id)
-      add :winner, references(:teams, on_delete: :nothing, type: :binary_id)
+      add :game_server_id, references(:game_servers, on_delete: :nothing)
+      add :team1_id, references(:teams, on_delete: :nothing)
+      add :team2_id, references(:teams, on_delete: :nothing)
+      add :winner_id, references(:teams, on_delete: :nothing)
       add :plugin_version, :string, default: :unknown, null: false
 
       timestamps()
@@ -30,6 +29,6 @@ defmodule Get5Api.Repo.Migrations.CreateMatches do
 
     create index(:matches, [:team1_id])
     create index(:matches, [:team2_id])
-    create index(:matches, [:winner])
+    create index(:matches, [:winner_id])
   end
 end

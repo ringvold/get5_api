@@ -67,7 +67,7 @@ defmodule Get5Api.GameServers.Get5Client do
 
   @spec connect(%GameServer{}) :: tuple()
   def connect(server) do
-    password = Encryption.decrypt(server.hashed_rcon_password)
+    password = Encryption.decrypt(server.encrypted_password)
 
     case Rcon.connect(server.host, password, server.port) do
       {:ok, conn} ->

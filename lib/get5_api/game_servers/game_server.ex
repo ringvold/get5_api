@@ -10,9 +10,10 @@ defmodule Get5Api.GameServers.GameServer do
     field :host, :string
     field :in_use, :boolean, default: false
     field :name, :string
-    field :port, :string
+    field :port, :integer
+    field :gotv_port, :integer
     field :rcon_password, :string, virtual: true, redact: true
-    field :hashed_rcon_password, :string, redact: true
+    field :encrypted_password, :string, redact: true
 
     has_many :matches, Match
 
@@ -63,7 +64,7 @@ defmodule Get5Api.GameServers.GameServer do
 
     if encrypt_password? && password && changeset.valid? do
       changeset
-      |> put_change(:hashed_rcon_password, Encryption.encrypt(password))
+      |> put_change(:encrypted_password, Encryption.encrypt(password))
       |> delete_change(:rcon_password)
     else
       changeset

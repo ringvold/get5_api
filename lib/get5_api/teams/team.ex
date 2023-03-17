@@ -4,8 +4,6 @@ defmodule Get5Api.Teams.Team do
   alias Get5Api.Matches.Match
   alias Get5Api.Teams.Player
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "teams" do
     field :name, :string
     embeds_many :players, Player, on_replace: :delete

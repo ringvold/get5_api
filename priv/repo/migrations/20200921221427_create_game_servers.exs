@@ -2,12 +2,12 @@ defmodule Get5Api.Repo.Migrations.CreateGameServers do
   use Ecto.Migration
 
   def change do
-    create table(:game_servers, primary_key: false) do
-      add :id, :binary_id, primary_key: true
+    create table(:game_servers) do
       add :name, :string
       add :host, :string
-      add :port, :string
-      add :rcon_password, :string
+      add :port, :integer, default: 27015, null: false
+      add :gotv_port, :integer, default: 27020, null: false
+      add :encrypted_password, :string
       add :in_use, :boolean, default: false, null: false
 
       timestamps()
