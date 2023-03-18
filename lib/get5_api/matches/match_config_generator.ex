@@ -14,7 +14,7 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
   @spec generate_config(%Match{}) :: map()
   def generate_config(match) do
     %{
-      matchid: Integer.to_string(match.matchid),
+      matchid: Integer.to_string(match.id),
       map_list: match.map_list,
       num_maps: Match.series_type_to_max_maps(match.series_type)
     }
@@ -26,13 +26,13 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
     Map.put(map, field, %{
       name: team.name,
       players:
-        Enum.map(
-          team.players,
+        team.players
+        |> Enum.into(%{},
           fn player ->
             if player.name != nil do
-              %{"#{player.steam_id}": player.name}
+              {"#{player.steam_id}", player.name}
             else
-              player.steam_id
+              {"#{player.steam_id}", ""}
             end
           end
         )

@@ -5,7 +5,8 @@ defmodule Get5Api.Matches.Match do
   alias Get5Api.GameServers.GameServer
 
   @type series_type() :: :bo1_preset | :bo1 | :bo2 | :bo3 | :bo5 | :bo7
-  # Side type is defined by Get5 in match schema https://splewis.github.io/get5/latest/match_schema/#schema
+  # Side type is defined by Get5 in match schema
+  # https://splewis.github.io/get5/latest/match_schema/#schema
   @type side_type() :: :standard | :always_knife | :never_knife
   @type status() :: :pending | :live | :cancelled | :finished
   @type veto_first() :: :team1 | :team2 | :random
@@ -14,7 +15,6 @@ defmodule Get5Api.Matches.Match do
     field(:api_key, :string)
     field(:end_time, :utc_datetime)
     field(:enforce_teams, :boolean, default: false)
-    field(:matchid, :integer)
     field(:max_maps, :integer)
     field(:min_player_ready, :integer)
 

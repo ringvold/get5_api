@@ -2,8 +2,8 @@
   <%= @match.team1.name %> vs <%= @match.team2.name %>
   <:subtitle>
     <%= if @status do %>
-      <%= if @status["gamestate"] != "none" and @status["matchid"] == Integer.to_string(@match.matchid
-      ) do %>
+      <%= if @status["gamestate"] != "none" and @status["matchid"] == @match.id
+        do %>
         Match is running on server. Game state: <%= @status["gamestate"] %>
       <% else %>
         Match is not running on server
@@ -35,7 +35,7 @@
 
 
 <.list>
-  <:item title="Matchid"><%= @match.matchid %></:item>
+  <:item title="Matchid"><%= @match.id %></:item>
   <:item title="Server">
     <.link navigate={~p"/game_servers/#{@match.game_server.id}"} class="underline">
       <%= @match.game_server.name %>
