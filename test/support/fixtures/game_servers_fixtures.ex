@@ -14,6 +14,7 @@ defmodule Get5Api.GameServersFixtures do
         host: "localhost",
         name: "some name",
         port: 27015,
+        gotv_port: 27020,
         rcon_password: "le-password"
       })
       |> Get5Api.GameServers.create_game_server()
