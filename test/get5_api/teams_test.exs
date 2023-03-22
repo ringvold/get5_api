@@ -32,7 +32,7 @@ defmodule Get5Api.TeamsTest do
     test "create_team/1 with valid data creates a team" do
       assert {:ok, %Team{} = team} = Teams.create_team(@valid_attrs)
       assert team.name == "some name"
-      assert team.players == %{}
+      assert team.players == []
     end
 
     test "create_team/1 with invalid data returns error changeset" do
@@ -43,7 +43,7 @@ defmodule Get5Api.TeamsTest do
       team = team_fixture()
       assert {:ok, %Team{} = team} = Teams.update_team(team, @update_attrs)
       assert team.name == "some updated name"
-      assert team.players == %{}
+      assert team.players == []
     end
 
     test "update_team/2 with invalid data returns error changeset" do
