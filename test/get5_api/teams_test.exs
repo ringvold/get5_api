@@ -5,9 +5,17 @@ defmodule Get5Api.TeamsTest do
 
   describe "teams" do
     alias Get5Api.Teams.Team
+    alias Get5Api.Teams.Player
 
-    @valid_attrs %{name: "some name", players: %{}}
-    @update_attrs %{name: "some updated name", players: %{}}
+    @valid_attrs %{name: "some name", players: [%{steam_id: "123124123", name: "player1"}]}
+    @update_attrs %{
+      name: "some updated name",
+      players: [
+        %{steam_id: "123124123", name: "player1"},
+        %{steam_id: "22222", name: "player1"}
+      ]
+    }
+
     @invalid_attrs %{name: nil, players: nil}
 
     def team_fixture(attrs \\ %{}) do
@@ -32,7 +40,7 @@ defmodule Get5Api.TeamsTest do
     test "create_team/1 with valid data creates a team" do
       assert {:ok, %Team{} = team} = Teams.create_team(@valid_attrs)
       assert team.name == "some name"
-      assert team.players == []
+      assert team.players == [%Player{steam_id: "123124123", name: "player1"}]
     end
 
     test "create_team/1 with invalid data returns error changeset" do
@@ -43,7 +51,11 @@ defmodule Get5Api.TeamsTest do
       team = team_fixture()
       assert {:ok, %Team{} = team} = Teams.update_team(team, @update_attrs)
       assert team.name == "some updated name"
-      assert team.players == []
+
+      assert team.players == [
+               %Player{steam_id: "123124123", name: "player1"},
+               %Player{steam_id: "22222", name: "player1"}
+             ]
     end
 
     test "update_team/2 with invalid data returns error changeset" do

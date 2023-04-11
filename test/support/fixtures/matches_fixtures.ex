@@ -18,6 +18,7 @@ defmodule Get5Api.MatchesFixtures do
         series_type: :bo1_preset,
         side_type: :standard,
         map_list: ["de_dust"],
+        plugin_version: "unknown",
         team1_id: team_fixture().id,
         team2_id: team_fixture().id,
         game_server_id: game_server_fixture().id

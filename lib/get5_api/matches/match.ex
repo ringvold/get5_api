@@ -30,20 +30,23 @@ defmodule Get5Api.Matches.Match do
 
     field(:spectator_ids, {:array, :string})
     field(:start_time, :utc_datetime)
-    field(:status, :string)
+    field(:status, Ecto.Enum,
+      values: [:pending, :live, :cancelled, :finished],
+      default: :pending
+    )
     field(:team1_score, :integer)
     field(:team2_score, :integer)
     field(:title, :string)
     field(:veto_first, Ecto.Enum,
       values: [:team1, :team2, :random],
       default: :team1
-      )
+    )
     field(:map_list, {:array, :string})
-    field(:winner, :binary_id)
-    field(:plugin_version, :string)
+    field(:plugin_version, :string, default: "unknown")
 
     belongs_to(:team1, Team)
     belongs_to(:team2, Team)
+    belongs_to(:winner, Team)
     belongs_to(:game_server, GameServer)
 
     timestamps()
@@ -66,7 +69,8 @@ defmodule Get5Api.Matches.Match do
       :min_player_ready,
       :status,
       :team1_score,
-      :team2_score
+      :team2_score,
+      :plugin_version
     ])
     |> cast_assoc(:team1)
     |> cast_assoc(:team2)
@@ -74,8 +78,10 @@ defmodule Get5Api.Matches.Match do
     |> validate_required([
       :team1_id,
       :team2_id,
-      :game_server_id
+      :game_server_id,
+      :series_type
     ])
+    |> foreign_key_constraint(:game_server_id)
     |> validate_map_pool()
     |> validate_different_teams()
     |> ensure_api_key()
