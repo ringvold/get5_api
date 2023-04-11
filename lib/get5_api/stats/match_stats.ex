@@ -2,8 +2,6 @@ defmodule Get5Api.Stats.MatchStats do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "match_stats" do
     field :end_time, :utc_datetime
     field :map_name, :string
