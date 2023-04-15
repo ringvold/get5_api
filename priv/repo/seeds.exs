@@ -61,7 +61,7 @@ match =
     team1_id: genesis.id,
     team2_id: astralis.id,
     api_key: "ølaksdf",
-    status: "pending",
+    status: :pending,
     enforce_teams: true,
     max_maps: 1,
     title: "Genesis vs Astralis",

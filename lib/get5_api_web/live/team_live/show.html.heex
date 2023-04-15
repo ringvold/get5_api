@@ -1,6 +1,6 @@
 <.header>
   <%= @team.name %>
-  <:subtitle>This is a team record from your database.</:subtitle>
+  <:subtitle></:subtitle>
   <:actions>
     <.link patch={~p"/teams/#{@team}/players/new"} phx-click={JS.push_focus()}>
       <.button>Add player</.button>
