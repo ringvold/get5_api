@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.MatchLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :matches, list_matches())}
+    {:ok, stream(socket, :matches, Matches.list_matches())}
   end
 
   @impl true
@@ -33,14 +33,15 @@ defmodule Get5ApiWeb.MatchLive.Index do
   end
 
   @impl true
+  def handle_info({Get5ApiWeb.MatchLive.FormComponent, {:saved, match}}, socket) do
+    {:noreply, stream_insert(socket, :matches, match)}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     match = Matches.get_match!(id)
     {:ok, _} = Matches.delete_match(match)
 
-    {:noreply, assign(socket, :matches, list_matches())}
-  end
-
-  defp list_matches do
-    Matches.list_matches()
+    {:noreply, stream_delete(socket, :matches, match)}
   end
 end

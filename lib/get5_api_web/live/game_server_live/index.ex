@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.GameServerLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :game_servers, list_game_servers())}
+    {:ok, stream(socket, :game_servers, GameServers.list_game_servers())}
   end
 
   @impl true
@@ -33,14 +33,15 @@ defmodule Get5ApiWeb.GameServerLive.Index do
   end
 
   @impl true
+  def handle_info({Get5ApiWeb.GameServerLive.FormComponent, {:saved, game_server}}, socket) do
+    {:noreply, stream_insert(socket, :game_servers, game_server)}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     game_server = GameServers.get_game_server!(id)
     {:ok, _} = GameServers.delete_game_server(game_server)
 
-    {:noreply, assign(socket, :game_servers, list_game_servers())}
-  end
-
-  defp list_game_servers do
-    GameServers.list_game_servers()
+    {:noreply, stream_delete(socket, :game_servers, game_server)}
   end
 end

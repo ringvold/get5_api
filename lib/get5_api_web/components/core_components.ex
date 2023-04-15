@@ -527,8 +527,13 @@ defmodule Get5ApiWeb.CoreComponents do
       </.table>
   """
   attr :id, :string, required: true
-  attr :row_click, :any, default: nil
   attr :rows, :list, required: true
+  attr :row_id, :any, default: nil, doc: "the function for generating the row id"
+  attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+
+  attr :row_item, :any,
+    default: &Function.identity/1,
+    doc: "the function for mapping each row before calling the :col and :action slots"
 
   slot :col, required: true do
     attr :label, :string
@@ -537,8 +542,13 @@ defmodule Get5ApiWeb.CoreComponents do
   slot :action, doc: "the slot for showing user actions in the last table column"
 
   def table(assigns) do
+    assigns =
+      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
+        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+      end
+
     ~H"""
-    <div id={@id} class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="mt-11 w-[40rem] sm:w-full">
         <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500 dark:text-zinc-100">
           <tr>
@@ -546,35 +556,43 @@ defmodule Get5ApiWeb.CoreComponents do
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
-        <tbody class={[
-          "relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700",
-          "dark:divide-zinc-700 dark:text-zinc-100"
-        ]}>
+        <tbody
+          id={@id}
+          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+          class={[
+            "relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700",
+            "dark:divide-zinc-700 dark:text-zinc-100"
+          ]}
+        >
           <tr
             :for={row <- @rows}
-            id={"#{@id}-#{Phoenix.Param.to_param(row)}"}
-            class="relative group hover:bg-zinc-50 dark:hover:bg-zinc-800"
+            id={@row_id && @row_id.(row)}
+            class="group hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["p-0", @row_click && "hover:cursor-pointer"]}
+              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
-              <div :if={i == 0}>
-                <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-l-xl" />
-                <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-800 sm:rounded-r-xl" />
-              </div>
               <div class="block py-4 pr-6">
-                <span class={[
-                  "relative",
-                  i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100 dark:hover:text-white"
-                ]}>
-                  <%= render_slot(col, row) %>
+                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl dark:group-hover:bg-zinc-800" />
+                <span
+                  class={[
+                    "relative", i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100 dark:hover:text-white"
+                  ]}
+                >
+                  <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="p-0 w-14">
+            <td :if={@action != []} class="relative p-0 w-14">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+                <span
+                  class={[
+                    "absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl",
+                    "dark:group-hover:bg-zinc-800"
+                  ]}
+                />
                 <span
                   :for={action <- @action}
                   class={[
@@ -582,7 +600,7 @@ defmodule Get5ApiWeb.CoreComponents do
                     "dark:text-zinc-100 dark:hover:text-white"
                   ]}
                 >
-                  <%= render_slot(action, row) %>
+                  <%= render_slot(action, @row_item.(row)) %>
                 </span>
               </div>
             </td>
@@ -592,6 +610,7 @@ defmodule Get5ApiWeb.CoreComponents do
     </div>
     """
   end
+
 
   @doc """
   Renders a data list.

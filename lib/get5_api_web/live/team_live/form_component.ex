@@ -9,18 +9,17 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage team records in your database.</:subtitle>
+        <:subtitle>Create a new team</:subtitle>
       </.header>
 
       <.simple_form
-        :let={f}
-        for={@changeset}
+        for={@form}
         id="team-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={{f, :name}} type="text" label="name" />
+        <.input field={@form[:name]} type="text" label="Name" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Team</.button>
         </:actions>
@@ -36,7 +35,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -46,7 +45,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
       |> Teams.change_team(team_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"team" => team_params}, socket) do
@@ -55,27 +54,37 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
 
   defp save_team(socket, :edit, team_params) do
     case Teams.update_team(socket.assigns.team, team_params) do
-      {:ok, _team} ->
+      {:ok, team} ->
+        notify_parent({:saved, team})
+
         {:noreply,
          socket
          |> put_flash(:info, "Team updated successfully")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
   defp save_team(socket, :new, team_params) do
     case Teams.create_team(team_params) do
       {:ok, team} ->
+        notify_parent({:saved, team})
+
         {:noreply,
          socket
          |> put_flash(:info, "Team created successfully")
          |> push_navigate(to: ~p"/teams/#{team.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
+  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

@@ -13,18 +13,17 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
       </.header>
 
       <.simple_form
-        :let={f}
-        for={@changeset}
+        for={@form}
         id="game_server-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={{f, :name}} type="text" label="name" />
-        <.input field={{f, :host}} type="text" label="host" />
-        <.input field={{f, :port}} type="text" label="port" />
+        <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:host]} type="text" label="Host" />
+        <.input field={@form[:port]} type="text" label="Port" />
         <.input
-          field={{f, :rcon_password}}
+          field={@form[:rcon_password]}
           type="password"
           label="RCON password"
           placeholder="Fill to change password. Leave blank to keep current"
@@ -44,7 +43,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -54,7 +53,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
       |> GameServers.change_game_server(game_server_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"game_server" => game_server_params}, socket) do
@@ -63,27 +62,37 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
 
   defp save_game_server(socket, :edit, game_server_params) do
     case GameServers.update_game_server(socket.assigns.game_server, game_server_params) do
-      {:ok, _game_server} ->
+      {:ok, game_server} ->
+        notify_parent({:saved, game_server})
+
         {:noreply,
          socket
          |> put_flash(:info, "Game server updated successfully")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
   defp save_game_server(socket, :new, game_server_params) do
     case GameServers.create_game_server(game_server_params) do
-      {:ok, _game_server} ->
+      {:ok, game_server} ->
+        notify_parent({:saved, game_server})
+
         {:noreply,
          socket
          |> put_flash(:info, "Game server created successfully")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
+  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

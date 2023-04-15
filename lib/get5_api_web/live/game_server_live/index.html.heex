@@ -7,19 +7,23 @@
   </:actions>
 </.header>
 
-<.table id="game_servers" rows={@game_servers} row_click={&JS.navigate(~p"/game_servers/#{&1}")}>
-  <:col :let={game_server} label="Name"><%= game_server.name %></:col>
-  <:col :let={game_server} label="Host"><%= game_server.host %></:col>
-  <:col :let={game_server} label="Port"><%= game_server.port %></:col>
-  <:action :let={game_server}>
+<.table
+  id="game_servers"
+  rows={@streams.game_servers}
+  row_click={fn {_id, game_server} -> JS.navigate(~p"/game_servers/#{game_server}") end}
+>
+  <:col :let={{_id, game_server}} label="Name"><%= game_server.name %></:col>
+  <:col :let={{_id, game_server}} label="Host"><%= game_server.host %></:col>
+  <:col :let={{_id, game_server}} label="Port"><%= game_server.port %></:col>
+  <:action :let={{_id, game_server}}>
     <div class="sr-only">
       <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
     </div>
     <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
   </:action>
-  <:action :let={game_server}>
+  <:action :let={{id, game_server}}>
     <.link
-      phx-click={JS.push("delete", value: %{id: game_server.id})}
+      phx-click={JS.push("delete", value: %{id: game_server.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
       Delete

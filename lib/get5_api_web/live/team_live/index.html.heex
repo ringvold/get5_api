@@ -7,20 +7,27 @@
   </:actions>
 </.header>
 
-<.table id="teams" rows={@teams} row_click={&JS.navigate(~p"/teams/#{&1}")}>
-  <:col :let={team} label="Name"><%= team.name %></:col>
-  <:col :let={team} label="Players">
+<.table
+  id="teams"
+  rows={@streams.teams}
+  row_click={fn {_id, team} -> JS.navigate(~p"/teams/#{team}") end}
+>
+  <:col :let={{_id, team}} label="Name"><%= team.name %></:col>
+  <:col :let={{_id, team}} label="Players">
     <%= Enum.map(team.players, fn player -> player.steam_id end)
     |> Enum.join(", ") %>
   </:col>
-  <:action :let={team}>
+  <:action :let={{_id, team}}>
     <div class="sr-only">
       <.link navigate={~p"/teams/#{team}"}>Show</.link>
     </div>
     <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
   </:action>
-  <:action :let={team}>
-    <.link phx-click={JS.push("delete", value: %{id: team.id})} data-confirm="Are you sure?">
+  <:action :let={{id, team}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: team.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
       Delete
     </.link>
   </:action>

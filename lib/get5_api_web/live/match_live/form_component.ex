@@ -12,19 +12,17 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage match records in your database.</:subtitle>
       </.header>
 
       <.simple_form
-        :let={f}
-        for={@changeset}
+        for={@form}
         id="match-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
         <.input
-          field={{f, :team1_id}}
+          field={@form[:team1_id]}
           type="select"
           label="Team 1"
           prompt="Choose a value"
@@ -32,7 +30,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :team2_id}}
+          field={@form[:team2_id]}
           type="select"
           label="Team 2"
           prompt="Choose a value"
@@ -40,7 +38,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :game_server_id}}
+          field={@form[:game_server_id]}
           type="select"
           label="Server"
           prompt="Choose a value"
@@ -48,7 +46,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :side_type}}
+          field={@form[:side_type]}
           type="select"
           label="Side type"
           prompt="Who starts the match/veto?"
@@ -56,7 +54,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :series_type}}
+          field={@form[:series_type]}
           type="select"
           label="Series type"
           prompt="Who many maps will be played?"
@@ -64,7 +62,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
         />
 
         <.input
-          field={{f, :map_list}}
+          field={@form[:map_list]}
           type="select"
           label="map_list"
           prompt="Choose a value"
@@ -98,7 +96,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)
+     |> assign_form(changeset)
      |> assign(:teams, Teams.list_teams())
      |> assign(:servers, GameServers.list_game_servers())}
   end
@@ -110,7 +108,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
       |> Matches.change_match(match_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"match" => match_params}, socket) do
@@ -126,7 +124,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -139,7 +137,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
 
       {:warn, match, :domain_does_not_exist} ->
         {:noreply,
@@ -151,5 +149,9 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
          )
          |> push_navigate(to: ~p"/matches/#{match.id}")}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end
