@@ -68,11 +68,11 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
 
   defp save_team(socket, :new, team_params) do
     case Teams.create_team(team_params) do
-      {:ok, _team} ->
+      {:ok, team} ->
         {:noreply,
          socket
          |> put_flash(:info, "Team created successfully")
-         |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: ~p"/teams/#{team.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
