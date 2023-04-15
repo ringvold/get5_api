@@ -28,6 +28,15 @@ defmodule Get5ApiWeb.MatchLive.Show do
          socket
          |> assign(status: resp)}
 
+      # TODO: Common/DRY handling of nxdomain error in match events
+      {:error, :nxdomain} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+         )}
+
       {:error, msg} ->
         {:noreply,
          socket
@@ -46,6 +55,14 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> put_flash(:info, "Match started")
          |> assign(status: resp)}
 
+      {:error, :nxdomain} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+         )}
+
       {:error, msg} ->
         {:noreply,
          socket
@@ -61,6 +78,14 @@ defmodule Get5ApiWeb.MatchLive.Show do
         {:noreply,
          socket
          |> put_flash(:info, "Match ended")}
+
+      {:error, :nxdomain} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+         )}
 
       {:error, msg} ->
         {:noreply,

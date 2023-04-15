@@ -10,14 +10,16 @@ defmodule Get5Api.GameServersTest do
       host: "csgo.example.com",
       in_use: true,
       name: "some name",
-      port: "some port",
+      port: 27015,
+      gotv_port: 27020,
       rcon_password: "some rcon_password"
     }
     @update_attrs %{
       host: "10.0.0.10",
       in_use: false,
       name: "some updated name",
-      port: "some updated port",
+      port: 27016,
+      gotv_port: 27021,
       rcon_password: "some updated rcon_password"
     }
     @invalid_attrs %{host: nil, in_use: nil, name: nil, port: nil, rcon_password: nil}
@@ -46,8 +48,9 @@ defmodule Get5Api.GameServersTest do
       assert game_server.host == "csgo.example.com"
       assert game_server.in_use == true
       assert game_server.name == "some name"
-      assert game_server.port == "some port"
-      assert game_server.rcon_password == "some rcon_password"
+      assert game_server.port == 27015
+      assert game_server.gotv_port == 27020
+      assert game_server.rcon_password != ""
     end
 
     test "create_game_server/1 with invalid data returns error changeset" do
@@ -63,7 +66,7 @@ defmodule Get5Api.GameServersTest do
       assert game_server.host == "10.0.0.10"
       assert game_server.in_use == false
       assert game_server.name == "some updated name"
-      assert game_server.port == "some updated port"
+      assert game_server.port == 27016
       assert game_server.rcon_password == "some updated rcon_password"
     end
 

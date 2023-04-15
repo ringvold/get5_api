@@ -2,31 +2,33 @@ defmodule Get5Api.MatchesTest do
   use Get5Api.DataCase
 
   alias Get5Api.Matches
+  import Get5Api.GameServersFixtures
+  import Get5Api.TeamsFixtures
 
   describe "matches" do
     alias Get5Api.Matches.Match
+    alias Get5Api.Teams.Player
 
-    @team1 %{
+
+    @game_server_attrs %{
+      id: 1,
+      host: "csgo.example.com",
+      in_use: true,
+      name: "some name",
+      port: 27015,
+      gotv_port: 27020,
+      rcon_password: "some rcon_password"
+    }
+    @team1_attrs %{
       id: 1,
       name: "Team1",
-      players: %{
-        "player1" => "1",
-        "player2" => "2",
-        "player3" => "3",
-        "player4" => "4",
-        "player5" => "5"
-      }
+      players: []
     }
-    @team2 %{
+    @team2_attrs %{
       id: 2,
       name: "Team2",
-      players: %{
-        "player6" => "6",
-        "player7" => "7",
-        "player8" => "8",
-        "player9" => "9",
-        "player10" => "10"
-      }
+      players: []
+
     }
 
     @valid_attrs %{
@@ -38,14 +40,18 @@ defmodule Get5Api.MatchesTest do
       side_type: :standard,
       spectator_ids: [],
       start_time: "2010-04-17T14:00:00Z",
-      status: "some status",
+      status: :pending,
       title: "some title",
-      veto_first: "some veto_first",
+      veto_first: :team1,
       map_list: ["de_dust"],
       team1_score: 0,
       team2_score: 0,
-      team1: @team1,
-      team2: @team2
+      game_server_id: @game_server_attrs.id,
+      team1_id: @team1_attrs.id,
+      team2_id: @team2_attrs.id,
+      # game_server: @game_server_attrs,
+      # team1_id: @team1_attrs,
+      # team2_id: @team2_attrs
     }
     @update_attrs %{
       end_time: "2011-05-18T15:01:01Z",
@@ -55,11 +61,11 @@ defmodule Get5Api.MatchesTest do
       side_type: :standard,
       spectator_ids: [],
       start_time: "2011-05-18T15:01:01Z",
-      status: "some updated status",
+      status: :live,
       title: "some updated title",
-      team1_score: 0,
-      team2_score: 0,
-      veto_first: "some updated veto_first",
+      team1_score: 1,
+      team2_score: 2,
+      veto_first: :team2,
       map_list: ["de_inferno"]
     }
     @invalid_attrs %{
@@ -79,8 +85,11 @@ defmodule Get5Api.MatchesTest do
     }
 
     def match_fixture(_state \\ %{}, attrs \\ %{}) do
+      game_server=game_server_fixture(@game_server_attrs)
+      team1=team_fixture(@team1_attrs)
+      team2=team_fixture(@team2_attrs)
       {:ok, match} =
-        attrs
+        %{game_server_id: game_server.id, team1_id: team1.id,team2_id: team2.id}
         |> Enum.into(@valid_attrs)
         |> Matches.create_match()
 
@@ -98,15 +107,21 @@ defmodule Get5Api.MatchesTest do
     end
 
     test "create_match/1 with valid data creates a match" do
-      assert {:ok, %Match{} = match} = Matches.create_match(@valid_attrs)
+      game_server=game_server_fixture(@game_server_attrs)
+      team1=team_fixture(@team1_attrs)
+      team2=team_fixture(@team2_attrs)
+      assert {:ok, %Match{} = match} = Matches.create_match(
+        %{game_server_id: game_server.id, team1_id: team1.id,team2_id: team2.id}
+        |> Enum.into(@valid_attrs)
+        )
       assert match.enforce_teams == true
       assert match.min_player_ready == 5
       assert match.series_type == :bo1
       assert match.side_type == :standard
       assert match.spectator_ids == []
-      assert match.status == "some status"
+      assert match.status == :pending
       assert match.title == "some title"
-      assert match.veto_first == "some veto_first"
+      assert match.veto_first == :team1
       assert match.map_list == ["de_dust"]
     end
 
@@ -123,7 +138,8 @@ defmodule Get5Api.MatchesTest do
       assert match.side_type == :standard
       assert match.spectator_ids == []
       assert match.title == "some updated title"
-      assert match.veto_first == "some updated veto_first"
+      assert match.status == :live
+      assert match.veto_first == :team2
       assert match.map_list == ["de_inferno"]
     end
 

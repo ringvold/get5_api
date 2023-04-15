@@ -74,11 +74,13 @@ defmodule Get5Api.Matches do
            create_match(attrs) do
       case Get5Client.start_match(match) do
         {:ok, result} -> {:ok, match, result}
+        {:error, :nxdomain} ->
+          {:warn, match, :domain_does_not_exist}
       end
     else
       err ->
         Logger.error("Failed to start match: #{inspect(err)}")
-        {:error, "Something went wrong. Check the logs."}
+        err
     end
   end
 

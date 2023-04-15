@@ -21,7 +21,7 @@ defmodule Get5Api.GameServers.GameServer do
   @doc false
   def changeset(game_server, attrs, opts \\ []) do
     game_server
-    |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
+    |> cast(attrs, [:name, :host, :port, :gotv_port, :in_use, :rcon_password])
     |> validate_required([:name, :host, :port, :rcon_password])
     |> validate_password(opts)
   end
@@ -30,7 +30,7 @@ defmodule Get5Api.GameServers.GameServer do
   def update_changeset(game_server, attrs, opts \\ []) do
     changeset =
       game_server
-      |> cast(attrs, [:name, :host, :port, :in_use, :rcon_password])
+      |> cast(attrs, [:name, :host, :port, :gotv_port, :in_use, :rcon_password])
       |> validate_required([:name, :host, :port])
 
     password_cs = rcon_password_changeset(game_server, attrs, opts)

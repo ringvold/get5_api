@@ -140,6 +140,16 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
+
+      {:warn, match, :domain_does_not_exist} ->
+        {:noreply,
+         socket
+         # TODO: put_flash should be kind :warn, but can not get tailwind amber colors to work
+         |> put_flash(
+           :error,
+           "Match was created but could not be started: Domain does not exist."
+         )
+         |> push_navigate(to: ~p"/matches/#{match.id}")}
     end
   end
 end
