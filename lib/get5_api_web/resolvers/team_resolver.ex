@@ -1,6 +1,5 @@
 defmodule Get5ApiWeb.TeamResolver do
   alias Get5Api.Teams
-
   alias Get5Api.Teams.Player
 
   def all_teams(_root, _args, _info) do

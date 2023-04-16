@@ -21,10 +21,6 @@ defmodule Get5ApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-  end
-
-  scope "/", Get5ApiWeb do
-    pipe_through [:browser]
 
     live_session :authenticated,
       on_mount: [{Get5ApiWeb.UserAuth, :ensure_authenticated}] do
@@ -67,13 +63,6 @@ defmodule Get5ApiWeb.Router do
 
   scope "/api" do
     forward "/graphql/v1", Absinthe.Plug, schema: Get5ApiWeb.Schema
-  end
-
-  scope "/auth", Get5ApiWeb do
-    pipe_through :browser
-
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -79,7 +79,19 @@ defmodule Get5Api.Teams do
     |> Repo.update()
   end
 
-  def add_player(%Team{} = team, %Player{} = player, attrs) do
+  @doc """
+  Adds player to team
+
+  ## Examples
+
+      iex> add_player(team, %Player{name: "First Last", steam_id: "1234556789"})
+      {:ok, %Team{}}
+
+      iex> add_player(team, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def add_player(%Team{} = team, %Player{} = player, attrs \\ %{}) do
     player = change_player(player, attrs)
     players = [player | team.players]
 

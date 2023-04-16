@@ -107,7 +107,7 @@ defmodule Get5Api.GameServers do
   end
 
   def decrypt_rcon_password(encryptet_password) do
-    if String.strip(encryptet_password) != "" do
+    if String.trim(encryptet_password) != "" do
       Encryption.decrypt(encryptet_password)
     else
       ""
