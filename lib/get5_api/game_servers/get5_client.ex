@@ -6,7 +6,7 @@ defmodule Get5Api.GameServers.Get5Client do
   require Logger
 
   def start_match(match) do
-    url = "#{Endpoint.url()}/matches/#{match.id}/match_config"
+    url = "#{Endpoint.url()}/matches/#{match.id}/match-config"
     command = "get5_loadmatch_url \"#{url}\" \"Authorization\" \"Bearer #{match.api_key}\""
     Logger.info("Starting match on server #{match.game_server.name}")
 
