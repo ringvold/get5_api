@@ -51,6 +51,17 @@ defmodule Get5Api.GameServers.Get5Client do
     end
   end
 
+  def run(server, command) do
+    with {:ok, conn} <- connect(server),
+         {:ok, _con, res} <- Rcon.exec(conn, command) do
+      {:ok, res}
+    else
+      err ->
+        Logger.error("Failed to run command `#{command}`: #{inspect(err)}")
+        {:error, "Failed to run command `#{command}`"}
+    end
+  end
+
   defp _status(conn) do
     with {:ok, _con, response} <- RCON.Client.exec(conn, "get5_status"),
          {:ok, response} <- response_to_json(response) do

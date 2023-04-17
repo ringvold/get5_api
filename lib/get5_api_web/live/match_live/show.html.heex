@@ -2,7 +2,7 @@
   <%= @match.team1.name %> vs <%= @match.team2.name %>
   <:subtitle>
     <%= if @status do %>
-      <%= if @status["gamestate"] != "none" and @status["matchid"] == @match.id
+      <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
         do %>
         Match is running on server. Game state: <%= @status["gamestate"] %>
       <% else %>
@@ -24,6 +24,18 @@
       data-confirm="Are you sure you want start the match?"
     >
       End match
+    </.button>
+    <.button
+      phx-click="set_event_url"
+      phx-disable-with="Loading..."
+    >
+      Set event url
+    </.button>
+    <.button
+      phx-click="get_event_url"
+      phx-disable-with="Loading..."
+    >
+      Get event url
     </.button>
     <.button phx-click="get_status" phx-disable-with="Loading...">Check status</.button>
     <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>

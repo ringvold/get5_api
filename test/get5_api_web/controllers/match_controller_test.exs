@@ -9,46 +9,6 @@ defmodule Get5ApiWeb.MatchControllerTest do
   @update_attrs %{}
   @invalid_attrs %{}
 
-  @team1 %{
-    id: 1,
-    name: "Team1",
-    players: %{
-      "player1" => "1",
-      "player2" => "2",
-      "player3" => "3",
-      "player4" => "4",
-      "player5" => "5"
-    }
-  }
-  @team2 %{
-    id: 2,
-    name: "Team2",
-    players: %{
-      "player6" => "6",
-      "player7" => "7",
-      "player8" => "8",
-      "player9" => "9",
-      "player10" => "10"
-    }
-  }
-
-  @_valid_attrs %{
-    api_key: "some api_key",
-    end_time: "2010-04-17T14:00:00Z",
-    enforce_teams: true,
-    min_player_ready: 5,
-    series_type: :bo1,
-    side_type: :standard,
-    spectator_ids: [],
-    start_time: "2010-04-17T14:00:00Z",
-    status: "some status",
-    title: "some title",
-    veto_first: "some veto_first",
-    map_list: ["de_dust"],
-    team1_score: 0,
-    team2_score: 0
-  }
-
   setup %{conn: conn} do
     {:ok,
      conn:

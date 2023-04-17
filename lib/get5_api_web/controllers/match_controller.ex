@@ -26,15 +26,23 @@ defmodule Get5ApiWeb.MatchController do
       case Matches.update_match(conn.assigns.match, %{start_time: DateTime.utc_now()}) do
         {:ok, _match} ->
           conn
-            |> put_status(:ok)
-        {:error, changeset } ->
+          |> put_status(:ok)
+
+        {:error, changeset} ->
           {:error, %{changeset: changeset}}
       end
-
     else
       {:error, errors} ->
         {:error, :validation, errors}
     end
+  end
+
+  def events(conn, params) do
+    dbg(params)
+
+    conn
+    |> put_status(:ok)
+    |> json(:ok)
   end
 
   defp authenticate_api_key(conn, _options) do
