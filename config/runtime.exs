@@ -10,7 +10,17 @@ if System.get_env("GET5API_IP_FIX") == "true" do
   ip = "#{a}.#{b}.#{c}.#{d}"
   IO.puts "IP address: #{ip}"
   config :get5_api, Get5ApiWeb.Endpoint,
-  url: [host: ip]
+    url: [host: ip]
+end
+
+# Override IP used by phoenix. Usefull for testing get5 event/callbacks over
+# tailscale.
+if System.get_env("GET5API_IP") != "" do
+  IO.puts "Using fixed IP addess from GET5API_IP env"
+  ip = System.get_env("GET5API_IP")
+  IO.puts "IP address: #{ip}"
+  config :get5_api, Get5ApiWeb.Endpoint,
+    url: [host: ip]
 end
 
 
