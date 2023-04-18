@@ -15,7 +15,7 @@ end
 
 # Override IP used by phoenix. Usefull for testing get5 event/callbacks over
 # tailscale.
-if System.get_env("GET5API_IP") != "" do
+if System.get_env("GET5API_IP") do
   IO.puts "Using fixed IP addess from GET5API_IP env"
   ip = System.get_env("GET5API_IP")
   IO.puts "IP address: #{ip}"
