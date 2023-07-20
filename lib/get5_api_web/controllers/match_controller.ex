@@ -3,8 +3,9 @@ defmodule Get5ApiWeb.MatchController do
 
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
+  alias Get5Api.Stats
   import Jason.Helpers
-  plug :authenticate_api_key
+  plug :authenticate_api_key when action not in [:events]
 
   action_fallback Get5ApiWeb.FallbackController
 
@@ -15,34 +16,51 @@ defmodule Get5ApiWeb.MatchController do
     render(conn, :match_config, match_config: match_config)
   end
 
-  @series_start_params %{
-    match_id: [type: :integer, required: true],
-    map_number: [type: :string, required: true],
-    map_name: [type: :string, required: true],
-    version_number: [type: :string, required: true]
-  }
-  def series_start(conn, params) do
-    with {:ok, _valid_params} <- Tarams.cast(params, @series_start_params) do
-      case Matches.update_match(conn.assigns.match, %{start_time: DateTime.utc_now()}) do
-        {:ok, _match} ->
-          conn
-          |> put_status(:ok)
-
-        {:error, changeset} ->
-          {:error, %{changeset: changeset}}
-      end
-    else
-      {:error, errors} ->
-        {:error, :validation, errors}
-    end
-  end
-
   def events(conn, params) do
-    dbg(params)
+    # TODO: Fix api key auth
+    match = Matches.get_match!(params["matchid"])
 
-    conn
-    |> put_status(:ok)
-    |> json(:ok)
+    case params["event"] do
+      "series_start" ->
+        case Matches.update_match(match, %{start_time: DateTime.utc_now()}) do
+          {:ok, _match} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_result" ->
+        case Stats.store_map_result(match, params) do
+          {:ok, _results} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, failed_operation, failed_value, _changes_so_far} ->
+            {:error, %{failed_operation: failed_operation, failed_value: failed_value}}
+        end
+
+      "series_end" ->
+        case Matches.update_match(match, %{
+               team1_score: params["team1_series_score"],
+               team2_score: params["team2_series_score"],
+               winner_id: Stats.get_winner_id(params)
+             }) do
+          {:ok, _match} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      _ ->
+        # Ignore other events
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
+    end
   end
 
   defp authenticate_api_key(conn, _options) do

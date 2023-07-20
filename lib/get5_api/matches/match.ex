@@ -70,7 +70,8 @@ defmodule Get5Api.Matches.Match do
       :status,
       :team1_score,
       :team2_score,
-      :plugin_version
+      :plugin_version,
+      :start_time
     ])
     |> cast_assoc(:team1)
     |> cast_assoc(:team2)

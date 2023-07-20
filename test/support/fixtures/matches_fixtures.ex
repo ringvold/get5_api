@@ -14,13 +14,13 @@ defmodule Get5Api.MatchesFixtures do
   def match_fixture(attrs \\ %{}) do
       attrs
       |> Enum.into(%{
-        api_key: "some api_key",
+        api_key: "some_api_key",
         series_type: :bo1_preset,
         side_type: :standard,
         map_list: ["de_dust"],
         plugin_version: "unknown",
-        team1_id: team_fixture().id,
-        team2_id: team_fixture().id,
+        team1_id: team1_fixture().id,
+        team2_id: team2_fixture().id,
         game_server_id: game_server_fixture().id
       })
       |> Get5Api.Matches.create_match()

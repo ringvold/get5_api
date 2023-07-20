@@ -17,7 +17,7 @@ config :get5_api, Get5ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1",
   render_errors: [
-    formats: [html: Get5Api.ErrorHTML, json: Get5Api.ErrorJSON],
+    formats: [html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Get5Api.PubSub,
