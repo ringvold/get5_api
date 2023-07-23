@@ -1,7 +1,9 @@
 defmodule Get5Api.Stats.MapStats do
   use Ecto.Schema
+  import Ecto.Query, only: [from: 2]
   import Ecto.Changeset
 
+  alias Get5Api.Matches.Match
   alias Get5Api.Teams.Team
 
   schema "map_stats" do
@@ -37,5 +39,11 @@ defmodule Get5Api.Stats.MapStats do
       :match_id,
       :winner_id
     ])
+  end
+
+  def by_match_and_map_number(match_id, map_number) do
+    from(ms in Get5Api.Stats.MapStats,
+      where: (ms.match_id == ^match_id) and (ms.map_number == ^map_number)
+    )
   end
 end

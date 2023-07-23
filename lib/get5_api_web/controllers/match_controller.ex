@@ -4,8 +4,11 @@ defmodule Get5ApiWeb.MatchController do
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
   alias Get5Api.Stats
+  alias Get5Api.SeriesEvents
+  alias Get5Api.MapEvents
+
   import Jason.Helpers
-  plug :authenticate_api_key when action not in [:events]
+  plug :authenticate_api_key
 
   action_fallback Get5ApiWeb.FallbackController
 
@@ -17,22 +20,20 @@ defmodule Get5ApiWeb.MatchController do
   end
 
   def events(conn, params) do
-    # TODO: Fix api key auth
-    match = Matches.get_match!(params["matchid"])
+    match = conn.assigns.match
 
     case params["event"] do
       "series_start" ->
-        case Matches.update_match(match, %{start_time: DateTime.utc_now()}) do
-          {:ok, _match} ->
-            conn
-            |> put_status(:ok)
+        SeriesEvents.on_series_init(params, match)
 
-          {:error, changeset} ->
-            {:error, %{changeset: changeset}}
-        end
+        conn
+        |> put_status(:ok)
+
+      "going_live" ->
+        MapEvents.on_going_live(params, match)
 
       "map_result" ->
-        case Stats.store_map_result(match, params) do
+        case SeriesEvents.on_map_result(params, match) do
           {:ok, _results} ->
             conn
             |> put_status(:ok)
@@ -42,11 +43,7 @@ defmodule Get5ApiWeb.MatchController do
         end
 
       "series_end" ->
-        case Matches.update_match(match, %{
-               team1_score: params["team1_series_score"],
-               team2_score: params["team2_series_score"],
-               winner_id: Stats.get_winner_id(params)
-             }) do
+        case SeriesEvents.on_series_end(params, match) do
           {:ok, _match} ->
             conn
             |> put_status(:ok)
@@ -54,6 +51,11 @@ defmodule Get5ApiWeb.MatchController do
           {:error, changeset} ->
             {:error, %{changeset: changeset}}
         end
+
+      "match_config_load_fail" ->
+        # TODO: Send message to clients on the match page
+        conn
+        |> put_status(:ok)
 
       _ ->
         # Ignore other events
@@ -64,7 +66,7 @@ defmodule Get5ApiWeb.MatchController do
   end
 
   defp authenticate_api_key(conn, _options) do
-    match = Matches.get_match!(conn.params["id"])
+    match = Matches.get_match!(conn.params["id"] || conn.params["matchid"])
 
     case get_req_header(conn, "authorization") do
       [header] ->

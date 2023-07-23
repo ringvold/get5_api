@@ -117,6 +117,11 @@ defmodule Get5Api.Stats do
   """
   def get_map_stats!(id), do: Repo.get!(MapStats, id)
 
+  def get_by_match_and_map_number(match_id, map_number) do
+    MapStats.by_match_and_map_number(match_id, map_number)
+    |> Repo.all()
+  end
+
   @doc """
   Creates a map_stats.
 

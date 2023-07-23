@@ -125,7 +125,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
           },
           "team2": {
             "id": #{match.team2.id},
-            "name": "Natus Vincere",
+            "name": "Astralis",
             "series_score": 0,
             "score": 14,
             "score_ct": 10,
@@ -133,7 +133,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
             "players": [
               {
                 "steamid": "76561198279375306",
-                "name": "s1mple",
+                "name": "xyp9x",
                 "stats": {
                   "kills": 20,
                   "deaths": 15,
