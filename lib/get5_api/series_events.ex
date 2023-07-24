@@ -1,5 +1,6 @@
 defmodule Get5Api.SeriesEvents do
   alias Get5Api.GameServers
+  alias Get5Api.MapSelections
   alias Get5Api.Matches
   alias Get5Api.Matches.Match
   alias Get5Api.Stats
@@ -57,6 +58,7 @@ defmodule Get5Api.SeriesEvents do
       map_name: event.map_name,
       pick_or_ban: :pick
     })
+    Matches.update_match(match, %{status: :finished})
   end
 
   @spec on_map_vetoed(on_map_vetoed(), %Match{}) :: any()

@@ -1,4 +1,5 @@
 defmodule Get5Api.MapEvents do
+  alias Get5Api.Matches
   alias Get5Api.Matches.Match
   alias Get5Api.Stats
   alias Get5Api.MapSelections
@@ -20,5 +21,6 @@ defmodule Get5Api.MapEvents do
           %{map_number: event["map_number"], start_time: DateTime.utc_now()}
         )
     end
+    Matches.update_match(match, %{status: :live})
   end
 end
