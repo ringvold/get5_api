@@ -1,10 +1,11 @@
 defmodule Get5Api.MapEvents do
   alias Get5Api.Matches.Match
   alias Get5Api.Stats
+  alias Get5Api.MapSelections
 
-  @type going_live() :: %{event: String.t(), matchid: String.t(), map_number: integer()}
-  @spec on_going_live(going_live(), %Match{}) :: any()
+  @type on_going_live() :: %{event: String.t(), matchid: String.t(), map_number: integer()}
 
+  @spec on_going_live(on_going_live(), %Match{}) :: any()
   def on_going_live(event, match) do
     # When we have veto/map ban info use that to get map name
     # or get it from map_list in match

@@ -23,24 +23,19 @@ defmodule Get5ApiWeb.MatchController do
     match = conn.assigns.match
 
     case params["event"] do
+      #
+      # Series events
+      #
+      "match_config_load_fail" ->
+        # TODO: Send message to clients on the match page
+        conn
+        |> put_status(:ok)
+
       "series_start" ->
         SeriesEvents.on_series_init(params, match)
 
         conn
         |> put_status(:ok)
-
-      "going_live" ->
-        MapEvents.on_going_live(params, match)
-
-      "map_result" ->
-        case SeriesEvents.on_map_result(params, match) do
-          {:ok, _results} ->
-            conn
-            |> put_status(:ok)
-
-          {:error, failed_operation, failed_value, _changes_so_far} ->
-            {:error, %{failed_operation: failed_operation, failed_value: failed_value}}
-        end
 
       "series_end" ->
         case SeriesEvents.on_series_end(params, match) do
@@ -52,11 +47,62 @@ defmodule Get5ApiWeb.MatchController do
             {:error, %{changeset: changeset}}
         end
 
-      "match_config_load_fail" ->
-        # TODO: Send message to clients on the match page
-        conn
-        |> put_status(:ok)
+      "map_picked" ->
+        case SeriesEvents.on_map_picked(params, match) do
+          {:ok, _map_selection} ->
+            conn
+            |> put_status(:ok)
 
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_vetoed" ->
+        case SeriesEvents.on_map_vetoed(params, match) do
+          {:ok, _map_selection} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "side_picked" ->
+        case SeriesEvents.on_side_picked(params, match) do
+          {:ok, side_selection} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      #
+      # Map events
+      #
+      "going_live" ->
+        case MapEvents.on_going_live(params, match) do
+          {:ok, map_stats} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_result" ->
+        case SeriesEvents.on_map_result(params, match) do
+          {:ok, _results} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, failed_operation, failed_value, _changes_so_far} ->
+            {:error, %{failed_operation: failed_operation, failed_value: failed_value}}
+        end
+
+      #
+      # Live events goes here (ex: player death, bomb defused, round end)
+      #
       _ ->
         # Ignore other events
         conn
