@@ -52,8 +52,7 @@ defmodule Get5ApiWeb.Router do
     pipe_through :api
     get "/matches/:id/match-config", MatchController, :match_config
     post "/matches/:id/series-start", MatchController, :series_start
-    post "/matches/:id/events", MatchController, :match_events
-    post "/matches/events", MatchController, :events
+    post "/matches/:id/events", MatchController, :events
   end
 
   scope "/" do

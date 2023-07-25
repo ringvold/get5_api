@@ -6,7 +6,7 @@ defmodule Get5Api.SeriesEvents do
   alias Get5Api.Stats
 
   @type on_map_picked() :: %{
-          # event: map_picked
+          # event: "map_picked"
           event: String.t(),
           matchid: String.t(),
           team: String.t(),
@@ -14,14 +14,14 @@ defmodule Get5Api.SeriesEvents do
           map_number: integer()
         }
   @type on_map_vetoed() :: %{
-          # event: map_vetoed
+          # event: "map_vetoed"
           event: String.t(),
           matchid: String.t(),
           team: String.t(),
           map_name: String.t()
         }
   @type on_backup_restore() :: %{
-          # event: backup_loaded
+          # event: "backup_loaded"
           event: String.t(),
           matchid: String.t(),
           map_number: integer(),
@@ -51,7 +51,7 @@ defmodule Get5Api.SeriesEvents do
   @spec on_map_picked(on_map_picked(), %Match{}) :: any()
   def on_map_picked(event, match) do
     team_name = get_team_name(event.team, match)
-    # TODO: broadcast map pick after store
+    # TODO: broadcast map pick
     MapSelections.create_map_selection(%{
       match_id: match.id,
       team_name: team_name,
@@ -64,7 +64,7 @@ defmodule Get5Api.SeriesEvents do
   @spec on_map_vetoed(on_map_vetoed(), %Match{}) :: any()
   def on_map_vetoed(event, match) do
     team_name = get_team_name(event.team, match)
-    # TODO: broadcast map veto after store
+    # TODO: broadcast map veto
     MapSelections.create_map_selection(%{
       match_id: match.id,
       team_name: team_name,

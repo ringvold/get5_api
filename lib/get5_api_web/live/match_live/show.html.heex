@@ -1,8 +1,13 @@
 <.header>
   <%= @match.team1.name %> vs <%= @match.team2.name %>
   <:subtitle>
-    <%= if @status do %>
-      <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
+    <%= case @status do %>
+      <% :loading -> %>
+        Loading status
+      <% nil -> %>
+        <span></span>
+      <% _ -> %>
+        <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
         do %>
         Match is running on server. Game state: <%= @status["gamestate"] %>
       <% else %>
@@ -10,32 +15,21 @@
       <% end %>
     <% end %>
   </:subtitle>
+
   <:actions>
     <.button
       phx-click="start_match"
       phx-disable-with="Loading..."
-      data-confirm="Are you sure you want to end the match?"
+      data-confirm="Are you sure you want to start the match?"
     >
       Start match
     </.button>
     <.button
       phx-click="end_match"
       phx-disable-with="Loading..."
-      data-confirm="Are you sure you want start the match?"
+      data-confirm="Are you sure you want end the match?"
     >
       End match
-    </.button>
-    <.button
-      phx-click="set_event_url"
-      phx-disable-with="Loading..."
-    >
-      Set event url
-    </.button>
-    <.button
-      phx-click="get_event_url"
-      phx-disable-with="Loading..."
-    >
-      Get event url
     </.button>
     <.button phx-click="get_status" phx-disable-with="Loading...">Check status</.button>
     <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>

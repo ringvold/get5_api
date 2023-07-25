@@ -10,6 +10,7 @@ defmodule Get5Api.MapEvents do
   def on_going_live(event, match) do
     # When we have veto/map ban info use that to get map name
     # or get it from map_list in match
+
     # Check if map_stats exists for match_id and map_number
     case Stats.get_by_match_and_map_number(match.id, event["map_number"]) do
       nil ->

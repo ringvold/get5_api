@@ -24,6 +24,7 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
 
   def with_team(map, field, team) do
     Map.put(map, field, %{
+      id: "#{team.id}",
       name: team.name,
       players:
         team.players

@@ -112,6 +112,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   end
 
   def handle_event("save", %{"match" => match_params}, socket) do
+    # TODO: Ensure that server has correct plugin version >= 0.15.0
     save_match(socket, socket.assigns.action, match_params)
   end
 
@@ -130,7 +131,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
 
   defp save_match(socket, :new, match_params) do
     case Matches.create_and_start_match(match_params) do
-      {:ok, _match} ->
+      {:ok, _match, _cmd_message} ->
         {:noreply,
          socket
          |> put_flash(:info, "Match created and started on the server")
@@ -146,6 +147,16 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
          |> put_flash(
            :error,
            "Match was created but could not be started: Domain does not exist."
+         )
+         |> push_navigate(to: ~p"/matches/#{match.id}")}
+
+      {:warn, match, :other_match_already_loaded} ->
+        {:noreply,
+         socket
+         # TODO: put_flash should be kind :warn, but can not get tailwind amber colors to work
+         |> put_flash(
+           :error,
+           "Match was created but could not be started: Other match already loaded on server"
          )
          |> push_navigate(to: ~p"/matches/#{match.id}")}
     end

@@ -1,6 +1,6 @@
 defmodule Get5ApiWeb.MatchController do
   use Get5ApiWeb, :controller
-
+  require Logger
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
   alias Get5Api.Stats
@@ -22,26 +22,37 @@ defmodule Get5ApiWeb.MatchController do
   def events(conn, params) do
     match = conn.assigns.match
 
+    dbg(params)
+
     case params["event"] do
       #
       # Series events
       #
       "match_config_load_fail" ->
-        # TODO: Send message to clients on the match page
+        IO.puts "MATCH CONFIG LOAD FAILED"
+        Get5ApiWeb.Endpoint.broadcast("match_events", "match_config_load_fail", %{
+          match_id: match.id,
+          event: params["event"],
+          reason: params["reason"]
+        })
+
         conn
         |> put_status(:ok)
+        |> json(:ok)
 
       "series_start" ->
         SeriesEvents.on_series_init(params, match)
 
         conn
         |> put_status(:ok)
+        |> json(:ok)
 
       "series_end" ->
         case SeriesEvents.on_series_end(params, match) do
           {:ok, _match} ->
             conn
             |> put_status(:ok)
+            |> json(:ok)
 
           {:error, changeset} ->
             {:error, %{changeset: changeset}}
@@ -52,6 +63,7 @@ defmodule Get5ApiWeb.MatchController do
           {:ok, _map_selection} ->
             conn
             |> put_status(:ok)
+            |> json(:ok)
 
           {:error, changeset} ->
             {:error, %{changeset: changeset}}
@@ -112,6 +124,8 @@ defmodule Get5ApiWeb.MatchController do
   end
 
   defp authenticate_api_key(conn, _options) do
+    dbg(conn)
+
     match = Matches.get_match!(conn.params["id"] || conn.params["matchid"])
 
     case get_req_header(conn, "authorization") do
