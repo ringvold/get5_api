@@ -1,6 +1,7 @@
 defmodule Get5ApiWeb.MatchController do
   use Get5ApiWeb, :controller
   require Logger
+  alias Get5ApiWeb.Endpoint
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
   alias Get5Api.Stats
@@ -15,7 +16,7 @@ defmodule Get5ApiWeb.MatchController do
   def match_config(conn, _params) do
     match = conn.assigns.match
 
-    match_config = MatchConfigGenerator.generate_config(match)
+    match_config = MatchConfigGenerator.generate_config(match, Endpoint.url())
     render(conn, :match_config, match_config: match_config)
   end
 
@@ -48,7 +49,7 @@ defmodule Get5ApiWeb.MatchController do
         |> json(:ok)
 
       "series_end" ->
-        case SeriesEvents.on_series_end(params, match) do
+        case SeriesEvents.on_series_result(params, match) do
           {:ok, _match} ->
             conn
             |> put_status(:ok)

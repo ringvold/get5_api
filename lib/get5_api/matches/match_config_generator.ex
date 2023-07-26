@@ -11,8 +11,8 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
   assign match IDs from another source, they **must** be integers (in a string) and
   must increment between matches.
   """
-  @spec generate_config(%Match{}) :: map()
-  def generate_config(match) do
+  @spec generate_config(%Match{}, String.t()) :: map()
+  def generate_config(match, base_url) do
     %{
       matchid: Integer.to_string(match.id),
       maplist: match.map_list,
@@ -20,6 +20,7 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
     }
     |> with_team(:team1, match.team1)
     |> with_team(:team2, match.team2)
+    |> with_cvars(match, base_url)
   end
 
   def with_team(map, field, team) do
@@ -28,7 +29,8 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
       name: team.name,
       players:
         team.players
-        |> Enum.into(%{},
+        |> Enum.into(
+          %{},
           fn player ->
             if player.name != nil do
               {"#{player.steam_id}", player.name}
@@ -37,6 +39,14 @@ defmodule Get5Api.Matches.MatchConfigGenerator do
             end
           end
         )
+    })
+  end
+
+  def with_cvars(map, match, base_url) do
+    Map.put(map, :cvars, %{
+      get5_remote_log_url: "#{base_url}/matches/#{match.id}/events",
+      get5_remote_log_header_key: "Authorization",
+      get5_remote_log_header_value: "Bearer #{match.api_key}"
     })
   end
 end

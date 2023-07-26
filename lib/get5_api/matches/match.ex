@@ -58,6 +58,7 @@ defmodule Get5Api.Matches.Match do
     |> cast(attrs, [
       :team1_id,
       :team2_id,
+      :winner_id,
       :game_server_id,
       :map_list,
       :api_key,
@@ -80,7 +81,8 @@ defmodule Get5Api.Matches.Match do
       :team1_id,
       :team2_id,
       :game_server_id,
-      :series_type
+      :series_type,
+      :winner
     ])
     |> foreign_key_constraint(:game_server_id)
     |> validate_map_pool()

@@ -38,14 +38,24 @@ defmodule Get5Api.SeriesEvents do
     Stats.store_map_result(match, event)
   end
 
-  def on_series_end(event, match) do
+  def on_series_result(event, match) do
     Matches.update_match(match, %{
       team1_score: event["team1_series_score"],
       team2_score: event["team2_series_score"],
-      winner_id: Stats.get_winner_id(event)
+      winner_id: get_winner_id(event, match),
+      end_time: DateTime.utc_now(),
+      status: :finished # TODO: some more checks here for if it was cancelled
     })
 
     GameServers.update_game_server(match.game_server, %{in_use: false})
+  end
+
+  defp get_winner_id(event, match) do
+    case event["winner"]["team"] do
+      "team1" -> match.team1_id
+      "team2" -> match.team2_id
+      _ -> nil
+    end
   end
 
   @spec on_map_picked(on_map_picked(), %Match{}) :: any()

@@ -37,6 +37,10 @@ defmodule Get5Api.MapSelections do
   """
   def get_map_selection!(id), do: Repo.get!(MapSelection, id)
 
+  def get_map_selection(match_id, map_number) do
+    Repo.one(MapSelection.picked_map(match_id, map_number))
+  end
+
   @doc """
   Creates a map_selection.
 

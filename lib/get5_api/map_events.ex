@@ -8,20 +8,28 @@ defmodule Get5Api.MapEvents do
 
   @spec on_going_live(on_going_live(), %Match{}) :: any()
   def on_going_live(event, match) do
-    # When we have veto/map ban info use that to get map name
-    # or get it from map_list in match
-
+    map_number = event["map_number"]
+    map_name = map_name_from_veto_or_map_list(match, map_number)
     # Check if map_stats exists for match_id and map_number
-    case Stats.get_by_match_and_map_number(match.id, event["map_number"]) do
+    case Stats.get_by_match_and_map_number(match.id, map_number) do
       nil ->
-        Stats.create_map_stats(%{match_id: match.id, start_time: DateTime.utc_now()})
+        Stats.create_map_stats(%{
+          match_id: match.id,
+          map_name: map_name,
+          start_time: DateTime.utc_now()
+        })
 
       map_stat ->
         Stats.update_map_stats(
           map_stat,
-          %{map_number: event["map_number"], start_time: DateTime.utc_now()}
+          %{map_number: map_number, map_name: map_name, start_time: DateTime.utc_now()}
         )
     end
+
     Matches.update_match(match, %{status: :live})
+  end
+
+  defp map_name_from_veto_or_map_list(match, map_number) do
+    MapSelections.get_map_selection(match.id, map_number) || match.map_list[map_number]
   end
 end
