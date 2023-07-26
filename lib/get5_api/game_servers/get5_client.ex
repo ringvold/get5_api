@@ -11,6 +11,7 @@ defmodule Get5Api.GameServers.Get5Client do
     Logger.info("Starting match on server #{match.game_server.name}")
 
     with {:ok, conn} <- connect(match.game_server),
+         {:ok, conn, result} <- set_log_url(conn, base_url, match.api_key),
          {:ok, conn, result} <- Rcon.exec(conn, load_command) do
       message =
         result
@@ -51,6 +52,15 @@ defmodule Get5Api.GameServers.Get5Client do
       err ->
         Logger.error("Failed to end match: #{inspect(err)}")
         {:error, "Failed to end match"}
+    end
+  end
+
+  def set_log_url(conn, base_url, api_key) do
+    url_cmd = "get5_remote_log_url \"#{base_url}/events\""
+    header_cmd = "get5_remote_log_header_value \"Bearer #{api_key}\""
+
+    with {:ok, conn, res} <- Rcon.exec(conn, url_cmd) do
+      Rcon.exec(conn, header_cmd)
     end
   end
 

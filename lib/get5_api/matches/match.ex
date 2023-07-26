@@ -77,12 +77,12 @@ defmodule Get5Api.Matches.Match do
     |> cast_assoc(:team1)
     |> cast_assoc(:team2)
     |> cast_assoc(:game_server)
+    |> cast_assoc(:winner)
     |> validate_required([
       :team1_id,
       :team2_id,
       :game_server_id,
-      :series_type,
-      :winner
+      :series_type
     ])
     |> foreign_key_constraint(:game_server_id)
     |> validate_map_pool()
