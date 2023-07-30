@@ -54,7 +54,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
 
     test "OnSeriesInit", %{conn: conn, match: match} do
       conn = put_req_header(conn, "authorization", "Bearer some_api_key")
-      conn = post(conn, ~p"/matches/events", ~s|
+      conn = post(conn, ~p"/matches/#{match.id}/events", ~s|
         {
           "event": "series_start",
           "matchid": "#{match.id}",
@@ -69,7 +69,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
 
     test "OnMapResult", %{conn: conn, match: match} do
       conn = put_req_header(conn, "authorization", "Bearer some_api_key")
-      conn = post(conn, ~p"/matches/events", ~s|
+      conn = post(conn, ~p"/matches/#{match.id}/events", ~s|
         {
           "event": "map_result",
           "matchid": #{match.id},
@@ -188,7 +188,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
 
     test "OnSeriesResult", %{conn: conn, match: match} do
       conn = put_req_header(conn, "authorization", "Bearer some_api_key")
-      conn = post(conn, ~p"/matches/events", ~s|
+      conn = post(conn, ~p"/matches/#{match.id}/events", ~s|
         {
           "event": "series_end",
           "matchid": #{match.id},
