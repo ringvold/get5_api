@@ -5,7 +5,6 @@
       <% :loading -> %>
         Loading status
       <% nil -> %>
-        <span></span>
       <% _ -> %>
         <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
         do %>

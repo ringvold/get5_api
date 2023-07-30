@@ -44,7 +44,8 @@ defmodule Get5Api.SeriesEvents do
       team2_score: event["team2_series_score"],
       winner_id: get_winner_id(event, match),
       end_time: DateTime.utc_now(),
-      status: :finished # TODO: some more checks here for if it was cancelled
+      # TODO: some more checks here for if it was cancelled
+      status: :finished
     })
 
     GameServers.update_game_server(match.game_server, %{in_use: false})
@@ -68,6 +69,7 @@ defmodule Get5Api.SeriesEvents do
       map_name: event.map_name,
       pick_or_ban: :pick
     })
+
     Matches.update_match(match, %{status: :finished})
   end
 
@@ -98,10 +100,33 @@ defmodule Get5Api.SeriesEvents do
 
   def on_side_picked(event, match) do
     # No side was chosen, perhaps was default? Ignore the event.
+    if event["side"] == nil do
+      {:ok, :ignored}
+    else
+      teams =
+        if event["team"] == "team1" do
+          %{pick_team: match.team1, ban_team: match.team2}
+        else
+          %{pick_team: match.team2, ban_team: match.team1}
+        end
 
-    # Need to get the initial veto data to link back to the veto table.
-    # If team1 is picking sides, that means team2 picked the map.
-    :not_implemented
+      map_selection =
+        MapSelections.get_picked_map(match.id, teams.pick_team.name, event["map_name"])
+
+      side =
+        case event["side"] do
+          "t" -> :t
+          "ct" -> :ct
+        end
+
+      MapSelections.create_side_selection(%{
+        match_id: match.id,
+        map_selection_id: map_selection.id,
+        team_name: teams.pick_team.name,
+        map_name: event["map_name"],
+        side: side
+      })
+    end
   end
 
   @spec on_backup_restore(on_backup_restore(), %Match{}) :: any()

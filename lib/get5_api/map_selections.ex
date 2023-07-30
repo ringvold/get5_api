@@ -37,8 +37,8 @@ defmodule Get5Api.MapSelections do
   """
   def get_map_selection!(id), do: Repo.get!(MapSelection, id)
 
-  def get_map_selection(match_id, map_number) do
-    Repo.one(MapSelection.picked_map(match_id, map_number))
+  def get_picked_map(match_id, team_name, map_number) do
+    Repo.one(MapSelection.picked_map(match_id, team_name, map_number))
   end
 
   @doc """

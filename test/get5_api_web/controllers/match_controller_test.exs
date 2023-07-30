@@ -2,7 +2,9 @@ defmodule Get5ApiWeb.MatchControllerTest do
   use Get5ApiWeb.ConnCase
 
   import Get5Api.MatchesFixtures
+  import Get5Api.MapSelectionsFixtures
 
+  alias Get5Api.Get5Api.MapSelections
   alias Get5Api.Matches.Match
 
   @create_attrs %{}
@@ -31,7 +33,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
                "num_maps" => 1,
                "team1" => %{"name" => "Team 1", "players" => %{}},
                "team2" => %{"name" => "Team 2", "players" => %{}},
-               "maplist" => ["de_dust"],
+               "maplist" => ["de_dust"]
              } = json_response(conn, 200)
     end
 
@@ -205,6 +207,29 @@ defmodule Get5ApiWeb.MatchControllerTest do
       assert match.team2_score == 0
     end
 
+    test "OnSidePicked", %{conn: conn, match: match} do
+      map_selection = map_selection_fixture(%{match_id: match.id})
+
+      conn = put_req_header(conn, "authorization", "Bearer some_api_key")
+      conn = post(conn, ~p"/matches/#{match.id}/events", ~s|
+       {
+        "event": "side_picked",
+        "matchid": "#{match.id}",
+        "team": "team1",
+        "map_name": "de_nuke",
+        "side": "ct",
+        "map_number": 0
+
+       }
+      |)
+      side_selections = Get5Api.MapSelections.list_side_selections()
+      side = Enum.at(side_selections, 0)
+      assert conn.status == 200
+      assert length(side_selections) == 1
+      assert side.match_id == match.id
+      assert side.map_selection_id == map_selection.id
+      assert side.team_name == match.team1.name
+    end
   end
 
   defp create_match(_) do

@@ -4,7 +4,7 @@ defmodule Get5Api.Repo.Migrations.CreateSideSelections do
   def change do
     create table(:side_selections) do
       add :team_name, :string
-      add :map, :string
+      add :map_name, :string
       add :side, :string
       add :match_id, references(:matches, on_delete: :nothing)
       add :map_selection_id, references(:map_selections, on_delete: :nothing)

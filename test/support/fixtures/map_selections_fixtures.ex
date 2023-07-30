@@ -12,8 +12,8 @@ defmodule Get5Api.MapSelectionsFixtures do
       attrs
       |> Enum.into(%{
         map_name: "de_nuke",
-        pick_or_veto: :pick,
-        team_name: "some team_name"
+        pick_or_ban: :pick,
+        team_name: "Team 1"
       })
       |> Get5Api.MapSelections.create_map_selection()
 
@@ -29,7 +29,7 @@ defmodule Get5Api.MapSelectionsFixtures do
       |> Enum.into(%{
         map_name: "de_nuke",
         side: "ct",
-        team_name: "some team_name"
+        team_name: "Team 1"
       })
       |> Get5Api.MapSelections.create_side_selection()
 

@@ -5,7 +5,7 @@ import Config
 # index 1 in the list.
 if System.get_env("GET5API_IP_FIX") == "true" do
   IO.puts "Using IP fix for local testing"
-  {:ok, [_,{ip,_,_},_] } = :inet.getif
+  {:ok, [{ip,_,_},_] } = :inet.getif
   {a,b,c,d} = ip
   ip = "#{a}.#{b}.#{c}.#{d}"
   IO.puts "IP address: #{ip}"

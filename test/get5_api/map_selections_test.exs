@@ -21,12 +21,12 @@ defmodule Get5Api.MapSelectionsTest do
     end
 
     test "create_map_selection/1 with valid data creates a map_selection" do
-      valid_attrs = %{map_name: "de_nuke", pick_or_ban: :pick, team_name: "some team_name"}
+      valid_attrs = %{map_name: "de_nuke", pick_or_ban: :pick, team_name: "Team 1"}
 
       assert {:ok, %MapSelection{} = map_selection} = MapSelections.create_map_selection(valid_attrs)
       assert map_selection.map == "de_nuke"
       assert map_selection.pick_or_ban == :pick
-      assert map_selection.team_name == "some team_name"
+      assert map_selection.team_name == "Team 1"
     end
 
     test "create_map_selection/1 with invalid data returns error changeset" do
@@ -79,12 +79,12 @@ defmodule Get5Api.MapSelectionsTest do
     end
 
     test "create_side_selection/1 with valid data creates a side_selection" do
-      valid_attrs = %{map_name: "de_nuke", side: "ct", team_name: "some team_name"}
+      valid_attrs = %{map_name: "de_nuke", side: "ct", team_name: "Team 1"}
 
       assert {:ok, %SideSelection{} = side_selection} = MapSelections.create_side_selection(valid_attrs)
       assert side_selection.map == "de_nuke"
       assert side_selection.side == "ct"
-      assert side_selection.team_name == "some team_name"
+      assert side_selection.team_name == "Team 1"
     end
 
     test "create_side_selection/1 with invalid data returns error changeset" do

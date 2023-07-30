@@ -3,7 +3,6 @@ defmodule Get5Api.MapSelections.MapSelection do
   import Ecto.Changeset
   import Ecto.Query
 
-
   schema "map_selections" do
     field :map_name, :string
     field :team_name, :string
@@ -22,9 +21,11 @@ defmodule Get5Api.MapSelections.MapSelection do
     |> validate_required([:team_name, :map_name, :pick_or_ban])
   end
 
-  def picked_map(match_id, map_number) do
-    from(ms in MapSelection,
-      where: ms.match_id == ^match_id and ms.pick_or_ban == :pick and ms.map_number == ^map_number,
+  def picked_map(match_id, team_name, map_name) do
+    from(ms in Get5Api.MapSelections.MapSelection,
+      where:
+        ms.match_id == ^match_id and ms.pick_or_ban == :pick and ms.map_name == ^map_name and
+          ms.team_name == ^team_name
     )
   end
 end
