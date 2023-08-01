@@ -18,7 +18,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
        |> put_req_header("content-type", "application/json")}
   end
 
-  describe "match config" do
+  describe "Match config" do
     setup [:create_match]
 
     test "renders match config when api_key is valid", %{

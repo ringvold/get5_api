@@ -8,13 +8,6 @@ module.exports = {
     "../lib/*_web/**/*.*ex"
   ],
   darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        brand: "#FD4F00",
-      }
-    },
-  },
   plugins: [
     require("@tailwindcss/forms"),
     plugin(({addVariant}) => addVariant("phx-no-feedback", [".phx-no-feedback&", ".phx-no-feedback &"])),
