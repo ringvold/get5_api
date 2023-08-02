@@ -14,6 +14,8 @@ alias Get5Api.Teams.Team
 alias Get5Api.Teams.Player
 alias Get5Api.Matches.Match
 alias Get5Api.GameServers.GameServer
+alias Get5Api.Stats.MapStats
+alias Get5Api.Stats.PlayerStats
 alias Get5Api.Repo
 
 genesis =
@@ -21,7 +23,8 @@ genesis =
     name: "Genesis",
     players: [
       %Player{steam_id: "12340987", name: "L0Lpalme"},
-      %Player{steam_id: "9832470", name: "Madde"}
+      %Player{steam_id: "9832470", name: "Madde"},
+      %Player{steam_id: "76561198279375306", name: "s1mple"}
     ]
   }
   |> Repo.insert!()
@@ -39,7 +42,7 @@ astralis =
   }
   |> Repo.insert!()
 
-astralis =
+_faze =
   %Team{
     name: "Faze",
     players: [
@@ -71,3 +74,98 @@ match =
     map_list: ["de_dust2"]
   }
   |> Repo.insert!()
+
+map_stats =
+  %MapStats{
+    team1_score: 14,
+    team2_score: 10,
+    map_number: 0,
+    map_name: "de_dust2",
+    match_id: match.id,
+    winner_id: genesis.id
+  }
+  |> Repo.insert!()
+
+%PlayerStats{
+  match_id: match.id,
+  map_stats_id: map_stats.id,
+  team_id: genesis.id,
+  steam_id: "76561198279375306",
+  name: "s1mple",
+  kills: 34,
+  deaths: 8,
+  assists: 5,
+  flash_assists: 3,
+  team_kills: 0,
+  suicides: 0,
+  damage: 2948,
+  utility_damage: 173,
+  enemies_flashed: 6,
+  friendlies_flashed: 2,
+  knife_kills: 1,
+  headshot_kills: 19,
+  rounds_played: 27,
+  bomb_defuses: 4,
+  bomb_plants: 3,
+  "1k": 3,
+  "2k": 2,
+  "3k": 3,
+  "4k": 0,
+  "5k": 1,
+  "1v1": 1,
+  "1v2": 3,
+  "1v3": 2,
+  "1v4": 0,
+  "1v5": 1,
+  first_kills_t: 6,
+  first_kills_ct: 5,
+  first_deaths_t: 1,
+  first_deaths_ct: 1,
+  trade_kills: 3,
+  kast: 23,
+  score: 45,
+  mvp: 4
+}
+|> Repo.insert!()
+
+%PlayerStats{
+  match_id: match.id,
+  map_stats_id: map_stats.id,
+  team_id: astralis.id,
+  steam_id: "76561197990682262",
+  name: "Xyp9x",
+  kills: 20,
+  deaths: 15,
+  assists: 2,
+  flash_assists: 3,
+  team_kills: 0,
+  suicides: 0,
+  damage: 1000,
+  utility_damage: 93,
+  enemies_flashed: 6,
+  friendlies_flashed: 4,
+  knife_kills: 0,
+  headshot_kills: 3,
+  rounds_played: 27,
+  bomb_defuses: 4,
+  bomb_plants: 3,
+  "1k": 3,
+  "2k": 2,
+  "3k": 3,
+  "4k": 0,
+  "5k": 1,
+  "1v1": 1,
+  "1v2": 3,
+  "1v3": 2,
+  "1v4": 0,
+  "1v5": 1,
+  first_kills_t: 6,
+  first_kills_ct: 5,
+  first_deaths_t: 1,
+  first_deaths_ct: 1,
+  trade_kills: 3,
+  kast: 23,
+  score: 45,
+  mvp: 4
+}
+|> Repo.insert!()

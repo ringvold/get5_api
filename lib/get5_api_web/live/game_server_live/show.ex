@@ -1,4 +1,5 @@
 defmodule Get5ApiWeb.GameServerLive.Show do
+  require Logger
   use Get5ApiWeb, :live_view
 
   alias Get5Api.GameServers
@@ -7,13 +8,14 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, socket |> assign(status_fetch_errors: 0)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     game_server = GameServers.get_game_server!(id)
     send(self(), {:get_status, game_server})
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
@@ -42,15 +44,20 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def handle_info({:get_status, game_server}, socket) do
-    case Get5Client.status(game_server) do
-      {:ok, resp} ->
-         {:noreply,socket
-         |> assign(status: resp)}
+    if socket.assigns.status_fetch_errors < 4 do
+      case Get5Client.status(game_server) do
+        {:ok, resp} ->
+          {:noreply,
+           socket
+           |> assign(status: resp)}
 
-      {:error, _msg} ->
-        {:noreply, socket
-          |> assign(status: nil)
-          |> put_flash(:error, "Could not fetch get5 status from server")}
+        {:error, msg} ->
+          Logger.error(%{message: msg})
+          {:noreply,
+           socket
+           |> assign(status: nil, status_fetches: socket.assigns.status_fetch_errors + 1)
+           |> put_flash(:error, "Could not fetch get5 status from server")}
+      end
     end
   end
 

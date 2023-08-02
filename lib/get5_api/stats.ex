@@ -51,6 +51,7 @@ defmodule Get5Api.Stats do
         inserted_at: DateTime.utc_now() |> DateTime.to_naive() |> NaiveDateTime.truncate(:second),
         updated_at: DateTime.utc_now() |> DateTime.to_naive() |> NaiveDateTime.truncate(:second),
         steam_id: player_payload["steamid"],
+        name: player_payload["name"],
         assists: player_payload["stats"]["assists"],
         bomb_defuses: player_payload["stats"]["bomb_defuses"],
         bomb_plants: player_payload["stats"]["bomb_plants"],
@@ -62,7 +63,7 @@ defmodule Get5Api.Stats do
         headshot_kills: player_payload["stats"]["headshot_kills"],
         mvp: player_payload["stats"]["mvp"],
         kast: player_payload["stats"]["kast"],
-        kill: player_payload["stats"]["kill"],
+        kills: player_payload["stats"]["kills"],
         knife_kills: player_payload["stats"]["knife_kills"],
         rounds_played: player_payload["stats"]["rounds_played"],
         team_kills: player_payload["stats"]["team_kills"],
@@ -119,6 +120,14 @@ defmodule Get5Api.Stats do
 
   def get_by_match_and_map_number(match_id, map_number) do
     MapStats.by_match_and_map_number(match_id, map_number)
+    |> Repo.all()
+  end
+
+  def get_by_match(match_id) do
+    from(ms in Get5Api.Stats.MapStats,
+      where: (ms.match_id == ^match_id),
+      order_by: ms.id
+    )
     |> Repo.all()
   end
 
@@ -200,6 +209,14 @@ defmodule Get5Api.Stats do
   """
   def list_player_stats do
     Repo.all(PlayerStats)
+  end
+
+  def player_stats_by_match(match_id) do
+    from(ps in Get5Api.Stats.PlayerStats,
+      where: (ps.match_id == ^match_id),
+      preload: [:map_stats, :team]
+    )
+    |> Repo.all()
   end
 
   @doc """

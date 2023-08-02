@@ -37,6 +37,15 @@ defmodule Get5Api.MapSelections do
   """
   def get_map_selection!(id), do: Repo.get!(MapSelection, id)
 
+  def get_map_selections_by_match(match_id) do
+    from(ms in Get5Api.MapSelections.MapSelection,
+      where:
+        ms.match_id == ^match_id and ms.pick_or_ban == :pick,
+      order_by: ms.id
+    )
+    |> Repo.all
+  end
+
   def get_picked_map(match_id, team_name, map_number) do
     Repo.one(MapSelection.picked_map(match_id, team_name, map_number))
   end

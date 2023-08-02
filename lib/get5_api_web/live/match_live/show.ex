@@ -4,24 +4,30 @@ defmodule Get5ApiWeb.MatchLive.Show do
   alias Get5ApiWeb.Endpoint
   alias Get5Api.GameServers.Get5Client
   alias Get5Api.Matches
+  alias Get5Api.Stats
 
   @topic "match_events"
 
   @impl true
   def mount(_params, _session, socket) do
     Get5ApiWeb.Endpoint.subscribe(@topic)
-    {:ok, assign(socket, status: nil)}
+    {:ok, assign(socket, status: nil, stats: nil)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     match = Matches.get_match!(id)
+    map_stats = Stats.get_by_match(id)
+    player_stats = Stats.player_stats_by_match(id)
     send(self(), {:get_status, match.game_server})
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:match, match)}
+     |> assign(:match, match)
+     |> assign(:map_stats, map_stats)
+     |> assign(:player_stats, player_stats)
+   }
   end
 
   @impl true

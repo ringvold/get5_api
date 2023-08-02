@@ -4,7 +4,8 @@ defmodule Get5Api.Repo.Migrations.CreatePlayerStats do
   def change do
     create table(:player_stats) do
       add :steam_id, :string, null: false
-      add :kill, :integer, default: 0
+      add :name, :string
+      add :kills, :integer, default: 0
       add :deaths, :integer, default: 0
       add :assists, :integer, default: 0
       add :flash_assists, :integer, default: 0

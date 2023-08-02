@@ -9,6 +9,7 @@ defmodule Get5Api.Stats.PlayerStats do
 
   schema "player_stats" do
     field :steam_id, :string
+    field :name, :string
     field :assists, :integer
     field :bomb_defuses, :integer
     field :bomb_plants, :integer
@@ -20,7 +21,7 @@ defmodule Get5Api.Stats.PlayerStats do
     field :headshot_kills, :integer
     field :mvp, :integer
     field :kast, :integer
-    field :kill, :integer
+    field :kills, :integer
     field :knife_kills, :integer
     field :rounds_played, :integer
     field :team_kills, :integer

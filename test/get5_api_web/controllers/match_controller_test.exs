@@ -6,6 +6,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
 
   alias Get5Api.Get5Api.MapSelections
   alias Get5Api.Matches.Match
+  alias Get5Api.Stats
 
   @create_attrs %{}
   @update_attrs %{}
@@ -134,7 +135,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
             "score_t": 14,
             "players": [
               {
-                "steamid": "76561198279375306",
+                "steamid": "76561197990682262",
                 "name": "xyp9x",
                 "stats": {
                   "kills": 20,
@@ -183,7 +184,43 @@ defmodule Get5ApiWeb.MatchControllerTest do
         }
       |)
 
+      [player_stats | rest ] = Stats.list_player_stats()
       assert conn.status == 200
+      assert player_stats.steam_id == "76561198279375306"
+      assert player_stats.name == "s1mple"
+      assert player_stats.kills == 34
+      assert player_stats.deaths == 8
+      assert player_stats.assists == 5
+      assert player_stats.flash_assists == 3
+      assert player_stats.team_kills == 0
+      assert player_stats.suicides == 0
+      assert player_stats.damage == 2948
+      assert player_stats.utility_damage == 173
+      assert player_stats.enemies_flashed == 6
+      assert player_stats.friendlies_flashed == 2
+      assert player_stats.knife_kills == 1
+      assert player_stats.headshot_kills == 19
+      assert player_stats.rounds_played == 27
+      assert player_stats.bomb_defuses == 4
+      assert player_stats.bomb_plants == 3
+      assert player_stats."1k" == 3
+      assert player_stats."2k" == 2
+      assert player_stats."3k" == 3
+      assert player_stats."4k" == 0
+      assert player_stats."5k" == 1
+      assert player_stats."1v1" == 1
+      assert player_stats."1v2" == 3
+      assert player_stats."1v3" == 2
+      assert player_stats."1v4" == 0
+      assert player_stats."1v5" == 1
+      assert player_stats.first_kills_t == 6
+      assert player_stats.first_kills_ct == 5
+      assert player_stats.first_deaths_t == 1
+      assert player_stats.first_deaths_ct == 1
+      assert player_stats.trade_kills == 3
+      assert player_stats.kast == 23
+      assert player_stats.score == 45
+      assert player_stats.mvp == 4
     end
 
     test "OnSeriesResult", %{conn: conn, match: match} do

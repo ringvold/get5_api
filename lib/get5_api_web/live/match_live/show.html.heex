@@ -37,8 +37,6 @@
   </:actions>
 </.header>
 
-
-
 <.list>
   <:item title="Matchid"><%= @match.id %></:item>
   <:item title="Server">
@@ -52,6 +50,25 @@
   <:item title="Side type"><%= @match.side_type %></:item>
   <:item title="Map list"><%= Enum.join(@match.map_list, ", ") %></:item>
 </.list>
+
+
+
+<.table
+  id="player_stats"
+  rows={@player_stats}
+>
+  <:col :let={player} label="Name"><%= player.name %></:col>
+  <:col :let={player} label="Kills"><%= player.kills %></:col>
+  <:col :let={player} label="Damage"><%= player.damage %></:col>
+  <:col :let={player} label="Deaths"><%= player.deaths %></:col>
+  <:col :let={player} label="Assists"><%= player.assists %></:col>
+  <:col :let={player} label="Flashed"><%= player.enemies_flashed %></:col>
+  <:col :let={player} label="HS"><%= player.headshot_kills %></:col>
+  <:col :let={player} label="HS%"><%= "#{ceil(player.headshot_kills / player.kills * 100)}%" %></:col>
+  <:col :let={player} label="Utility"><%= player.utility_damage %></:col>
+  <:col :let={player} label="KAST"><%= player.kast %></:col>
+  <:col :let={player} label="Score"><%= player.score %></:col>
+</.table>
 
 <.back navigate={~p"/matches"}>Back to matches</.back>
 
