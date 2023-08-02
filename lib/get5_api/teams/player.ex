@@ -10,5 +10,6 @@ defmodule Get5Api.Teams.Player do
   def changeset(player, attrs) do
     player
     |> cast(attrs, [:steam_id, :name])
+    |> validate_required([:steam_id])
   end
 end

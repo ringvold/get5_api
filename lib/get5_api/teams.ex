@@ -93,20 +93,25 @@ defmodule Get5Api.Teams do
   """
   def add_player(%Team{} = team, %Player{} = player, attrs \\ %{}) do
     player = change_player(player, attrs)
-    players = [player | team.players]
 
-    result =
-      team
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_embed(:players, players)
-      |> Repo.update()
+    if player.valid? do
+      players = [player | team.players]
 
-    case result do
-      {:ok, team} ->
-        {:ok, team.players}
+      result =
+        team
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_embed(:players, players)
+        |> Repo.update()
 
-      rest ->
-        rest
+      case result do
+        {:ok, team} ->
+          {:ok, team.players}
+
+        rest ->
+          rest
+      end
+    else
+      {:error, player}
     end
   end
 

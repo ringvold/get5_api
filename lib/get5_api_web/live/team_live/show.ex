@@ -14,8 +14,7 @@ defmodule Get5ApiWeb.TeamLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:team, Teams.get_team!(id))
-     |> assign(:player, %Player{})}
+     |> assign(:team, Teams.get_team!(id))}
   end
 
   @impl true
