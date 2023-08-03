@@ -5,6 +5,7 @@ defmodule Get5Api.MatchConfigGeneratorTest do
   alias Get5Api.Teams.Player
 
   @team1 %{
+    id: 12,
     name: "Team1",
     players: [
       %Player{steam_id: "1", name: "player1"},
@@ -15,6 +16,7 @@ defmodule Get5Api.MatchConfigGeneratorTest do
     ]
   }
   @team2 %{
+    id: 22,
     name: "Team2",
     players: [
       %Player{steam_id: "6", name: "player6"},
@@ -31,7 +33,8 @@ defmodule Get5Api.MatchConfigGeneratorTest do
     side_type: :standard,
     map_list: ["de_mirage", "de_inferno", "de_dust"],
     team1: @team1,
-    team2: @team2
+    team2: @team2,
+    api_key: "some_api_key"
   }
 
   test "create a minimum config" do
@@ -40,7 +43,7 @@ defmodule Get5Api.MatchConfigGeneratorTest do
       |> Map.put(:team1, @team1)
       |> Map.put(:team2, @team2)
 
-    config = MatchConfigGenerator.generate_config(match)
+    config = MatchConfigGenerator.generate_config(match, "baseurl")
 
     assert config.matchid == "42"
     assert config.team1.name == "Team1"
@@ -53,12 +56,15 @@ defmodule Get5Api.MatchConfigGeneratorTest do
           "4" => "player4",
           "5" => "player5"
         }
-     assert config.team2.players == %{
+    assert config.team2.players == %{
           "6" => "player6",
           "7" => "player7",
           "8" => "player8",
           "9" => "player9",
           "10" => "player10"
         }
+    assert config.cvars.get5_remote_log_url == "baseurl/matches/#{match.id}/events"
+    assert config.cvars.get5_remote_log_header_key == "Authorization"
+    assert config.cvars.get5_remote_log_header_value == "Bearer #{match.api_key}"
   end
 end

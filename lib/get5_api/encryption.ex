@@ -23,7 +23,15 @@ defmodule Get5Api.Encryption do
     iv = :crypto.strong_rand_bytes(@nonce_size)
 
     {ciphertext, tag} =
-      :crypto.crypto_one_time_aead(@cipher, decode_key(key), iv, to_string(val), @aad, @tag_size, true)
+      :crypto.crypto_one_time_aead(
+        @cipher,
+        decode_key(key),
+        iv,
+        to_string(val),
+        @aad,
+        @tag_size,
+        true
+      )
 
     (iv <> tag <> ciphertext)
     |> :base64.encode()
@@ -45,6 +53,7 @@ defmodule Get5Api.Encryption do
   end
 
   defp find_key() do
+    # TODO: Maybe just use secret_key_base?
     <<key::binary-size(32), _::bitstring>> = Application.fetch_env!(:get5_api, :encryption_key)
     :base64.encode(key)
   end

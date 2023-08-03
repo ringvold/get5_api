@@ -1,8 +1,13 @@
 defmodule Get5ApiWeb.MatchController do
   use Get5ApiWeb, :controller
-
+  require Logger
+  alias Get5ApiWeb.Endpoint
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
+  alias Get5Api.Stats
+  alias Get5Api.SeriesEvents
+  alias Get5Api.MapEvents
+
   import Jason.Helpers
   plug :authenticate_api_key
 
@@ -11,34 +16,118 @@ defmodule Get5ApiWeb.MatchController do
   def match_config(conn, _params) do
     match = conn.assigns.match
 
-    match_config = MatchConfigGenerator.generate_config(match)
+    match_config = MatchConfigGenerator.generate_config(match, Endpoint.url())
     render(conn, :match_config, match_config: match_config)
   end
 
-  @series_start_params %{
-    match_id: [type: :integer, required: true],
-    map_number: [type: :string, required: true],
-    map_name: [type: :string, required: true],
-    version_number: [type: :string, required: true]
-  }
-  def series_start(conn, params) do
-    with {:ok, _valid_params} <- Tarams.cast(params, @series_start_params) do
-      case Matches.update_match(conn.assigns.match, %{start_time: DateTime.utc_now()}) do
-        {:ok, _match} ->
-          conn
-            |> put_status(:ok)
-        {:error, changeset } ->
-          {:error, %{changeset: changeset}}
-      end
+  def events(conn, params) do
+    match = conn.assigns.match
 
-    else
-      {:error, errors} ->
-        {:error, :validation, errors}
+    dbg(params)
+
+    case params["event"] do
+      #
+      # Series events
+      #
+      "match_config_load_fail" ->
+        IO.puts "MATCH CONFIG LOAD FAILED"
+        Get5ApiWeb.Endpoint.broadcast("match_events", "match_config_load_fail", %{
+          match_id: match.id,
+          event: params["event"],
+          reason: params["reason"]
+        })
+
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
+
+      "series_start" ->
+        SeriesEvents.on_series_init(params, match)
+
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
+
+      "series_end" ->
+        case SeriesEvents.on_series_result(params, match) do
+          {:ok, _match} ->
+            conn
+            |> put_status(:ok)
+            |> json(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_picked" ->
+        case SeriesEvents.on_map_picked(params, match) do
+          {:ok, _map_selection} ->
+            conn
+            |> put_status(:ok)
+            |> json(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_vetoed" ->
+        case SeriesEvents.on_map_vetoed(params, match) do
+          {:ok, _map_selection} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "side_picked" ->
+        case SeriesEvents.on_side_picked(params, match) do
+          {:ok, side_selection} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      #
+      # Map events
+      #
+      "going_live" ->
+        case MapEvents.on_going_live(params, match) do
+          {:ok, map_stats} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "map_result" ->
+        case SeriesEvents.on_map_result(params, match) do
+          {:ok, _results} ->
+            conn
+            |> put_status(:ok)
+
+          {:error, failed_operation, failed_value, _changes_so_far} ->
+            {:error, %{failed_operation: failed_operation, failed_value: failed_value}}
+        end
+
+      #
+      # Live events goes here (ex: player death, bomb defused, round end)
+      #
+      _ ->
+        # Ignore other events
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
     end
   end
 
   defp authenticate_api_key(conn, _options) do
-    match = Matches.get_match!(conn.params["id"])
+    dbg(conn)
+
+    match = Matches.get_match!(conn.params["id"] || conn.params["matchid"])
 
     case get_req_header(conn, "authorization") do
       [header] ->

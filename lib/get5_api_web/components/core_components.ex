@@ -60,10 +60,16 @@ defmodule Get5ApiWeb.CoreComponents do
             </.link>
           </li>
         <% end %>
-          <li id="theme" phx-click={JS.dispatch("toggle_darkmode")}>
-            <Heroicons.moon mini class="hidden dark:block w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all" />
-            <Heroicons.sun mini class="dark:hidden w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all" />
-          </li>
+        <li id="theme" phx-click={JS.dispatch("toggle_darkmode")}>
+          <Heroicons.moon
+            mini
+            class="hidden dark:block w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all"
+          />
+          <Heroicons.sun
+            mini
+            class="dark:hidden w-4 h-4 cursor-pointer text-zinc-500 hover:text-black dark:hover:text-white transition-all"
+          />
+        </li>
       </ul>
     </div>
     """
@@ -108,7 +114,11 @@ defmodule Get5ApiWeb.CoreComponents do
       phx-remove={hide_modal(@id)}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 dark:bg-zinc-700/90 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-zinc-50/90 dark:bg-zinc-700/90 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -125,7 +135,9 @@ defmodule Get5ApiWeb.CoreComponents do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class={["hidden relative rounded-2xl bg-white dark:bg-zinc-900 p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"]}
+              class={[
+                "hidden relative rounded-2xl bg-white dark:bg-zinc-900 p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+              ]}
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -139,7 +151,10 @@ defmodule Get5ApiWeb.CoreComponents do
               </div>
               <div id={"#{@id}-content"}>
                 <header :if={@title != []}>
-                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800 dark:text-zinc-100">
+                  <h1
+                    id={"#{@id}-title"}
+                    class="text-lg font-semibold leading-8 text-zinc-800 dark:text-zinc-100"
+                  >
                     <%= render_slot(@title) %>
                   </h1>
                   <p
@@ -208,7 +223,7 @@ defmodule Get5ApiWeb.CoreComponents do
         "fixed hidden top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-zinc-900/5 ring-1",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
         @kind == :warn && "bg-amber-50 p-3 text-amber-900 shadow-md ring-amber-500 fill-amber-900",
-        @kind == :error && "bg-rose-50 p-3 text-rose-900 shadow-md ring-rose-500 fill-rose-900",
+        @kind == :error && "bg-rose-50 p-3 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
       ]}
       {@rest}
     >
@@ -231,7 +246,7 @@ defmodule Get5ApiWeb.CoreComponents do
     """
   end
 
-   @doc """
+  @doc """
   Shows the flash group with standard titles and content.
 
   ## Examples
@@ -375,7 +390,7 @@ defmodule Get5ApiWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+      <label class="flex items-center gap-4 text-md leading-6 text-zinc-600 dark:text-zinc-100">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -383,7 +398,7 @@ defmodule Get5ApiWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 dark:text-zinc-100 focus:ring-zinc-900"
+          class="w-5 h-5 rounded border-zinc-300 dark:bg-zinc-900 dark:text-zinc-700 dark:border-zinc-300"
           {@rest}
         />
         <%= @label %>
@@ -576,23 +591,20 @@ defmodule Get5ApiWeb.CoreComponents do
             >
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl dark:group-hover:bg-zinc-800" />
-                <span
-                  class={[
-                    "relative", i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100 dark:hover:text-white"
-                  ]}
-                >
+                <span class={[
+                  "relative",
+                  i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100 dark:hover:text-white"
+                ]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
             <td :if={@action != []} class="relative p-0 w-14">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span
-                  class={[
-                    "absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl",
-                    "dark:group-hover:bg-zinc-800"
-                  ]}
-                />
+                <span class={[
+                  "absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl",
+                  "dark:group-hover:bg-zinc-800"
+                ]} />
                 <span
                   :for={action <- @action}
                   class={[
@@ -610,7 +622,6 @@ defmodule Get5ApiWeb.CoreComponents do
     </div>
     """
   end
-
 
   @doc """
   Renders a data list.
@@ -631,7 +642,9 @@ defmodule Get5ApiWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500 dark:text-zinc-400"><%= item.title %></dt>
+          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500 dark:text-zinc-400">
+            <%= item.title %>
+          </dt>
           <dd class={[
             "text-sm leading-6 text-zinc-700",
             "dark:text-zinc-200 "

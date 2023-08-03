@@ -58,6 +58,7 @@ defmodule Get5Api.Matches.Match do
     |> cast(attrs, [
       :team1_id,
       :team2_id,
+      :winner_id,
       :game_server_id,
       :map_list,
       :api_key,
@@ -70,11 +71,13 @@ defmodule Get5Api.Matches.Match do
       :status,
       :team1_score,
       :team2_score,
-      :plugin_version
+      :plugin_version,
+      :start_time
     ])
     |> cast_assoc(:team1)
     |> cast_assoc(:team2)
     |> cast_assoc(:game_server)
+    |> cast_assoc(:winner)
     |> validate_required([
       :team1_id,
       :team2_id,

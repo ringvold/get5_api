@@ -17,7 +17,7 @@ config :get5_api, Get5ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1",
   render_errors: [
-    formats: [html: Get5Api.ErrorHTML, json: Get5Api.ErrorJSON],
+    formats: [html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Get5Api.PubSub,
@@ -29,7 +29,7 @@ config :get5_api, Get5Api.Mailer, adapter: Swoosh.Adapters.Local
 config :swoosh, :api_client, false
 
 config :esbuild,
-  version: "0.17.16",
+  version: "0.18.17",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -39,7 +39,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.3.1",
+  version: "3.3.3",
   default: [
     args: ~w(
       --config=tailwind.config.js

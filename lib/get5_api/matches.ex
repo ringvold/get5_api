@@ -73,9 +73,14 @@ defmodule Get5Api.Matches do
     with {:ok, match} <-
            create_match(attrs) do
       case Get5Client.start_match(match) do
-        {:ok, result} -> {:ok, match, result}
+        {:ok, result} ->
+          {:ok, match, result}
+
         {:error, :nxdomain} ->
           {:warn, match, :domain_does_not_exist}
+
+        {:error, :other_match_already_loaded} ->
+          {:warn, match, :other_match_already_loaded}
       end
     else
       err ->

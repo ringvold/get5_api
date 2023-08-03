@@ -53,11 +53,11 @@
 >
   <.live_component
     module={Get5ApiWeb.TeamLive.PlayerFormComponent}
-    id={@team.id}
+    id="add_player"
     title={@page_title}
     action={@live_action}
     team={@team}
-    player={@player}
+    player={%Player{}}
     navigate={~p"/teams/#{@team}"}
   />
 </.modal>

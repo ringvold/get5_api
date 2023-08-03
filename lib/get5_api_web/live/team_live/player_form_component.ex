@@ -9,19 +9,18 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage team records in your database.</:subtitle>
+        <:subtitle>Add player by steam id. Name is optional. If not set name defaults to the players current steam name.</:subtitle>
       </.header>
 
       <.simple_form
-        :let={f}
-        for={@changeset}
-        id="team-player-form"
+        for={@form}
+        id="player-form"
         phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
+        phx-change="validate_player"
+        phx-submit="save_player"
       >
-        <.input field={{f, :steam_id}} type="text" label="SteamID" />
-        <.input field={{f, :name}} type="text" label="Name" />
+        <.input field={@form[:steam_id]} type="text" label="SteamID" />
+        <.input field={@form[:name]} type="text" label="Name" />
         <:actions>
           <.button phx-disable-with="Saving...">Add player</.button>
         </:actions>
@@ -37,34 +36,21 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_player_form(changeset)}
   end
 
   @impl true
-  def handle_event("validate", %{"player" => player_params}, socket) do
+  def handle_event("validate_player", %{"player" => player_params}, socket) do
     changeset =
       socket.assigns.player
       |> Teams.change_player(player_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_player_form(socket, changeset)}
   end
 
-  def handle_event("save", %{"player" => player_params}, socket) do
+  def handle_event("save_player", %{"player" => player_params}, socket) do
     save_player(socket, socket.assigns.action, player_params)
-  end
-
-  defp save_player(socket, :edit, player_params) do
-    case Teams.add_player(socket.assigns.team, player_params) do
-      {:ok, _team} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Player updated successfully")
-         |> push_navigate(to: socket.assigns.navigate)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
   end
 
   defp save_player(socket, :add_player, player_params) do
@@ -76,7 +62,11 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_player_form(socket, changeset|> Map.put(:action, :validate))}
     end
+  end
+
+  defp assign_player_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset, as: :player))
   end
 end

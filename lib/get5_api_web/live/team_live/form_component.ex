@@ -9,7 +9,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Create a new team</:subtitle>
+        <:subtitle><%= if assigns.action == :edit do %>Edit team details<% else %>Create a new team<% end %></:subtitle>
       </.header>
 
       <.simple_form
