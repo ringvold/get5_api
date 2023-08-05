@@ -44,7 +44,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Match sendt to server")}
+         |> put_flash(:info, gettext("Match sendt to server"))}
 
       {:error, :nxdomain} ->
         {:noreply,
@@ -52,7 +52,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+           gettext("Domain %{host} does not exist or could not be reached", host: socket.assigns.match.game_server.host)
          )}
 
       {:error, :other_match_already_loaded} ->
@@ -61,7 +61,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           "A match is already loaded on the server"
+           gettext("A match is already loaded on the server")
          )}
 
       {:error, msg} ->
@@ -78,7 +78,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
       {:ok, _msg} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Match ended")}
+         |> put_flash(:info, gettext("Match ended"))}
 
       {:error, :nxdomain} ->
         {:noreply,
@@ -86,7 +86,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+           gettext("Domain %{host} does not exist or could not be reached", host: socket.assigns.match.game_server.host)
          )}
 
       {:error, msg} ->
@@ -115,7 +115,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           "Domain #{game_server.host} does not exist or could not be reached"
+           gettext("Domain %{host} does not exist or could not be reached", host: game_server.host)
          )}
 
       {:error, msg} ->

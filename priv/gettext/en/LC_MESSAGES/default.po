@@ -1,0 +1,127 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/get5_api_web/components/core_components.ex:571
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr ""
+
+#: lib/get5_api_web/components/core_components.ex:147
+#: lib/get5_api_web/components/core_components.ex:241
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "Loading status"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Match is running on server. Game state: %{game_state}"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "Match is not running on server"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want end the match?"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to start the match?"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:21
+#: lib/get5_api_web/live/match_live/show.html.heex:28
+#: lib/get5_api_web/live/match_live/show.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "Loading..."
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:73
+#, elixir-autogen, elixir-format
+msgid "Back to matches"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "End match"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:51
+#, elixir-autogen, elixir-format
+msgid "Map list"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:41
+#, elixir-autogen, elixir-format
+msgid "Matchid"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:49
+#, elixir-autogen, elixir-format
+msgid "Series type"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Server"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:50
+#, elixir-autogen, elixir-format
+msgid "Side type"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Start match"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "Team 1"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:48
+#, elixir-autogen, elixir-format
+msgid "Team 2"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:64
+#, elixir-autogen, elixir-format
+msgid "A match is already loaded on the server"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:55
+#: lib/get5_api_web/live/match_live/show.ex:89
+#: lib/get5_api_web/live/match_live/show.ex:118
+#, elixir-autogen, elixir-format
+msgid "Domain %{host} does not exist or could not be reached"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:81
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Match ended"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:47
+#, elixir-autogen, elixir-format
+msgid "Match sendt to server"
+msgstr ""
