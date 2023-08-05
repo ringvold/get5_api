@@ -4,7 +4,6 @@ defmodule Get5ApiWeb.MatchController do
   alias Get5ApiWeb.Endpoint
   alias Get5Api.Matches
   alias Get5Api.Matches.MatchConfigGenerator
-  alias Get5Api.Stats
   alias Get5Api.SeriesEvents
   alias Get5Api.MapEvents
 
@@ -82,7 +81,7 @@ defmodule Get5ApiWeb.MatchController do
 
       "side_picked" ->
         case SeriesEvents.on_side_picked(params, match) do
-          {:ok, side_selection} ->
+          {:ok, _side_selection} ->
             conn
             |> put_status(:ok)
 
@@ -95,7 +94,7 @@ defmodule Get5ApiWeb.MatchController do
       #
       "going_live" ->
         case MapEvents.on_going_live(params, match) do
-          {:ok, map_stats} ->
+          {:ok, _map_stats} ->
             conn
             |> put_status(:ok)
 

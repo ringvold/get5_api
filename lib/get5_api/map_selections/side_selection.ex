@@ -2,7 +2,6 @@ defmodule Get5Api.MapSelections.SideSelection do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Get5Api.Matches.Match
   alias Get5Api.MapSelections.MapSelection
 
   schema "side_selections" do

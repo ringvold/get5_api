@@ -1,7 +1,7 @@
 defmodule Get5ApiWeb.MatchLive.Show do
   use Get5ApiWeb, :live_view
   require Logger
-  alias Get5ApiWeb.Endpoint
+
   alias Get5Api.GameServers.Get5Client
   alias Get5Api.Matches
   alias Get5Api.Stats
@@ -39,7 +39,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
   @impl true
   def handle_event("start_match", _params, socket) do
     case Get5Client.start_match(socket.assigns.match) do
-      {:ok, resp} ->
+      {:ok, _resp} ->
         send(self(), {:get_status, socket.assigns.match.game_server})
 
         {:noreply,
@@ -99,7 +99,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
 
   @impl true
   def handle_info({:get_status, game_server}, socket) do
-    case Get5Client.status(socket.assigns.match.game_server) do
+    case Get5Client.status(game_server) do
       {:ok, resp} ->
         Logger.debug(resp)
         dbg(resp)
@@ -115,7 +115,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           "Domain #{socket.assigns.match.game_server.host} does not exist or could not be reached"
+           "Domain #{game_server.host} does not exist or could not be reached"
          )}
 
       {:error, msg} ->
