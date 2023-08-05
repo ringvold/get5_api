@@ -21,6 +21,20 @@ This application is written with [Phoenix](https://www.phoenixframework.org/) an
 4. [ ] ???
 5. [ ] World domination
 
+### More detailed plan
+
+Things to be done in no perticular order:
+- [ ] Better match page design/layout (got someone on that 🙌)
+- [ ] Add more stats to match page
+- [ ] Broadcast on all (relevant) Get5 events
+- [ ] Better design for team page
+- [ ] Add possibility for private servers, teams and matches. Enforce access control.
+- [ ] Add more admin actions for match (cancel, forfeigt, add player, pause, resume)
+- [ ] Add posibility to set captain for team and add a coach
+- [ ] Make possible to translate all the things
+- [ ] Handle demo uploads
+
+
 ## Why
 
 [Splewis/get5-web] was a proof-of-concept web panel for get5 and was a 
