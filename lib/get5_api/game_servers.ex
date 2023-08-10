@@ -18,9 +18,23 @@ defmodule Get5Api.GameServers do
       [%GameServer{}, ...]
 
   """
-  def list_game_servers do
-    Repo.all(from g in GameServer,
-        order_by: [asc: :inserted_at])
+  def list_game_servers(user_id) do
+    if user_id do
+      Repo.all(
+        from g in GameServer,
+          where: g.public == true or g.user_id == ^user_id,
+          order_by: [asc: :inserted_at]
+      )
+    else
+      list_public_game_servers()
+    end
+  end
+
+  def list_public_game_servers do
+    Repo.all(
+      from g in GameServer,
+        order_by: [asc: :inserted_at]
+    )
   end
 
   @doc """

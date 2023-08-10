@@ -1,6 +1,7 @@
 <.header>
   <%= @team.name %>
-  <:subtitle></:subtitle>
+  <.visibility_icons type={:inline} visible={@team.public} />
+  <:subtitle :if={@team.user}>Owner: <%= @team.user.id %></:subtitle>
   <:actions>
     <.link patch={~p"/teams/#{@team}/players/new"} phx-click={JS.push_focus()}>
       <.button>Add player</.button>

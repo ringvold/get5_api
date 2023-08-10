@@ -14,7 +14,9 @@ defmodule Get5ApiWeb.TeamLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:team, Teams.get_team!(id))}
+     |> assign_new(:team, fn ->
+       Teams.get_team!(id)
+     end)}
   end
 
   @impl true
@@ -22,6 +24,17 @@ defmodule Get5ApiWeb.TeamLive.Show do
     {:ok, team} = Teams.remove_player(socket.assigns.team, %Player{steam_id: id})
 
     {:noreply, assign(socket, :team, team)}
+  end
+
+  def get_entity_for_id(id, socket) do
+    assign_new(socket, :team, fn ->
+      Teams.get_team!(id)
+    end)
+    |> assign_new(:owner_id, fn %{team: team} -> team.user_id end)
+  end
+
+  def redirect_url() do
+    ~p"/teams"
   end
 
   defp page_title(:show), do: "Show Team"

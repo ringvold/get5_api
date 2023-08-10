@@ -26,8 +26,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:match, match)
      |> assign(:map_stats, map_stats)
-     |> assign(:player_stats, player_stats)
-   }
+     |> assign(:player_stats, player_stats)}
   end
 
   @impl true
@@ -52,7 +51,9 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           gettext("Domain %{host} does not exist or could not be reached", host: socket.assigns.match.game_server.host)
+           gettext("Domain %{host} does not exist or could not be reached",
+             host: socket.assigns.match.game_server.host
+           )
          )}
 
       {:error, :other_match_already_loaded} ->
@@ -86,7 +87,9 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: nil)
          |> put_flash(
            :error,
-           gettext("Domain %{host} does not exist or could not be reached", host: socket.assigns.match.game_server.host)
+           gettext("Domain %{host} does not exist or could not be reached",
+             host: socket.assigns.match.game_server.host
+           )
          )}
 
       {:error, msg} ->
@@ -136,6 +139,17 @@ defmodule Get5ApiWeb.MatchLive.Show do
        :error,
        payload.reason
      )}
+  end
+
+  def get_entity_for_id(id, socket) do
+    assign_new(socket, :match, fn ->
+      Matches.get_match!(id)
+    end)
+    |> assign_new(:owner_id, fn %{match: match} -> match.user_id end)
+  end
+
+  def redirect_url() do
+    ~p"/matches"
   end
 
   defp page_title(:show), do: "Show Match"

@@ -1,12 +1,14 @@
 defmodule Get5Api.GameServers.GameServer do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Get5Api.Accounts.User
   alias Get5Api.Matches.Match
   alias Get5Api.Encryption
 
   schema "game_servers" do
     field :host, :string
     field :in_use, :boolean, default: false
+    field :public, :boolean, default: false
     field :name, :string
     field :port, :integer
     field :gotv_port, :integer
@@ -14,6 +16,7 @@ defmodule Get5Api.GameServers.GameServer do
     field :encrypted_password, :string, redact: true
 
     has_many :matches, Match
+    belongs_to :user, User
 
     timestamps()
   end
@@ -21,8 +24,9 @@ defmodule Get5Api.GameServers.GameServer do
   @doc false
   def changeset(game_server, attrs, opts \\ []) do
     game_server
-    |> cast(attrs, [:name, :host, :port, :gotv_port, :in_use, :rcon_password])
-    |> validate_required([:name, :host, :port, :rcon_password])
+    |> cast(attrs, [:user_id, :name, :host, :port, :gotv_port, :in_use, :rcon_password])
+    |> cast_assoc(:user)
+    |> validate_required([:name, :host, :port, :rcon_password, :user_id])
     |> validate_password(opts)
   end
 

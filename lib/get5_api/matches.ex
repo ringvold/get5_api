@@ -19,9 +19,24 @@ defmodule Get5Api.Matches do
       [%Match{}, ...]
 
   """
-  def list_matches do
+  def list_matches(user_id) do
+    if user_id do
+      Repo.all(
+        from m in Match,
+          where: m.public == true or m.user_id == ^user_id,
+          preload: [:team1, :team2, :game_server],
+          order_by: [asc: :inserted_at]
+      )
+    else
+      list_public_matches()
+    end
+  end
+
+
+  def list_public_matches do
     Repo.all(
       from m in Match,
+        where: m.public == true,
         preload: [:team1, :team2, :game_server],
         order_by: [asc: :inserted_at]
     )

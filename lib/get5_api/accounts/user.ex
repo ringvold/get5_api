@@ -1,12 +1,19 @@
 defmodule Get5Api.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Get5Api.Matches.Match
+  alias Get5Api.Teams.Team
+  alias Get5Api.GameServers.GameServer
 
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+
+    has_many :game_servers, GameServer
+    has_many :teams, Team
+    has_many :matches, Match
 
     timestamps()
   end

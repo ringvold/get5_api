@@ -18,9 +18,24 @@ defmodule Get5Api.Teams do
       [%Team{}, ...]
 
   """
-  def list_teams do
+  def list_teams(user_id) do
+    if user_id do
+      Repo.all(
+        from t in Team,
+          where: t.public == true or t.user_id == ^user_id,
+          preload: [:user],
+          order_by: [asc: :inserted_at]
+      )
+    else
+      list_public_teams()
+    end
+  end
+
+  def list_public_teams() do
     Repo.all(
       from t in Team,
+        where: t.public == true,
+        preload: [:user],
         order_by: [asc: :inserted_at]
     )
   end
@@ -39,9 +54,11 @@ defmodule Get5Api.Teams do
       ** (Ecto.NoResultsError)
 
   """
-  def get_team!(id), do: Repo.get!(Team, id)
+  def get_team!(id), do: Repo.get!(Team, id) |> Repo.preload([:user])
 
-  def get_team(id), do: Repo.get(Team, id)
+
+  def get_team(id), do: Repo.get(Team, id) |> Repo.preload([:user])
+
 
   @doc """
   Creates a team.

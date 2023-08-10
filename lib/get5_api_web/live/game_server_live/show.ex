@@ -53,12 +53,24 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
         {:error, msg} ->
           Logger.error(%{message: msg})
+
           {:noreply,
            socket
            |> assign(status: nil, status_fetches: socket.assigns.status_fetch_errors + 1)
            |> put_flash(:error, "Could not fetch get5 status from server")}
       end
     end
+  end
+
+  def get_entity_for_id(id, socket) do
+    assign_new(socket, :game_server, fn ->
+      GameServers.get_game_server!(id)
+    end)
+    |> assign_new(:owner_id, fn %{game_server: game_server} -> game_server.user_id end)
+  end
+
+  def redirect_url() do
+    ~p"/matches"
   end
 
   defp page_title(:show), do: "Show Game server"

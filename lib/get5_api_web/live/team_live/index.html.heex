@@ -17,6 +17,12 @@
     <%= Enum.map(team.players, fn player -> player.steam_id end)
     |> Enum.join(", ") %>
   </:col>
+  <:col :let={{_id, team}} label="Visibility">
+    <.visibility_icons
+      visible={team.public}
+      title={if team.public, do: "Public team", else: "Private team"}
+    />
+  </:col>
   <:action :let={{_id, team}}>
     <div class="sr-only">
       <.link navigate={~p"/teams/#{team}"}>Show</.link>

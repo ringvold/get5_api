@@ -29,7 +29,8 @@ defmodule Get5ApiWeb.MatchController do
       # Series events
       #
       "match_config_load_fail" ->
-        IO.puts "MATCH CONFIG LOAD FAILED"
+        IO.puts("MATCH CONFIG LOAD FAILED")
+
         Get5ApiWeb.Endpoint.broadcast("match_events", "match_config_load_fail", %{
           match_id: match.id,
           event: params["event"],

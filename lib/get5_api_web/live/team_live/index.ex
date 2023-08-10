@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.TeamLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :teams, Teams.list_teams())}
+    {:ok, stream(socket, :teams, Teams.list_teams(socket.assigns.current_user.id))}
   end
 
   @impl true

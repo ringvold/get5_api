@@ -184,7 +184,7 @@ defmodule Get5ApiWeb.MatchControllerTest do
         }
       |)
 
-      [player_stats | rest ] = Stats.list_player_stats()
+      [player_stats | rest] = Stats.list_player_stats()
       assert conn.status == 200
       assert player_stats.steam_id == "76561198279375306"
       assert player_stats.name == "s1mple"

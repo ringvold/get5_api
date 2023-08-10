@@ -23,6 +23,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         <.input field={@form[:host]} type="text" label="Host" />
         <.input field={@form[:port]} type="text" label="Port" />
         <.input field={@form[:in_use]} type="checkbox" label="In use" />
+        <.input field={@form[:public]} type="checkbox" label="Public" />
         <.input
           field={@form[:rcon_password]}
           type="password"

@@ -9,7 +9,6 @@ defmodule Get5Api.MatchesTest do
     alias Get5Api.Matches.Match
     alias Get5Api.Teams.Player
 
-
     @game_server_attrs %{
       id: 1,
       host: "csgo.example.com",
@@ -28,7 +27,6 @@ defmodule Get5Api.MatchesTest do
       id: 2,
       name: "Team2",
       players: []
-
     }
 
     @valid_attrs %{
@@ -48,7 +46,7 @@ defmodule Get5Api.MatchesTest do
       team2_score: 0,
       game_server_id: @game_server_attrs.id,
       team1_id: @team1_attrs.id,
-      team2_id: @team2_attrs.id,
+      team2_id: @team2_attrs.id
       # game_server: @game_server_attrs,
       # team1_id: @team1_attrs,
       # team2_id: @team2_attrs
@@ -85,11 +83,12 @@ defmodule Get5Api.MatchesTest do
     }
 
     def match_fixture(_state \\ %{}, attrs \\ %{}) do
-      game_server=game_server_fixture(@game_server_attrs)
-      team1=team1_fixture(@team1_attrs)
-      team2=team2_fixture(@team2_attrs)
+      game_server = game_server_fixture(@game_server_attrs)
+      team1 = team1_fixture(@team1_attrs)
+      team2 = team2_fixture(@team2_attrs)
+
       {:ok, match} =
-        %{game_server_id: game_server.id, team1_id: team1.id,team2_id: team2.id}
+        %{game_server_id: game_server.id, team1_id: team1.id, team2_id: team2.id}
         |> Enum.into(@valid_attrs)
         |> Matches.create_match()
 
@@ -107,13 +106,16 @@ defmodule Get5Api.MatchesTest do
     end
 
     test "create_match/1 with valid data creates a match" do
-      game_server=game_server_fixture(@game_server_attrs)
-      team1=team1_fixture(@team1_attrs)
-      team2=team2_fixture(@team2_attrs)
-      assert {:ok, %Match{} = match} = Matches.create_match(
-        %{game_server_id: game_server.id, team1_id: team1.id,team2_id: team2.id}
-        |> Enum.into(@valid_attrs)
-        )
+      game_server = game_server_fixture(@game_server_attrs)
+      team1 = team1_fixture(@team1_attrs)
+      team2 = team2_fixture(@team2_attrs)
+
+      assert {:ok, %Match{} = match} =
+               Matches.create_match(
+                 %{game_server_id: game_server.id, team1_id: team1.id, team2_id: team2.id}
+                 |> Enum.into(@valid_attrs)
+               )
+
       assert match.enforce_teams == true
       assert match.min_player_ready == 5
       assert match.series_type == :bo1

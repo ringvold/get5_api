@@ -43,7 +43,7 @@ defmodule Get5Api.Stats.MapStats do
 
   def by_match_and_map_number(match_id, map_number) do
     from(ms in Get5Api.Stats.MapStats,
-      where: (ms.match_id == ^match_id) and (ms.map_number == ^map_number)
+      where: ms.match_id == ^match_id and ms.map_number == ^map_number
     )
   end
 end

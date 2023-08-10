@@ -9,7 +9,13 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle><%= if assigns.action == :edit do %>Edit team details<% else %>Create a new team<% end %></:subtitle>
+        <:subtitle>
+          <%= if assigns.action == :edit do %>
+            Edit team details
+          <% else %>
+            Create a new team
+          <% end %>
+        </:subtitle>
       </.header>
 
       <.simple_form
@@ -20,6 +26,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:public]} type="checkbox" label="Public" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Team</.button>
         </:actions>

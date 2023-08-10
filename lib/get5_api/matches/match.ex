@@ -1,6 +1,7 @@
 defmodule Get5Api.Matches.Match do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Get5Api.Accounts.User
   alias Get5Api.Teams.Team
   alias Get5Api.GameServers.GameServer
 
@@ -8,6 +9,7 @@ defmodule Get5Api.Matches.Match do
   # Side type is defined by Get5 in match schema
   # https://splewis.github.io/get5/latest/match_schema/#schema
   @type side_type() :: :standard | :always_knife | :never_knife
+  # Add map ban and knife phases?
   @type status() :: :pending | :live | :cancelled | :finished
   @type veto_first() :: :team1 | :team2 | :random
 
@@ -17,6 +19,7 @@ defmodule Get5Api.Matches.Match do
     field(:enforce_teams, :boolean, default: false)
     field(:max_maps, :integer)
     field(:min_player_ready, :integer)
+    field(:public, :boolean, default: false)
 
     field(:side_type, Ecto.Enum,
       values: [:standard, :always_knife, :never_knife],
@@ -30,20 +33,25 @@ defmodule Get5Api.Matches.Match do
 
     field(:spectator_ids, {:array, :string})
     field(:start_time, :utc_datetime)
+
     field(:status, Ecto.Enum,
       values: [:pending, :live, :cancelled, :finished],
       default: :pending
     )
+
     field(:team1_score, :integer)
     field(:team2_score, :integer)
     field(:title, :string)
+
     field(:veto_first, Ecto.Enum,
       values: [:team1, :team2, :random],
       default: :team1
     )
+
     field(:map_list, {:array, :string})
     field(:plugin_version, :string, default: "unknown")
 
+    belongs_to(:user, User)
     belongs_to(:team1, Team)
     belongs_to(:team2, Team)
     belongs_to(:winner, Team)
@@ -72,17 +80,21 @@ defmodule Get5Api.Matches.Match do
       :team1_score,
       :team2_score,
       :plugin_version,
-      :start_time
+      :start_time,
+      :user_id
     ])
     |> cast_assoc(:team1)
     |> cast_assoc(:team2)
     |> cast_assoc(:game_server)
     |> cast_assoc(:winner)
+    |> cast_assoc(:user)
     |> validate_required([
+      :user_id,
       :team1_id,
       :team2_id,
       :game_server_id,
-      :series_type
+      :series_type,
+      :user_id
     ])
     |> foreign_key_constraint(:game_server_id)
     |> validate_map_pool()

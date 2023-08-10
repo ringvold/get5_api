@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.MatchLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :matches, Matches.list_matches())}
+    {:ok, stream(socket, :matches, Matches.list_matches(socket.assigns.current_user.id))}
   end
 
   @impl true

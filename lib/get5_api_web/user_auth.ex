@@ -3,6 +3,7 @@ defmodule Get5ApiWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
+  import Get5ApiWeb.Gettext
 
   alias Get5Api.Accounts
 
@@ -155,7 +156,7 @@ defmodule Get5ApiWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.put_flash(:error, gettext("You must log in to access this page."))
         |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
 
       {:halt, socket}
@@ -167,6 +168,23 @@ defmodule Get5ApiWeb.UserAuth do
 
     if socket.assigns.current_user do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
+    else
+      {:cont, socket}
+    end
+  end
+
+  def on_mount(:ensure_owner_if_private, params, session, socket) do
+    socket = mount_current_user(session, socket)
+    socket = socket.view.get_entity_for_id(params["id"], socket)
+    redirect_url = socket.view.redirect_url()
+
+    if socket.assigns.owner_id && (socket.assigns.owner_id != socket.assigns.current_user.id) do
+      # Redirecting is not the best way to handle this but works as a start
+      {:halt,
+        socket
+        |> Phoenix.LiveView.put_flash(:error, gettext("You do not have access to this page. Redirecting."))
+        |> Phoenix.LiveView.redirect(to: redirect_url)}
+
     else
       {:cont, socket}
     end

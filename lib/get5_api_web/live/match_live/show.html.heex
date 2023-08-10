@@ -1,5 +1,6 @@
 <.header>
   <%= @match.team1.name %> vs <%= @match.team2.name %>
+  <.visibility_icons type={:inline} visible={@match.public} />
   <:subtitle>
     <%= case @status do %>
       <% :loading -> %>
@@ -8,10 +9,12 @@
       <% _ -> %>
         <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
         do %>
-        <%= gettext("Match is running on server. Game state: %{game_state}", game_state: @status["gamestate"]) %>
-      <% else %>
-        <%= gettext("Match is not running on server") %>
-      <% end %>
+          <%= gettext("Match is running on server. Game state: %{game_state}",
+            game_state: @status["gamestate"]
+          ) %>
+        <% else %>
+          <%= gettext("Match is not running on server") %>
+        <% end %>
     <% end %>
   </:subtitle>
 
@@ -30,7 +33,9 @@
     >
       <%= gettext("End match") %>
     </.button>
-    <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>Check status</.button>
+    <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>
+      Check status
+    </.button>
     <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit match</.button>
     </.link>
@@ -49,14 +54,10 @@
   <:item title={gettext("Series type")}><%= @match.series_type %></:item>
   <:item title={gettext("Side type")}><%= @match.side_type %></:item>
   <:item title={gettext("Map list")}><%= Enum.join(@match.map_list, ", ") %></:item>
+  <:item title={gettext("Public")}><%= @match.public %></:item>
 </.list>
 
-
-
-<.table
-  id="player_stats"
-  rows={@player_stats}
->
+<.table id="player_stats" rows={@player_stats}>
   <:col :let={player} label="Name"><%= player.name %></:col>
   <:col :let={player} label="Kills"><%= player.kills %></:col>
   <:col :let={player} label="Damage"><%= player.damage %></:col>
@@ -64,7 +65,9 @@
   <:col :let={player} label="Assists"><%= player.assists %></:col>
   <:col :let={player} label="Flashed"><%= player.enemies_flashed %></:col>
   <:col :let={player} label="HS"><%= player.headshot_kills %></:col>
-  <:col :let={player} label="HS%"><%= "#{ceil(player.headshot_kills / player.kills * 100)}%" %></:col>
+  <:col :let={player} label="HS%">
+    <%= "#{ceil(player.headshot_kills / player.kills * 100)}%" %>
+  </:col>
   <:col :let={player} label="Utility"><%= player.utility_damage %></:col>
   <:col :let={player} label="KAST"><%= player.kast %></:col>
   <:col :let={player} label="Score"><%= player.score %></:col>

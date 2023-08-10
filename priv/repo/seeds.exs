@@ -10,17 +10,36 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+alias Get5Api.Accounts.User
 alias Get5Api.Teams.Team
 alias Get5Api.Teams.Player
 alias Get5Api.Matches.Match
+alias Get5Api.GameServers
 alias Get5Api.GameServers.GameServer
 alias Get5Api.Stats.MapStats
 alias Get5Api.Stats.PlayerStats
 alias Get5Api.Repo
 
+user =
+  %User{
+    email: "test@example.com",
+    password: "qwer1234",
+    hashed_password: Bcrypt.hash_pwd_salt("qwer1234")
+  }
+  |> Repo.insert!()
+
+user2 =
+  %User{
+    email: "test2@example.com",
+    password: "qwer1234",
+    hashed_password: Bcrypt.hash_pwd_salt("qwer1234")
+  }
+  |> Repo.insert!()
+
 genesis =
   %Team{
     name: "Genesis",
+    user_id: user.id,
     players: [
       %Player{steam_id: "12340987", name: "L0Lpalme"},
       %Player{steam_id: "9832470", name: "Madde"},
@@ -32,6 +51,8 @@ genesis =
 astralis =
   %Team{
     name: "Astralis",
+    user_id: user.id,
+    public: true,
     players: [
       %Player{steam_id: "83622425197", name: "Dev1ce"},
       %Player{steam_id: "76561198010511021", name: "gla1ve"},
@@ -45,6 +66,8 @@ astralis =
 _faze =
   %Team{
     name: "Faze",
+    user_id: user.id,
+    public: true,
     players: [
       %Player{steam_id: "76561197961275685", name: "Broky"},
       %Player{steam_id: "76561197989430253", name: "karrigan"},
@@ -55,12 +78,18 @@ _faze =
   }
   |> Repo.insert!()
 
-server =
-  %GameServer{name: "MyServer", host: "192.168.1.2", port: 27015, rcon_password: "1234"}
-  |> Repo.insert!()
+{:ok, server} =
+  GameServers.create_game_server(%{
+    user_id: user2.id,
+    name: "MyServer",
+    host: "192.168.1.2",
+    port: 27015,
+    rcon_password: "1234"
+  })
 
 match =
   %Match{
+    user_id: user.id,
     team1_id: genesis.id,
     team2_id: astralis.id,
     api_key: "ølaksdf",

@@ -40,3 +40,5 @@ npm-debug.log
 .nix-mix
 
 .DS_Store
+*.sublime-project
+*.sublime-workspace

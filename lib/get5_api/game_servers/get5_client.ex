@@ -7,7 +7,10 @@ defmodule Get5Api.GameServers.Get5Client do
 
   def start_match(match) do
     base_url = "#{Endpoint.url()}/matches/#{match.id}"
-    load_command = "get5_loadmatch_url \"#{base_url}/match-config\" \"Authorization\" \"Bearer #{match.api_key}\""
+
+    load_command =
+      "get5_loadmatch_url \"#{base_url}/match-config\" \"Authorization\" \"Bearer #{match.api_key}\""
+
     Logger.info("Starting match on server #{match.game_server.name}")
 
     with {:ok, conn} <- connect(match.game_server),

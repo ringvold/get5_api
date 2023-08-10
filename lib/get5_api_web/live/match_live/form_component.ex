@@ -81,6 +81,8 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
           multiple
         />
 
+        <.input field={@form[:public]} type="checkbox" label="Public" />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Match</.button>
         </:actions>

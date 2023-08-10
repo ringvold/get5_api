@@ -54,7 +54,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:73
+#: lib/get5_api_web/live/match_live/show.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Back to matches"
 msgstr ""
@@ -124,4 +124,14 @@ msgstr ""
 #: lib/get5_api_web/live/match_live/show.ex:47
 #, elixir-autogen, elixir-format
 msgid "Match sendt to server"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:52
+#, elixir-autogen, elixir-format
+msgid "Public"
+msgstr ""
+
+#: lib/get5_api_web/user_auth.ex:159
+#, elixir-autogen, elixir-format
+msgid "You must log in to access this page."
 msgstr ""
