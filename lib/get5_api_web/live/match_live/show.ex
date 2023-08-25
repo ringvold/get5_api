@@ -11,12 +11,15 @@ defmodule Get5ApiWeb.MatchLive.Show do
   @impl true
   def mount(_params, _session, socket) do
     Get5ApiWeb.Endpoint.subscribe(@topic)
-    {:ok, assign(socket, status: nil, stats: nil)}
+
+    {:ok,
+     assign(socket, status: nil, stats: nil)
+     |> assign_new(:match, fn %{entity: entity} -> entity end)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    match = Matches.get_match!(id)
+    match = socket.assigns.match || Matches.get_match!(id)
     map_stats = Stats.get_by_match(id)
     player_stats = Stats.player_stats_by_match(id)
     send(self(), {:get_status, match.game_server})
@@ -141,11 +144,10 @@ defmodule Get5ApiWeb.MatchLive.Show do
      )}
   end
 
-  def get_entity_for_id(id, socket) do
-    assign_new(socket, :match, fn ->
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn ->
       Matches.get_match!(id)
     end)
-    |> assign_new(:owner_id, fn %{match: match} -> match.user_id end)
   end
 
   def redirect_url() do

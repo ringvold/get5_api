@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.TeamLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, socket |> assign_new(:team, fn %{entity: entity} -> entity end)}
   end
 
   @impl true
@@ -26,11 +26,10 @@ defmodule Get5ApiWeb.TeamLive.Show do
     {:noreply, assign(socket, :team, team)}
   end
 
-  def get_entity_for_id(id, socket) do
-    assign_new(socket, :team, fn ->
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn ->
       Teams.get_team!(id)
     end)
-    |> assign_new(:owner_id, fn %{team: team} -> team.user_id end)
   end
 
   def redirect_url() do

@@ -8,12 +8,14 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(status_fetch_errors: 0)}
+    {:ok, socket
+      |> assign_new(:game_server, fn %{entity: entity} -> entity end)
+      |> assign(status_fetch_errors: 0)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    game_server = GameServers.get_game_server!(id)
+    game_server = socket.assigns.entity || GameServers.get_game_server!(id)
     send(self(), {:get_status, game_server})
 
     {:noreply,
@@ -62,11 +64,10 @@ defmodule Get5ApiWeb.GameServerLive.Show do
     end
   end
 
-  def get_entity_for_id(id, socket) do
-    assign_new(socket, :game_server, fn ->
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn ->
       GameServers.get_game_server!(id)
     end)
-    |> assign_new(:owner_id, fn %{game_server: game_server} -> game_server.user_id end)
   end
 
   def redirect_url() do

@@ -174,17 +174,21 @@ defmodule Get5ApiWeb.UserAuth do
   end
 
   def on_mount(:ensure_owner_if_private, params, session, socket) do
-    socket = mount_current_user(session, socket)
-    socket = socket.view.get_entity_for_id(params["id"], socket)
+    socket = mount_current_user(session, socket) |> socket.view.get_entity_for_id(params["id"])
     redirect_url = socket.view.redirect_url()
+    entity = socket.assigns.entity
 
-    if socket.assigns.owner_id && (socket.assigns.owner_id != socket.assigns.current_user.id) do
+    if !entity.public && entity.user_id != socket.assigns.current_user.id do
       # Redirecting is not the best way to handle this but works as a start
+      # Should have a common "no access" or "404" component to render
       {:halt,
-        socket
-        |> Phoenix.LiveView.put_flash(:error, gettext("You do not have access to this page. Redirecting."))
-        |> Phoenix.LiveView.redirect(to: redirect_url)}
-
+       socket
+       |> Phoenix.Component.assign(:entity, nil)
+       |> Phoenix.LiveView.put_flash(
+         :error,
+         gettext("You do not have access to this page. Redirecting.")
+       )
+       |> Phoenix.LiveView.redirect(to: redirect_url)}
     else
       {:cont, socket}
     end
