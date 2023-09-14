@@ -23,7 +23,7 @@ defmodule Get5ApiWeb.GameServerLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Game server")
-    |> assign(:game_server, %GameServer{})
+    |> assign(:game_server, %GameServer{user_id: socket.assigns.current_user.id})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -40,7 +40,7 @@ defmodule Get5ApiWeb.GameServerLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     game_server = GameServers.get_game_server!(id)
-    {:ok, _} = GameServers.delete_game_server(game_server)
+    {:ok, _} = GameServers.delete_game_server(socket.assigns.current_user, game_server)
 
     {:noreply, stream_delete(socket, :game_servers, game_server)}
   end

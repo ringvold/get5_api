@@ -125,8 +125,6 @@ defmodule Get5ApiWeb.MatchController do
   end
 
   defp authenticate_api_key(conn, _options) do
-    dbg(conn)
-
     match = Matches.get_match!(conn.params["id"] || conn.params["matchid"])
 
     case get_req_header(conn, "authorization") do

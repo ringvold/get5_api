@@ -23,7 +23,7 @@ defmodule Get5ApiWeb.TeamLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Team")
-    |> assign(:team, %Team{})
+    |> assign(:team, %Team{user_id: socket.assigns.current_user.id})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -40,7 +40,7 @@ defmodule Get5ApiWeb.TeamLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     team = Teams.get_team!(id)
-    {:ok, _} = Teams.delete_team(team)
+    {:ok, _} = Teams.delete_team(socket.assigns.current_user, team)
 
     {:noreply, stream_delete(socket, :teams, team)}
   end

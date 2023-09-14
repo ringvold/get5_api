@@ -55,7 +55,7 @@ defmodule Get5Api.Stats.PlayerStats do
     player_stats
     |> cast(attrs, [
       :steam_id,
-      :kill,
+      :kills,
       :deaths,
       :assists,
       :flash_assists,

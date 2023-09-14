@@ -63,7 +63,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
   end
 
   defp save_game_server(socket, :edit, game_server_params) do
-    case GameServers.update_game_server(socket.assigns.game_server, game_server_params) do
+    case GameServers.update_game_server(socket.assigns.current_user, socket.assigns.game_server, game_server_params) do
       {:ok, game_server} ->
         notify_parent({:saved, game_server})
 
@@ -78,7 +78,9 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
   end
 
   defp save_game_server(socket, :new, game_server_params) do
-    case GameServers.create_game_server(game_server_params) do
+    game_server_params_with_user = Map.put(game_server_params, "user_id", socket.assigns.current_user.id)
+
+    case GameServers.create_game_server(game_server_params_with_user) do
       {:ok, game_server} ->
         notify_parent({:saved, game_server})
 

@@ -8,6 +8,7 @@ defmodule Get5Api.Teams do
 
   alias Get5Api.Teams.Team
   alias Get5Api.Teams.Player
+  alias Get5Api.Accounts.User
 
   @doc """
   Returns the list of teams.
@@ -56,9 +57,7 @@ defmodule Get5Api.Teams do
   """
   def get_team!(id), do: Repo.get!(Team, id) |> Repo.preload([:user])
 
-
   def get_team(id), do: Repo.get(Team, id) |> Repo.preload([:user])
-
 
   @doc """
   Creates a team.
@@ -90,7 +89,15 @@ defmodule Get5Api.Teams do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_team(%Team{} = team, attrs) do
+  def update_team(%User{} = user, %Team{} = team, attrs) do
+    if team.user_id == user.id do
+      update_team(team, attrs)
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def update_team(%Team{} = team, attrs \\ %{}) do
     team
     |> Team.changeset(attrs)
     |> Repo.update()
@@ -132,6 +139,14 @@ defmodule Get5Api.Teams do
     end
   end
 
+  def remove_player(%User{} = user, %Team{} = team, %Player{} = player) do
+    if team.user_id == user.id do
+      remove_player(team, player)
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   def remove_player(%Team{} = team, %Player{} = player) do
     players = Enum.reject(team.players, &(&1.steam_id == player.steam_id))
 
@@ -162,10 +177,14 @@ defmodule Get5Api.Teams do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_team(%Team{} = team) do
-    team
-    |> Team.changeset(%{})
-    |> Repo.delete()
+  def delete_team(%User{} = user, %Team{} = team) do
+    if team.user_id == user.id do
+      team
+      |> Team.changeset(%{})
+      |> Repo.delete()
+    else
+      {:error, :unauthorized}
+    end
   end
 
   @doc """

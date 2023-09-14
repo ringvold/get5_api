@@ -8,6 +8,7 @@ defmodule Get5Api.Matches do
   alias Get5Api.Repo
 
   alias Get5Api.Matches.Match
+  alias Get5Api.Accounts.User
   alias Get5Api.GameServers.Get5Client
 
   @doc """
@@ -31,7 +32,6 @@ defmodule Get5Api.Matches do
       list_public_matches()
     end
   end
-
 
   def list_public_matches do
     Repo.all(
@@ -104,6 +104,14 @@ defmodule Get5Api.Matches do
     end
   end
 
+  def update_match(%User{} = user, %Match{} = match, attrs) do
+    if match.user_id == user.id do
+      update_match(match, attrs)
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   @doc """
   Updates a match.
 
@@ -116,7 +124,7 @@ defmodule Get5Api.Matches do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_match(%Match{} = match, attrs) do
+  def update_match(%Match{} = match, attrs \\ %{}) do
     match
     |> Match.changeset(attrs)
     |> Repo.update()
@@ -127,15 +135,22 @@ defmodule Get5Api.Matches do
 
   ## Examples
 
-      iex> delete_match(match)
+      iex> delete_match(user, match)
       {:ok, %Match{}}
 
-      iex> delete_match(match)
+      iex> delete_match(user, match)
       {:error, %Ecto.Changeset{}}
 
+      iex> delete_match(user, match)
+      {:error, :unauthorized}
+
   """
-  def delete_match(%Match{} = match) do
-    Repo.delete(match)
+  def delete_match(%User{} = user, %Match{} = match) do
+    if match.user_id == user.id do
+      Repo.delete(match)
+    else
+      {:error, :unauthorized}
+    end
   end
 
   @doc """

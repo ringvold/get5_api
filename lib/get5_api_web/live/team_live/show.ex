@@ -21,7 +21,7 @@ defmodule Get5ApiWeb.TeamLive.Show do
 
   @impl true
   def handle_event("delete_player", %{"id" => id}, socket) do
-    {:ok, team} = Teams.remove_player(socket.assigns.team, %Player{steam_id: id})
+    {:ok, team} = Teams.remove_player(socket.assigns.current_user, socket.assigns.team, %Player{steam_id: id})
 
     {:noreply, assign(socket, :team, team)}
   end
