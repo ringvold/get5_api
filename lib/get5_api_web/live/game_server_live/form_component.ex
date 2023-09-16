@@ -74,6 +74,11 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
+
+      {:error, :unauthorized} ->
+        {:noreply, socket
+         |> put_flash(:error, "Unauthorized")
+        |> push_navigate(to: socket.assigns.navigate)}
     end
   end
 

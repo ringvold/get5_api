@@ -21,9 +21,14 @@ defmodule Get5ApiWeb.TeamLive.Show do
 
   @impl true
   def handle_event("delete_player", %{"id" => id}, socket) do
-    {:ok, team} = Teams.remove_player(socket.assigns.current_user, socket.assigns.team, %Player{steam_id: id})
-
-    {:noreply, assign(socket, :team, team)}
+    case Teams.remove_player(socket.assigns.current_user, socket.assigns.team, %Player{steam_id: id}) do
+      {:ok, team} ->
+        {:noreply, assign(socket, :team, team)}
+      {:error, :unauthorized} ->
+        {:noreply, socket |> put_flash(:error, gettext("You are not authorized to remove players from this team"))}
+      {:error, _} ->
+        {:noreply, socket |> put_flash(:error, gettext("Could not remove player from team"))}
+    end
   end
 
   def get_entity_for_id(socket, id) do

@@ -40,66 +40,78 @@ defmodule Get5ApiWeb.MatchLive.Show do
 
   @impl true
   def handle_event("start_match", _params, socket) do
-    case Get5Client.start_match(socket.assigns.match) do
-      {:ok, _resp} ->
-        send(self(), {:get_status, socket.assigns.match.game_server})
+    if socket.assigns.match.user_id == socket.assigns.current_user.id do
+      case Get5Client.start_match(socket.assigns.match) do
+        {:ok, _resp} ->
+          send(self(), {:get_status, socket.assigns.match.game_server})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, gettext("Match sendt to server"))}
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("Match sendt to server"))}
 
-      {:error, :nxdomain} ->
-        {:noreply,
-         socket
-         |> assign(status: nil)
-         |> put_flash(
-           :error,
-           gettext("Domain %{host} does not exist or could not be reached",
-             host: socket.assigns.match.game_server.host
-           )
-         )}
+        {:error, :nxdomain} ->
+          {:noreply,
+           socket
+           |> assign(status: nil)
+           |> put_flash(
+             :error,
+             gettext("Domain %{host} does not exist or could not be reached",
+               host: socket.assigns.match.game_server.host
+             )
+           )}
 
-      {:error, :other_match_already_loaded} ->
-        {:noreply,
-         socket
-         |> assign(status: nil)
-         |> put_flash(
-           :error,
-           gettext("A match is already loaded on the server")
-         )}
+        {:error, :other_match_already_loaded} ->
+          {:noreply,
+           socket
+           |> assign(status: nil)
+           |> put_flash(
+             :error,
+             gettext("A match is already loaded on the server")
+           )}
 
-      {:error, msg} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, msg)
-         |> assign(status: nil)}
-    end
+        {:error, msg} ->
+          {:noreply,
+           socket
+           |> put_flash(:error, msg)
+           |> assign(status: nil)}
+      end
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("You are not allowed to start this match"))}
+     end
   end
 
   @impl true
   def handle_event("end_match", _params, socket) do
-    case Get5Client.end_match(socket.assigns.match) do
-      {:ok, _msg} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, gettext("Match ended"))}
+    if socket.assigns.match.user_id == socket.assigns.current_user.id do
+      case Get5Client.end_match(socket.assigns.match) do
+        {:ok, _msg} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("Match ended"))}
 
-      {:error, :nxdomain} ->
-        {:noreply,
-         socket
-         |> assign(status: nil)
-         |> put_flash(
-           :error,
-           gettext("Domain %{host} does not exist or could not be reached",
-             host: socket.assigns.match.game_server.host
-           )
-         )}
+        {:error, :nxdomain} ->
+          {:noreply,
+           socket
+           |> assign(status: nil)
+           |> put_flash(
+             :error,
+             gettext("Domain %{host} does not exist or could not be reached",
+               host: socket.assigns.match.game_server.host
+             )
+           )}
 
-      {:error, msg} ->
-        {:noreply,
-         socket
-         |> assign(status: nil)
-         |> put_flash(:error, msg)}
+        {:error, msg} ->
+          {:noreply,
+           socket
+           |> assign(status: nil)
+           |> put_flash(:error, msg)}
+      end
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("You are not allowed to end this match"))}
     end
   end
 

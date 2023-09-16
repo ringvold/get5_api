@@ -23,13 +23,16 @@
     />
   </:col>
   <:action :let={{_id, game_server}}>
-    <div class="sr-only">
-      <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
-    </div>
-    <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+    <span :if={@current_user.id == game_server.user_id}>
+      <div class="sr-only">
+        <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
+      </div>
+      <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+    </span>
   </:action>
   <:action :let={{id, game_server}}>
     <.link
+      :if={@current_user.id == game_server.user_id}
       phx-click={JS.push("delete", value: %{id: game_server.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >

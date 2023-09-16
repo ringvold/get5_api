@@ -20,7 +20,7 @@ defmodule Get5Api.Teams.Team do
   @doc false
   def changeset(team, attrs) do
     team
-    |> cast(attrs, [:name, :user_id])
+    |> cast(attrs, [:name, :user_id, :public])
     |> cast_embed(:players)
     |> cast_assoc(:user)
     |> validate_required([:name])

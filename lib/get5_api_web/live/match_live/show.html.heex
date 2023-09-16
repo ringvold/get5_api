@@ -20,6 +20,7 @@
 
   <:actions>
     <.button
+      :if={@current_user.id == @match.user_id}
       phx-click="start_match"
       phx-disable-with={gettext("Loading...")}
       data-confirm={gettext("Are you sure you want to start the match?")}
@@ -27,6 +28,7 @@
       <%= gettext("Start match") %>
     </.button>
     <.button
+      :if={@current_user.id == @match.user_id}
       phx-click="end_match"
       phx-disable-with={gettext("Loading...")}
       data-confirm={gettext("Are you sure you want end the match?")}
@@ -36,7 +38,11 @@
     <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>
       Check status
     </.button>
-    <.link patch={~p"/matches/#{@match}/show/edit"} phx-click={JS.push_focus()}>
+    <.link
+      :if={@current_user.id == @match.user_id}
+      patch={~p"/matches/#{@match}/show/edit"}
+      phx-click={JS.push_focus()}
+    >
       <.button>Edit match</.button>
     </.link>
   </:actions>
@@ -87,6 +93,7 @@
     title={@page_title}
     action={@live_action}
     match={@match}
+    current_user={@current_user}
     navigate={~p"/matches/#{@match}"}
   />
 </.modal>

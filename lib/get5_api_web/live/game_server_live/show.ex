@@ -29,18 +29,24 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def handle_event("show_password", _params, socket) do
-    if socket.assigns.show_password do
-      {:noreply,
-       socket
-       |> assign(:show_password, false)}
+    if socket.assigns.game_server.user_id == socket.assigns.current_user.id do
+      if socket.assigns.show_password do
+        {:noreply,
+         socket
+         |> assign(:show_password, false)}
+      else
+        {:noreply,
+         socket
+         |> assign(:show_password, true)
+         |> assign(
+           :rcon_password,
+           Encryption.decrypt(socket.assigns.game_server.encrypted_password)
+         )}
+      end
     else
       {:noreply,
        socket
-       |> assign(:show_password, true)
-       |> assign(
-         :rcon_password,
-         Encryption.decrypt(socket.assigns.game_server.encrypted_password)
-       )}
+       |> put_flash(:error, gettext("You are not allowed to view rcon password"))}
     end
   end
 

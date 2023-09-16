@@ -14,8 +14,11 @@
         Plugin version: <%= @status["plugin_version"] %>
     <% end %>
   </:subtitle>
-  <:actions>
-    <.link patch={~p"/game_servers/#{@game_server}/show/edit"} phx-click={JS.push_focus()}>
+  <:actions :if={@current_user.id == @game_server.user_id}>
+    <.link
+      patch={~p"/game_servers/#{@game_server}/show/edit"}
+      phx-click={JS.push_focus()}
+    >
       <.button>Edit server</.button>
     </.link>
   </:actions>
@@ -27,7 +30,7 @@
   <:item title="Port"><%= @game_server.port %></:item>
   <:item title="In use"><%= @game_server.in_use %></:item>
   <:item title="Public"><%= @game_server.public %></:item>
-  <:item title="Rcon password">
+  <:item :if={@current_user.id == @game_server.user_id} title="Rcon password">
     <div class="flex group items-center">
       <code
         class="bg-gray-200 dark:bg-gray-700 p-1 font-mono cursor-pointer"

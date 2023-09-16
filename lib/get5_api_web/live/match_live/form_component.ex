@@ -92,15 +92,14 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   end
 
   @impl true
-  def update(%{match: match, current_user: current_user} = assigns, socket) do
+  def update(%{match: match, current_user: user} = assigns, socket) do
     changeset = Matches.change_match(match)
-
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:teams, Teams.list_teams(current_user.id))
-     |> assign(:servers, GameServers.list_game_servers(current_user.id))}
+     |> assign(:teams, Teams.list_teams(user.id))
+     |> assign(:servers, GameServers.list_game_servers(user.id))}
   end
 
   @impl true

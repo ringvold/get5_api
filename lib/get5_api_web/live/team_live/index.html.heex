@@ -24,13 +24,16 @@
     />
   </:col>
   <:action :let={{_id, team}}>
-    <div class="sr-only">
-      <.link navigate={~p"/teams/#{team}"}>Show</.link>
-    </div>
-    <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
+    <span :if={@current_user.id == team.user_id}>
+      <div class="sr-only">
+        <.link navigate={~p"/teams/#{team}"}>Show</.link>
+      </div>
+      <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
+    </span>
   </:action>
   <:action :let={{id, team}}>
     <.link
+      :if={@current_user.id == team.user_id}
       phx-click={JS.push("delete", value: %{id: team.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
