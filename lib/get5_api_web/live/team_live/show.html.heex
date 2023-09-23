@@ -1,7 +1,8 @@
 <.header>
   <%= @team.name %>
-  <:subtitle></:subtitle>
-  <:actions>
+  <.visibility_icons type={:inline} visible={@team.public} />
+  <:subtitle :if={@current_user.id == @team.user_id}>Owner: You</:subtitle>
+  <:actions :if={@current_user.id == @team.user_id}>
     <.link patch={~p"/teams/#{@team}/players/new"} phx-click={JS.push_focus()}>
       <.button>Add player</.button>
     </.link>
@@ -24,6 +25,7 @@
   <:col :let={player} label="Name"><%= player.name %></:col>
   <:action :let={player}>
     <.link
+      :if={@current_user.id == @team.user_id}
       phx-click={JS.push("delete_player", value: %{id: player.steam_id})}
       data-confirm="Are you sure?"
     >
@@ -58,6 +60,7 @@
     action={@live_action}
     team={@team}
     player={%Player{}}
+    current_user={@current_user}
     navigate={~p"/teams/#{@team}"}
   />
 </.modal>

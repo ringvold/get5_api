@@ -9,7 +9,13 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle><%= if assigns.action == :edit do %>Edit team details<% else %>Create a new team<% end %></:subtitle>
+        <:subtitle>
+          <%= if assigns.action == :edit do %>
+            Edit team details
+          <% else %>
+            Create a new team
+          <% end %>
+        </:subtitle>
       </.header>
 
       <.simple_form
@@ -20,6 +26,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:public]} type="checkbox" label="Public" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Team</.button>
         </:actions>
@@ -53,7 +60,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
   end
 
   defp save_team(socket, :edit, team_params) do
-    case Teams.update_team(socket.assigns.team, team_params) do
+    case Teams.update_team(socket.assigns.current_user, socket.assigns.team, team_params) do
       {:ok, team} ->
         notify_parent({:saved, team})
 
@@ -68,7 +75,9 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
   end
 
   defp save_team(socket, :new, team_params) do
-    case Teams.create_team(team_params) do
+    team_with_user = Map.put(team_params, "user_id", socket.assigns.current_user.id)
+
+    case Teams.create_team(team_with_user) do
       {:ok, team} ->
         notify_parent({:saved, team})
 

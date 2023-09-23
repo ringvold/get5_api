@@ -49,20 +49,23 @@ defmodule Get5Api.MatchConfigGeneratorTest do
     assert config.team1.name == "Team1"
     assert config.team2.name == "Team2"
     assert config.num_maps == 1
+
     assert config.team1.players == %{
-          "1" => "player1",
-          "2" => "player2",
-          "3" => "player3",
-          "4" => "player4",
-          "5" => "player5"
-        }
+             "1" => "player1",
+             "2" => "player2",
+             "3" => "player3",
+             "4" => "player4",
+             "5" => "player5"
+           }
+
     assert config.team2.players == %{
-          "6" => "player6",
-          "7" => "player7",
-          "8" => "player8",
-          "9" => "player9",
-          "10" => "player10"
-        }
+             "6" => "player6",
+             "7" => "player7",
+             "8" => "player8",
+             "9" => "player9",
+             "10" => "player10"
+           }
+
     assert config.cvars.get5_remote_log_url == "baseurl/matches/#{match.id}/events"
     assert config.cvars.get5_remote_log_header_key == "Authorization"
     assert config.cvars.get5_remote_log_header_value == "Bearer #{match.api_key}"

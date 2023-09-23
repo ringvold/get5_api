@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.TeamLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, socket |> assign_new(:team, fn %{entity: entity} -> entity end)}
   end
 
   @impl true
@@ -14,14 +14,31 @@ defmodule Get5ApiWeb.TeamLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:team, Teams.get_team!(id))}
+     |> assign_new(:team, fn ->
+       Teams.get_team!(id)
+     end)}
   end
 
   @impl true
   def handle_event("delete_player", %{"id" => id}, socket) do
-    {:ok, team} = Teams.remove_player(socket.assigns.team, %Player{steam_id: id})
+    case Teams.remove_player(socket.assigns.current_user, socket.assigns.team, %Player{steam_id: id}) do
+      {:ok, team} ->
+        {:noreply, assign(socket, :team, team)}
+      {:error, :unauthorized} ->
+        {:noreply, socket |> put_flash(:error, gettext("You are not authorized to remove players from this team"))}
+      {:error, _} ->
+        {:noreply, socket |> put_flash(:error, gettext("Could not remove player from team"))}
+    end
+  end
 
-    {:noreply, assign(socket, :team, team)}
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn ->
+      Teams.get_team!(id)
+    end)
+  end
+
+  def redirect_url() do
+    ~p"/teams"
   end
 
   defp page_title(:show), do: "Show Team"

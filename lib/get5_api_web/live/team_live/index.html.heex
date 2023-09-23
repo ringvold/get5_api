@@ -17,14 +17,23 @@
     <%= Enum.map(team.players, fn player -> player.steam_id end)
     |> Enum.join(", ") %>
   </:col>
+  <:col :let={{_id, team}} label="Visibility">
+    <.visibility_icons
+      visible={team.public}
+      title={if team.public, do: "Public team", else: "Private team"}
+    />
+  </:col>
   <:action :let={{_id, team}}>
-    <div class="sr-only">
-      <.link navigate={~p"/teams/#{team}"}>Show</.link>
-    </div>
-    <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
+    <span :if={@current_user.id == team.user_id}>
+      <div class="sr-only">
+        <.link navigate={~p"/teams/#{team}"}>Show</.link>
+      </div>
+      <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
+    </span>
   </:action>
   <:action :let={{id, team}}>
     <.link
+      :if={@current_user.id == team.user_id}
       phx-click={JS.push("delete", value: %{id: team.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
@@ -45,6 +54,7 @@
     title={@page_title}
     action={@live_action}
     team={@team}
+    current_user={@current_user}
     navigate={~p"/teams"}
   />
 </.modal>

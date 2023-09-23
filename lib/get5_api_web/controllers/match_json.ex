@@ -1,5 +1,4 @@
 defmodule Get5ApiWeb.MatchJSON do
-
   @doc """
   Renders match config for starting match in Get5
   """
@@ -10,5 +9,4 @@ defmodule Get5ApiWeb.MatchJSON do
   def series_start(%{validation_errors: errors}) do
     %{errors: errors}
   end
-
 end

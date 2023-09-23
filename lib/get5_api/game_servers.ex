@@ -8,6 +8,7 @@ defmodule Get5Api.GameServers do
 
   alias Get5Api.GameServers.GameServer
   alias Get5Api.Encryption
+  alias Get5Api.Accounts.User
 
   @doc """
   Returns the list of game_servers.
@@ -18,9 +19,23 @@ defmodule Get5Api.GameServers do
       [%GameServer{}, ...]
 
   """
-  def list_game_servers do
-    Repo.all(from g in GameServer,
-        order_by: [asc: :inserted_at])
+  def list_game_servers(user_id) do
+    if user_id do
+      Repo.all(
+        from g in GameServer,
+          where: g.public == true or g.user_id == ^user_id,
+          order_by: [asc: :inserted_at]
+      )
+    else
+      list_public_game_servers()
+    end
+  end
+
+  def list_public_game_servers do
+    Repo.all(
+      from g in GameServer,
+        order_by: [asc: :inserted_at]
+    )
   end
 
   @doc """
@@ -77,20 +92,35 @@ defmodule Get5Api.GameServers do
     |> Repo.update()
   end
 
+  def update_game_server(%User{} = user, %GameServer{} = game_server, attrs) do
+    if game_server.user_id == user.id do
+      update_game_server(game_server, attrs)
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   @doc """
   Deletes a game_server.
 
   ## Examples
 
-      iex> delete_game_server(game_server)
+      iex> delete_game_server(user, game_server)
       {:ok, %GameServer{}}
 
-      iex> delete_game_server(game_server)
+      iex> delete_game_server(user, game_server)
       {:error, %Ecto.Changeset{}}
 
+      iex> delete_game_server(user, game_server)
+      {:error, :unauthorized}
+
   """
-  def delete_game_server(%GameServer{} = game_server) do
-    Repo.delete(game_server)
+  def delete_game_server(%User{} = user, %GameServer{} = game_server) do
+    if game_server.user_id == user.id do
+      Repo.delete(game_server)
+    else
+      {:error, :unauthorized}
+    end
   end
 
   @doc """

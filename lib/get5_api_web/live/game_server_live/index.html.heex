@@ -15,15 +15,24 @@
   <:col :let={{_id, game_server}} label="Name"><%= game_server.name %></:col>
   <:col :let={{_id, game_server}} label="Host"><%= game_server.host %></:col>
   <:col :let={{_id, game_server}} label="Port"><%= game_server.port %></:col>
-  <:col :let={{_id, game_server}} label="Port"><%= game_server.in_use %></:col>
+  <:col :let={{_id, game_server}} label="In use"><%= game_server.in_use %></:col>
+  <:col :let={{_id, game_server}} label="Visibility">
+    <.visibility_icons
+      visible={game_server.public}
+      title={if game_server.public, do: "Public server", else: "Private server"}
+    />
+  </:col>
   <:action :let={{_id, game_server}}>
-    <div class="sr-only">
-      <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
-    </div>
-    <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+    <span :if={@current_user.id == game_server.user_id}>
+      <div class="sr-only">
+        <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
+      </div>
+      <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
+    </span>
   </:action>
   <:action :let={{id, game_server}}>
     <.link
+      :if={@current_user.id == game_server.user_id}
       phx-click={JS.push("delete", value: %{id: game_server.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
@@ -44,6 +53,7 @@
     title={@page_title}
     action={@live_action}
     game_server={@game_server}
+    current_user={@current_user}
     navigate={~p"/game_servers"}
   />
 </.modal>

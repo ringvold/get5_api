@@ -73,10 +73,10 @@ defmodule Get5Api.RconServerMock do
          <<size::32-signed-integer-little, id::32-signed-integer-little,
            kind_code::32-signed-integer-little, body::binary>>
        ) do
-    IO.inspect size, label: "size"
-    IO.inspect id, label: "id"
-    IO.inspect kind_code, label: "kind_code"
-    IO.inspect body, label: "body"
+    IO.inspect(size, label: "size")
+    IO.inspect(id, label: "id")
+    IO.inspect(kind_code, label: "kind_code")
+    IO.inspect(body, label: "body")
     send_packet(socket, :exec_resp, id, "Command recieved", :server)
   end
 

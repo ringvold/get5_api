@@ -26,25 +26,13 @@ defmodule Get5ApiWeb.Router do
       on_mount: [{Get5ApiWeb.UserAuth, :ensure_authenticated}] do
       live "/matches", MatchLive.Index, :index
       live "/matches/new", MatchLive.Index, :new
-      live "/matches/:id/edit", MatchLive.Index, :edit
 
-      live "/matches/:id", MatchLive.Show, :show
-      live "/matches/:id/show/edit", MatchLive.Show, :edit
 
       live "/game_servers", GameServerLive.Index, :index
       live "/game_servers/new", GameServerLive.Index, :new
-      live "/game_servers/:id/edit", GameServerLive.Index, :edit
-
-      live "/game_servers/:id", GameServerLive.Show, :show
-      live "/game_servers/:id/show/edit", GameServerLive.Show, :edit
 
       live "/teams", TeamLive.Index, :index
       live "/teams/new", TeamLive.Index, :new
-      live "/teams/:id/edit", TeamLive.Index, :edit
-
-      live "/teams/:id", TeamLive.Show, :show
-      live "/teams/:id/show/edit", TeamLive.Show, :edit
-      live "/teams/:id/players/new", TeamLive.Show, :add_player
     end
   end
 
@@ -80,6 +68,28 @@ defmodule Get5ApiWeb.Router do
 
       live_dashboard "/dashboard", metrics: Get5ApiWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authorized routes
+
+  scope "/", Get5ApiWeb do
+    pipe_through :browser
+
+    live_session :authorized, on_mount: [{Get5ApiWeb.UserAuth, :ensure_owner_if_private}] do
+      live "/matches/:id", MatchLive.Show, :show
+      live "/matches/:id/edit", MatchLive.Index, :edit
+      live "/matches/:id/show/edit", MatchLive.Show, :edit
+
+      live "/game_servers/:id", GameServerLive.Show, :show
+      live "/game_servers/:id/edit", GameServerLive.Index, :edit
+      live "/game_servers/:id/show/edit", GameServerLive.Show, :edit
+
+      live "/teams/:id", TeamLive.Show, :show
+      live "/teams/:id/edit", TeamLive.Index, :edit
+      live "/teams/:id/show/edit", TeamLive.Show, :edit
+      live "/teams/:id/players/new", TeamLive.Show, :add_player
+
     end
   end
 

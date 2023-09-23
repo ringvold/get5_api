@@ -6,7 +6,7 @@ defmodule Get5ApiWeb.MatchLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :matches, Matches.list_matches())}
+    {:ok, stream(socket, :matches, Matches.list_matches(socket.assigns.current_user.id))}
   end
 
   @impl true
@@ -23,7 +23,7 @@ defmodule Get5ApiWeb.MatchLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Match")
-    |> assign(:match, %Match{})
+    |> assign(:match, %Match{user_id: socket.assigns.current_user.id})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -40,7 +40,7 @@ defmodule Get5ApiWeb.MatchLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     match = Matches.get_match!(id)
-    {:ok, _} = Matches.delete_match(match)
+    {:ok, _} = Matches.delete_match(socket.assigns.current_user, match)
 
     {:noreply, stream_delete(socket, :matches, match)}
   end

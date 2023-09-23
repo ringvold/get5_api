@@ -9,7 +9,9 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Add player by steam id. Name is optional. If not set name defaults to the players current steam name.</:subtitle>
+        <:subtitle>
+          Add player by steam id. Name is optional. If not set name defaults to the players current steam name.
+        </:subtitle>
       </.header>
 
       <.simple_form
@@ -62,7 +64,7 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_player_form(socket, changeset|> Map.put(:action, :validate))}
+        {:noreply, assign_player_form(socket, changeset |> Map.put(:action, :validate))}
     end
   end
 

@@ -6,12 +6,11 @@ defmodule Get5Api.MapSelections.SideSelection do
 
   schema "side_selections" do
     field :map_name, :string
-    field :side,  Ecto.Enum, values: [:t, :ct]
+    field :side, Ecto.Enum, values: [:t, :ct]
     field :team_name, :string
 
     belongs_to(:match, Matche)
     belongs_to(:map_selection, MapSelection)
-
 
     timestamps()
   end

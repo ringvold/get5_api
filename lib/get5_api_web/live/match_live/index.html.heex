@@ -15,14 +15,23 @@
   <:col :let={{_id, match}} label="Name"><%= match.team1.name %> vs <%= match.team2.name %></:col>
   <:col :let={{_id, match}} label="Series type"><%= match.series_type %></:col>
   <:col :let={{_id, match}} label="Server"><%= match.game_server.name %></:col>
+  <:col :let={{_id, match}} label="Visibility">
+    <.visibility_icons
+      visible={match.public}
+      title={if match.public, do: "Public match", else: "Private match"}
+    />
+  </:col>
   <:action :let={{_id, match}}>
-    <div class="sr-only">
-      <.link navigate={~p"/matches/#{match}"}>Show</.link>
-    </div>
-    <.link patch={~p"/matches/#{match}/edit"}>Edit</.link>
+    <span :if={@current_user.id == match.user_id}>
+      <div class="sr-only">
+        <.link navigate={~p"/matches/#{match}"}>Show</.link>
+      </div>
+      <.link patch={~p"/matches/#{match}/edit"}>Edit</.link>
+    </span>
   </:action>
   <:action :let={{id, match}}>
     <.link
+      :if={@current_user.id == match.user_id}
       phx-click={JS.push("delete", value: %{id: match.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
@@ -43,6 +52,7 @@
     title={@page_title}
     action={@live_action}
     match={@match}
+    current_user={@current_user}
     navigate={~p"/matches"}
   />
 </.modal>

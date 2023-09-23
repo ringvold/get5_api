@@ -23,6 +23,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         <.input field={@form[:host]} type="text" label="Host" />
         <.input field={@form[:port]} type="text" label="Port" />
         <.input field={@form[:in_use]} type="checkbox" label="In use" />
+        <.input field={@form[:public]} type="checkbox" label="Public" />
         <.input
           field={@form[:rcon_password]}
           type="password"
@@ -62,7 +63,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
   end
 
   defp save_game_server(socket, :edit, game_server_params) do
-    case GameServers.update_game_server(socket.assigns.game_server, game_server_params) do
+    case GameServers.update_game_server(socket.assigns.current_user, socket.assigns.game_server, game_server_params) do
       {:ok, game_server} ->
         notify_parent({:saved, game_server})
 
@@ -73,11 +74,18 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
+
+      {:error, :unauthorized} ->
+        {:noreply, socket
+         |> put_flash(:error, "Unauthorized")
+        |> push_navigate(to: socket.assigns.navigate)}
     end
   end
 
   defp save_game_server(socket, :new, game_server_params) do
-    case GameServers.create_game_server(game_server_params) do
+    game_server_params_with_user = Map.put(game_server_params, "user_id", socket.assigns.current_user.id)
+
+    case GameServers.create_game_server(game_server_params_with_user) do
       {:ok, game_server} ->
         notify_parent({:saved, game_server})
 

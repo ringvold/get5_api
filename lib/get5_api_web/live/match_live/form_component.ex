@@ -81,6 +81,8 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
           multiple
         />
 
+        <.input field={@form[:public]} type="checkbox" label="Public" />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Match</.button>
         </:actions>
@@ -90,15 +92,14 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   end
 
   @impl true
-  def update(%{match: match} = assigns, socket) do
+  def update(%{match: match, current_user: user} = assigns, socket) do
     changeset = Matches.change_match(match)
-
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:teams, Teams.list_teams())
-     |> assign(:servers, GameServers.list_game_servers())}
+     |> assign(:teams, Teams.list_teams(user.id))
+     |> assign(:servers, GameServers.list_game_servers(user.id))}
   end
 
   @impl true
@@ -117,7 +118,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   end
 
   defp save_match(socket, :edit, match_params) do
-    case Matches.update_match(socket.assigns.match, match_params) do
+    case Matches.update_match(socket.assigns.current_user, socket.assigns.match, match_params) do
       {:ok, _match} ->
         {:noreply,
          socket
@@ -130,7 +131,9 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   end
 
   defp save_match(socket, :new, match_params) do
-    case Matches.create_and_start_match(match_params) do
+    match_with_user = Map.put(match_params, "user_id", socket.assigns.current_user.id)
+
+    case Matches.create_and_start_match(match_with_user) do
       {:ok, _match, _cmd_message} ->
         {:noreply,
          socket

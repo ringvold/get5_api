@@ -8,12 +8,14 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(status_fetch_errors: 0)}
+    {:ok, socket
+      |> assign_new(:game_server, fn %{entity: entity} -> entity end)
+      |> assign(status_fetch_errors: 0)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    game_server = GameServers.get_game_server!(id)
+    game_server = socket.assigns.entity || GameServers.get_game_server!(id)
     send(self(), {:get_status, game_server})
 
     {:noreply,
@@ -27,18 +29,24 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def handle_event("show_password", _params, socket) do
-    if socket.assigns.show_password do
-      {:noreply,
-       socket
-       |> assign(:show_password, false)}
+    if socket.assigns.game_server.user_id == socket.assigns.current_user.id do
+      if socket.assigns.show_password do
+        {:noreply,
+         socket
+         |> assign(:show_password, false)}
+      else
+        {:noreply,
+         socket
+         |> assign(:show_password, true)
+         |> assign(
+           :rcon_password,
+           Encryption.decrypt(socket.assigns.game_server.encrypted_password)
+         )}
+      end
     else
       {:noreply,
        socket
-       |> assign(:show_password, true)
-       |> assign(
-         :rcon_password,
-         Encryption.decrypt(socket.assigns.game_server.encrypted_password)
-       )}
+       |> put_flash(:error, gettext("You are not allowed to view rcon password"))}
     end
   end
 
@@ -53,12 +61,23 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
         {:error, msg} ->
           Logger.error(%{message: msg})
+
           {:noreply,
            socket
            |> assign(status: nil, status_fetches: socket.assigns.status_fetch_errors + 1)
            |> put_flash(:error, "Could not fetch get5 status from server")}
       end
     end
+  end
+
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn ->
+      GameServers.get_game_server!(id)
+    end)
+  end
+
+  def redirect_url() do
+    ~p"/matches"
   end
 
   defp page_title(:show), do: "Show Game server"

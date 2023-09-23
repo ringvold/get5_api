@@ -8,7 +8,7 @@ defmodule Get5Api.GameServers.Rcon do
   def connect(host, password, port \\ 27015) do
     case RCON.Client.connect(host, port, multi: true, timeout: 3000) do
       {:ok, con} ->
-        case RCON.Client.authenticate(con, password) |> dbg do
+        case RCON.Client.authenticate(con, password) do
           {:ok, conn, true} ->
             {:ok, conn}
 

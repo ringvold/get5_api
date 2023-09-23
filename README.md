@@ -33,6 +33,7 @@ Things to be done in no perticular order:
 - [ ] Add posibility to set captain for team and add a coach
 - [ ] Make possible to translate all the things
 - [ ] Handle demo uploads
+- [ ] Handle backups
 
 
 ## Why

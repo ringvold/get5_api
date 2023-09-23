@@ -11,117 +11,157 @@
 msgid ""
 msgstr ""
 
-#: lib/get5_api_web/components/core_components.ex:571
+#: lib/get5_api_web/components/core_components.ex:607
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
 
-#: lib/get5_api_web/components/core_components.ex:147
-#: lib/get5_api_web/components/core_components.ex:241
+#: lib/get5_api_web/components/core_components.ex:183
+#: lib/get5_api_web/components/core_components.ex:277
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:6
+#: lib/get5_api_web/live/match_live/show.html.heex:7
 #, elixir-autogen, elixir-format
 msgid "Loading status"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:11
+#: lib/get5_api_web/live/match_live/show.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Match is running on server. Game state: %{game_state}"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:13
+#: lib/get5_api_web/live/match_live/show.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "Match is not running on server"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:29
+#: lib/get5_api_web/live/match_live/show.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want end the match?"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:22
+#: lib/get5_api_web/live/match_live/show.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to start the match?"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:21
-#: lib/get5_api_web/live/match_live/show.html.heex:28
+#: lib/get5_api_web/live/match_live/show.html.heex:25
 #: lib/get5_api_web/live/match_live/show.html.heex:33
+#: lib/get5_api_web/live/match_live/show.html.heex:38
 #, elixir-autogen, elixir-format
 msgid "Loading..."
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:73
+#: lib/get5_api_web/live/match_live/show.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "Back to matches"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:31
+#: lib/get5_api_web/live/match_live/show.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "End match"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:51
+#: lib/get5_api_web/live/match_live/show.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Map list"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:41
+#: lib/get5_api_web/live/match_live/show.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "Matchid"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:49
+#: lib/get5_api_web/live/match_live/show.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Series type"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:42
+#: lib/get5_api_web/live/match_live/show.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Server"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:50
+#: lib/get5_api_web/live/match_live/show.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Side type"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:24
+#: lib/get5_api_web/live/match_live/show.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "Start match"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:47
+#: lib/get5_api_web/live/match_live/show.html.heex:58
 #, elixir-autogen, elixir-format
 msgid "Team 1"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.html.heex:48
+#: lib/get5_api_web/live/match_live/show.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "Team 2"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.ex:64
+#: lib/get5_api_web/live/match_live/show.ex:69
 #, elixir-autogen, elixir-format
 msgid "A match is already loaded on the server"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.ex:55
-#: lib/get5_api_web/live/match_live/show.ex:89
-#: lib/get5_api_web/live/match_live/show.ex:118
+#: lib/get5_api_web/live/match_live/show.ex:58
+#: lib/get5_api_web/live/match_live/show.ex:100
+#: lib/get5_api_web/live/match_live/show.ex:136
 #, elixir-autogen, elixir-format
 msgid "Domain %{host} does not exist or could not be reached"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.ex:81
+#: lib/get5_api_web/live/match_live/show.ex:92
 #, elixir-autogen, elixir-format
 msgid "Match ended"
 msgstr ""
 
-#: lib/get5_api_web/live/match_live/show.ex:47
+#: lib/get5_api_web/live/match_live/show.ex:50
 #, elixir-autogen, elixir-format
 msgid "Match sendt to server"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.html.heex:63
+#, elixir-autogen, elixir-format
+msgid "Public"
+msgstr ""
+
+#: lib/get5_api_web/user_auth.ex:159
+#, elixir-autogen, elixir-format
+msgid "You must log in to access this page."
+msgstr ""
+
+#: lib/get5_api_web/live/team_live/show.ex:30
+#, elixir-autogen, elixir-format
+msgid "Could not remove player from team"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:114
+#, elixir-autogen, elixir-format
+msgid "You are not allowed to end this match"
+msgstr ""
+
+#: lib/get5_api_web/live/match_live/show.ex:81
+#, elixir-autogen, elixir-format
+msgid "You are not allowed to start this match"
+msgstr ""
+
+#: lib/get5_api_web/live/game_server_live/show.ex:49
+#, elixir-autogen, elixir-format
+msgid "You are not allowed to view rcon password"
+msgstr ""
+
+#: lib/get5_api_web/live/team_live/show.ex:28
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to remove players from this team"
+msgstr ""
+
+#: lib/get5_api_web/user_auth.ex:189
+#, elixir-autogen, elixir-format
+msgid "You do not have access to this page. Redirecting."
 msgstr ""

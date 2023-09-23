@@ -21,7 +21,7 @@ defmodule Get5ApiWeb.CoreComponents do
       <ul class="flex items-center gap-4">
         <%= if @current_user do %>
           <li>
-            <p class="text-[0.8125rem] font-semibold leading-6">
+            <p class="text-[0.8125rem] leading-6">
               <%= @current_user.email %>
             </p>
           </li>
@@ -72,6 +72,42 @@ defmodule Get5ApiWeb.CoreComponents do
         </li>
       </ul>
     </div>
+    """
+  end
+
+  attr :visible, :boolean, required: true, doc: "the boolean that toggles the icons"
+  attr :title, :string, required: false, doc: "title attribute on element"
+
+  attr :type, :atom,
+    values: [:inline, :table],
+    default: :table,
+    doc: "different style for different context"
+
+  def visibility_icons(%{type: :table} = assigns) do
+    ~H"""
+    <div class="flex " title={@title}>
+      <%= if @visible do %>
+        <Heroicons.eye mini class="w-5 h-5 text-zinc-700 dark:text-zinc-100" />
+      <% else %>
+        <Heroicons.eye_slash mini class="w-5 h-5 text-zinc-700 dark:text-zinc-100" />
+      <% end %>
+    </div>
+    """
+  end
+
+  def visibility_icons(%{type: :inline} = assigns) do
+    ~H"""
+    <span class="text-zinc-400 dark:text-zinc-200" title={if @visible, do: "Public", else: "Private"}>
+      <%= if @visible do %>
+        <Heroicons.eye mini class="ml-2 w-4 h-4 inline text-zinc-400 dark:text-zinc-400" />
+      <% else %>
+        <Heroicons.eye_slash
+          mini
+          class="ml-2 w-4 h-4 inline text-zinc-400 dark:text-zinc-400"
+          title="Private"
+        />
+      <% end %>
+    </span>
     """
   end
 

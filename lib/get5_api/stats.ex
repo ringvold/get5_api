@@ -24,10 +24,20 @@ defmodule Get5Api.Stats do
       |> repo.insert
     end)
     |> Ecto.Multi.insert_all(:players_team1, PlayerStats, fn %{map_stats: map} ->
-      payload_to_player_stats(payload["team1"]["players"], match.id, map.id, payload["team1"]["id"])
+      payload_to_player_stats(
+        payload["team1"]["players"],
+        match.id,
+        map.id,
+        payload["team1"]["id"]
+      )
     end)
     |> Ecto.Multi.insert_all(:players_team2, PlayerStats, fn %{map_stats: map} ->
-      payload_to_player_stats(payload["team2"]["players"], match.id, map.id, payload["team2"]["id"])
+      payload_to_player_stats(
+        payload["team2"]["players"],
+        match.id,
+        map.id,
+        payload["team2"]["id"]
+      )
     end)
     |> Repo.transaction()
   end
@@ -125,7 +135,7 @@ defmodule Get5Api.Stats do
 
   def get_by_match(match_id) do
     from(ms in Get5Api.Stats.MapStats,
-      where: (ms.match_id == ^match_id),
+      where: ms.match_id == ^match_id,
       order_by: ms.id
     )
     |> Repo.all()
@@ -213,7 +223,7 @@ defmodule Get5Api.Stats do
 
   def player_stats_by_match(match_id) do
     from(ps in Get5Api.Stats.PlayerStats,
-      where: (ps.match_id == ^match_id),
+      where: ps.match_id == ^match_id,
       preload: [:map_stats, :team]
     )
     |> Repo.all()
