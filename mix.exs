@@ -62,7 +62,7 @@ defmodule Get5Api.MixProject do
       # rcon depencency
       {:socket, "~> 0.3"},
       # For mocking rcon
-      {:thousand_island, "~> 0.6.2"},
+      {:thousand_island, "~> 1.1.0"},
       {:tarams, "~> 1.7"},
       {:floki, ">= 0.30.0", only: :test}
     ]
