@@ -1,7 +1,16 @@
+ARG ELIXIR_VERSION=1.15.7
+ARG OTP_VERSION=26.1.2
+ARG ALPINE_VERSION=3.18.4
+
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
+# ARG RUNNER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
+ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
+
+
 ###
 ### Fist Stage - Building the Release
 ###
-FROM hexpm/elixir:1.14.2-erlang-25.1.2-alpine-3.16.2 AS build
+FROM ${BUILDER_IMAGE} AS build
 
 # install build dependencies
 # git needed for getting ueberauth_steam
@@ -54,7 +63,7 @@ RUN mix do compile, release
 ###
 
 # prepare release docker image
-FROM alpine:3.16.2 AS app
+FROM ${RUNNER_IMAGE} AS app
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
 WORKDIR /app
