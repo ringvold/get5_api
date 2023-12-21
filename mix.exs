@@ -32,15 +32,15 @@ defmodule Get5Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.0"},
+      {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.8"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.2"},
-      {:phoenix_live_view, "~> 0.18.3"},
-      {:phoenix_live_dashboard, "~> 0.7.2"},
+      {:phoenix_html, "~> 3.3"},
+      {:phoenix_live_view, "~> 0.20.1"},
+      {:phoenix_live_dashboard, "~> 0.8.2"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:heroicons, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
@@ -54,7 +54,6 @@ defmodule Get5Api.MixProject do
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_error_payload, "~> 1.1"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:poison, "~> 5.0"},
       {:cors_plug, "~> 2.0"},
       # {:ueberauth, "~> 0.7"},
       # {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
@@ -63,7 +62,6 @@ defmodule Get5Api.MixProject do
       {:socket, "~> 0.3"},
       # For mocking rcon
       {:thousand_island, "~> 1.2.0"},
-      {:tarams, "~> 1.7"},
       {:floki, ">= 0.30.0", only: :test}
     ]
   end

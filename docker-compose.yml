@@ -12,10 +12,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
-    env_file: .env
+    env_file: .docker_env
     volumes:
       - ./:/app
-      - /app/deps
     ports:
       - "4000:4000"
       - "1234:1234"
