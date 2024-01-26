@@ -13,3 +13,18 @@ defmodule Get5Api.Teams.Player do
     |> validate_required([:steam_id])
   end
 end
+
+
+defimpl Inspect, for: Get5Api.Teams.Player do
+  import Inspect.Algebra
+
+  def inspect(player, opts) do
+    concat(["Player( name:", to_doc(player, opts), ")"])
+  end
+end
+
+defimpl String.Chars, for: Get5Api.Teams.Player do
+  def to_string(player) do
+    "#{player.name}: #{player.steam_id}"
+  end
+end

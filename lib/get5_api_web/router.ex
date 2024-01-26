@@ -1,5 +1,6 @@
 defmodule Get5ApiWeb.Router do
   use Get5ApiWeb, :router
+  use Kaffy.Routes, scope: "/admin"
 
   import Get5ApiWeb.UserAuth
 

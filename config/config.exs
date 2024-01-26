@@ -28,6 +28,23 @@ config :get5_api, Get5Api.Mailer, adapter: Swoosh.Adapters.Local
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
+config :kaffy,
+  # required keys
+  otp_app: :get5_api, # required
+  ecto_repo: Get5Api.Repo, # required
+  router: Get5ApiWeb.Router, # required
+  # optional keys
+  admin_title: "My Awesome App",
+  admin_logo: [
+    url: "https://example.com/img/logo.png",
+    style: "width:200px;height:66px;"
+  ],
+  admin_logo_mini: "/images/logo-mini.png",
+  hide_dashboard: true,
+  home_page: [schema: [:accounts, :user]],
+  enable_context_dashboards: true, # since v0.10.0
+  admin_footer: "Kaffy &copy; 2023" # since v0.10.0
+
 config :esbuild,
   version: "0.18.17",
   default: [

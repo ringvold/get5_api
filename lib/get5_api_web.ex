@@ -22,12 +22,28 @@ defmodule Get5ApiWeb do
 
   def router do
     quote do
-      use Phoenix.Router, helpers: false
+      use Phoenix.Router, helpers: true
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+    end
+  end
+
+  def view do
+    quote do
+      use Phoenix.View, root: "lib/get5_api_web/templates", namespace: Get5ApiWeb
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+
+      import YourAppWeb.ErrorHelpers
+      import YourAppWeb.Gettext
     end
   end
 
