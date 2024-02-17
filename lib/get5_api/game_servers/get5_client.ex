@@ -25,11 +25,14 @@ defmodule Get5Api.GameServers.Get5Client do
         String.contains?(message, "Loading match configuration") ->
           {:ok, message}
 
-        String.contains?(message, "Cannot load a match config when another is already loaded") ->
+        String.contains?(message, "A match is already setup") ->
           {:error, :other_match_already_loaded}
 
+        String.contains?(message, "HTTP request failed with status code: Unauthorized") ->
+          {:error, :unauthorized}
+
         true ->
-          {:error, "Failed to start match"}
+          {:ok, "Match started"}
       end
     else
       err ->
@@ -48,8 +51,11 @@ defmodule Get5Api.GameServers.Get5Client do
         String.contains?(res, "No match is configured; nothing to end") ->
           {:error, "No match is configured; nothing to end"}
 
+        String.contains?(String.downcase(res), "failed") ->
+          {:error, "No match is configured; nothing to end"}
+
         true ->
-          {:error, "Failed to end match"}
+          {:ok, "Match ended"}
       end
     else
       err ->

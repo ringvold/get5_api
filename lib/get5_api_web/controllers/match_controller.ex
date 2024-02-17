@@ -13,9 +13,7 @@ defmodule Get5ApiWeb.MatchController do
   action_fallback Get5ApiWeb.FallbackController
 
   def match_config(conn, _params) do
-    match = conn.assigns.match
-
-    match_config = MatchConfigGenerator.generate_config(match, Endpoint.url())
+    match_config = MatchConfigGenerator.generate_config(conn.assigns.match, Endpoint.url())
     render(conn, :match_config, match_config: match_config)
   end
 

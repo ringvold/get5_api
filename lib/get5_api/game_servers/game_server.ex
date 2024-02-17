@@ -62,12 +62,12 @@ defmodule Get5Api.GameServers.GameServer do
     if host && (Regex.match?(domain_regex(), host) || Regex.match?(ip_regex(), host)) do
       changeset
     else
-      add_error(changeset, :host, "Invalid IP address")
+      add_error(changeset, :host, "Invalid host")
     end
   end
 
   defp domain_regex() do
-    ~r/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}(\:[0-9]{4,5})?$/
+    ~r/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$/ # (\:[0-9]{4,5})?
   end
 
   defp ip_regex() do

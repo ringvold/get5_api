@@ -1,4 +1,5 @@
 defmodule Get5ApiWeb.MatchLive.Show do
+  alias Phoenix.LiveView.AsyncResult
   use Get5ApiWeb, :live_view
   require Logger
 
@@ -13,101 +14,98 @@ defmodule Get5ApiWeb.MatchLive.Show do
     Get5ApiWeb.Endpoint.subscribe(@topic)
 
     {:ok,
-     assign(socket, status: nil, stats: nil)
-     |> assign_new(:match, fn %{entity: entity} -> entity end)}
+     assign(socket, stats: nil)
+     |> assign_new(:match, fn %{entity: entity} -> entity end)
+     |> assign(:status, AsyncResult.loading())}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    match = socket.assigns.match || Matches.get_match!(id)
+    match = socket.assigns.entity || Matches.get_match!(id)
     map_stats = Stats.get_by_match(id)
     player_stats = Stats.player_stats_by_match(id)
-    send(self(), {:get_status, match.game_server})
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:match, match)
      |> assign(:map_stats, map_stats)
-     |> assign(:player_stats, player_stats)}
+     |> assign(:player_stats, player_stats)
+     |> start_async(:get_status, fn -> Get5Client.status(socket.assigns.entity.game_server) end)}
   end
 
   @impl true
   def handle_event("get_status", _params, socket) do
-    send(self(), {:get_status, socket.assigns.match.game_server})
-    {:noreply, socket |> assign(status: :loading)}
+    {:noreply,
+     socket
+     |> assign(status: AsyncResult.loading())
+     |> start_async(:get_status, fn -> Get5Client.status(socket.assigns.match.game_server) end)}
   end
 
   @impl true
   def handle_event("start_match", _params, socket) do
     if socket.assigns.match.user_id == socket.assigns.current_user.id do
-      case Get5Client.start_match(socket.assigns.match) do
-        {:ok, _resp} ->
-          send(self(), {:get_status, socket.assigns.match.game_server})
-
-          {:noreply,
-           socket
-           |> put_flash(:info, gettext("Match sendt to server"))}
-
-        {:error, :nxdomain} ->
-          {:noreply,
-           socket
-           |> assign(status: nil)
-           |> put_flash(
-             :error,
-             gettext("Domain %{host} does not exist or could not be reached",
-               host: socket.assigns.match.game_server.host
-             )
-           )}
-
-        {:error, :other_match_already_loaded} ->
-          {:noreply,
-           socket
-           |> assign(status: nil)
-           |> put_flash(
-             :error,
-             gettext("A match is already loaded on the server")
-           )}
-
-        {:error, msg} ->
-          {:noreply,
-           socket
-           |> put_flash(:error, msg)
-           |> assign(status: nil)}
-      end
+      {:noreply,
+       socket
+       |> start_async(:start_match, fn -> Get5Client.start_match(socket.assigns.match) end)}
     else
       {:noreply,
        socket
        |> put_flash(:error, gettext("You are not allowed to start this match"))}
-     end
+    end
+  end
+
+  def handle_async(:start_match, {:ok, {:ok, _resp}}, socket) do
+    {:noreply,
+     socket
+     |> start_async(:get_status, fn ->
+       Get5Client.status(socket.assigns.match.game_server)
+     end)
+     |> put_flash(:info, gettext("Match sendt to server"))}
+  end
+
+  def handle_async(:start_match, {:ok, {:error, error}}, socket) do
+    case error do
+      :nxdomain ->
+        {:noreply,
+         socket
+         |> start_async(:get_status, fn ->
+           Get5Client.status(socket.assigns.match.game_server)
+         end)
+         |> put_flash(
+           :error,
+           gettext("Domain %{host} does not exist or could not be reached",
+             host: socket.assigns.match.game_server.host
+           )
+         )}
+
+      :other_match_already_loaded ->
+        {:noreply,
+         socket
+         |> start_async(:get_status, fn ->
+           Get5Client.status(socket.assigns.match.game_server)
+         end)
+         |> put_flash(
+           :error,
+           gettext("A match is already loaded on the server")
+         )}
+
+      err ->
+        {:noreply,
+         socket
+         |> start_async(:get_status, fn ->
+           Get5Client.status(socket.assigns.match.game_server)
+         end)
+         |> put_flash(:error, gettext("Failed to start match"))}
+    end
   end
 
   @impl true
   def handle_event("end_match", _params, socket) do
     if socket.assigns.match.user_id == socket.assigns.current_user.id do
-      case Get5Client.end_match(socket.assigns.match) do
-        {:ok, _msg} ->
-          {:noreply,
-           socket
-           |> put_flash(:info, gettext("Match ended"))}
-
-        {:error, :nxdomain} ->
-          {:noreply,
-           socket
-           |> assign(status: nil)
-           |> put_flash(
-             :error,
-             gettext("Domain %{host} does not exist or could not be reached",
-               host: socket.assigns.match.game_server.host
-             )
-           )}
-
-        {:error, msg} ->
-          {:noreply,
-           socket
-           |> assign(status: nil)
-           |> put_flash(:error, msg)}
-      end
+      {:noreply,
+       socket
+       |> start_async(:end_match, fn -> Get5Client.end_match(socket.assigns.match) end)}
     else
       {:noreply,
        socket
@@ -115,33 +113,73 @@ defmodule Get5ApiWeb.MatchLive.Show do
     end
   end
 
-  @impl true
-  def handle_info({:get_status, game_server}, socket) do
-    case Get5Client.status(game_server) do
-      {:ok, resp} ->
-        Logger.debug(resp)
-        dbg(resp)
+  def handle_async(:end_match, {:ok, {:ok, msg}}, socket) do
+    {:noreply,
+     socket
+     |> start_async(:get_status, fn ->
+       Get5Client.status(socket.assigns.match.game_server)
+     end)
+     |> put_flash(:info, gettext("Match ended"))}
+  end
 
+  def handle_async(:end_match, {:ok, {:error, error}}, socket) do
+    case error do
+      :nxdomain ->
         {:noreply,
          socket
-         |> assign(status: resp)}
-
-      # TODO: Common/DRY handling of nxdomain error in match events
-      {:error, :nxdomain} ->
-        {:noreply,
-         socket
-         |> assign(status: nil)
          |> put_flash(
            :error,
-           gettext("Domain %{host} does not exist or could not be reached", host: game_server.host)
+           gettext("Domain %{host} does not exist or could not be reached",
+             host: socket.assigns.match.game_server.host
+           )
          )}
 
-      {:error, msg} ->
+      msg ->
         {:noreply,
          socket
-         |> assign(status: nil)
          |> put_flash(:error, msg)}
     end
+  end
+
+  def handle_async(:end_match, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(status: AsyncResult.failed(socket.assigns.status, reason))
+     |> put_flash(:error, reason)}
+  end
+
+  def handle_async(:get_status, {:ok, {:ok, resp}}, socket) do
+    {:noreply,
+     socket
+     |> assign(status: AsyncResult.ok(resp))}
+  end
+
+  def handle_async(:get_status, {:ok, {:error, msg}}, socket) do
+    case msg do
+      :nxdomain ->
+        {:noreply,
+         socket
+         |> assign(status: AsyncResult.failed(socket.assigns.status, :nxdomain))
+         |> put_flash(
+           :error,
+           gettext("Domain %{host} does not exist or could not be reached",
+             host: socket.assigns.match.game_server.host
+           )
+         )}
+
+      msg ->
+        {:noreply,
+         socket
+         |> assign(status: AsyncResult.failed(socket.assigns.status, msg))
+         |> put_flash(:error, msg)}
+    end
+  end
+
+  def handle_async(:status, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(status: AsyncResult.failed(socket.assigns.status, reason))
+     |> put_flash(:error, reason)}
   end
 
   def handle_info(%{topic: @topic, payload: payload}, socket) do

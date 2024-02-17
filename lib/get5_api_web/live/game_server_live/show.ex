@@ -14,7 +14,7 @@ defmodule Get5ApiWeb.GameServerLive.Show do
      socket
      |> assign_new(:game_server, fn %{entity: entity} -> entity end)
      |> assign(status_fetch_errors: 0)
-     |> assign_async(:status, fn -> Get5Client.status(server) end)}
+     |> assign_async(:status, fn -> get_status(server) end)}
   end
 
   @impl true
@@ -71,6 +71,11 @@ defmodule Get5ApiWeb.GameServerLive.Show do
            |> put_flash(:error, "Could not fetch get5 status from server")}
       end
     end
+  end
+
+  defp get_status(server) do
+    {:ok, status} = Get5Client.status(server)
+    {:ok, %{status: status}}
   end
 
   def get_entity_for_id(socket, id) do

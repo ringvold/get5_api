@@ -2,20 +2,19 @@
   <%= @match.team1.name %> vs <%= @match.team2.name %>
   <.visibility_icons type={:inline} visible={@match.public} />
   <:subtitle>
-    <%= case @status do %>
-      <% :loading -> %>
+    <.async_result :let={status} assign={@status}>
+      <:loading>
         <%= gettext("Loading status") %>
-      <% nil -> %>
-      <% _ -> %>
-        <%= if @status["gamestate"] != "none" and @status["matchid"] == to_string(@match.id)
+      </:loading>
+      <%= if status["gamestate"] != "none" and status["matchid"] == to_string(@match.id)
         do %>
-          <%= gettext("Match is running on server. Game state: %{game_state}",
-            game_state: @status["gamestate"]
-          ) %>
-        <% else %>
-          <%= gettext("Match is not running on server") %>
-        <% end %>
-    <% end %>
+        <%= gettext("Match is running on server. Game state: %{game_state}",
+          game_state: status["gamestate"]
+        ) %>
+      <% else %>
+        <%= gettext("Match is not running on server") %>
+      <% end %>
+    </.async_result>
   </:subtitle>
 
   <:actions>

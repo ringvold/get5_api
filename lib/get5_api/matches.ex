@@ -95,7 +95,7 @@ defmodule Get5Api.Matches do
           {:warn, match, :domain_does_not_exist}
 
         {:error, :other_match_already_loaded} ->
-          {:warn, match, :other_match_already_loaded}
+          {:warn, match, :other_match_already_loadedded}
       end
     else
       err ->
