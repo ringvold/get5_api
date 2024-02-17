@@ -55,6 +55,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
     end
   end
 
+  @impl true
   def handle_async(:start_match, {:ok, {:ok, _resp}}, socket) do
     {:noreply,
      socket
@@ -64,6 +65,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> put_flash(:info, gettext("Match sendt to server"))}
   end
 
+  @impl true
   def handle_async(:start_match, {:ok, {:error, error}}, socket) do
     case error do
       :nxdomain ->
@@ -113,6 +115,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
     end
   end
 
+  @impl true
   def handle_async(:end_match, {:ok, {:ok, msg}}, socket) do
     {:noreply,
      socket
@@ -122,6 +125,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> put_flash(:info, gettext("Match ended"))}
   end
 
+  @impl true
   def handle_async(:end_match, {:ok, {:error, error}}, socket) do
     case error do
       :nxdomain ->
@@ -141,6 +145,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
     end
   end
 
+  @impl true
   def handle_async(:end_match, {:exit, reason}, socket) do
     {:noreply,
      socket
@@ -148,12 +153,14 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> put_flash(:error, reason)}
   end
 
+  @impl true
   def handle_async(:get_status, {:ok, {:ok, resp}}, socket) do
     {:noreply,
      socket
      |> assign(status: AsyncResult.ok(resp))}
   end
 
+  @impl true
   def handle_async(:get_status, {:ok, {:error, msg}}, socket) do
     case msg do
       :nxdomain ->
@@ -175,6 +182,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
     end
   end
 
+  @impl true
   def handle_async(:status, {:exit, reason}, socket) do
     {:noreply,
      socket
@@ -182,6 +190,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> put_flash(:error, reason)}
   end
 
+  @impl true
   def handle_info(%{topic: @topic, payload: payload}, socket) do
     IO.puts("HANDLE BROADCAST FOR #{@topic}")
     dbg(payload)

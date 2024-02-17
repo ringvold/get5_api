@@ -57,17 +57,29 @@ defmodule Get5Api.GameServers.GameServer do
   end
 
   def validate_host(changeset) do
-    host = get_change(changeset, :host)
+    {_, host} = fetch_field(changeset, :host)
 
     if host && (Regex.match?(domain_regex(), host) || Regex.match?(ip_regex(), host)) do
-      changeset
+      case String.split(host, ":") do
+        [host, port] ->
+          changeset
+          |> put_change(:host, host)
+          |> put_change(:port, port)
+
+        [host] ->
+          changeset
+          |> put_change(:host, host)
+
+        _ ->
+          add_error(changeset, :host, "Invalid host")
+      end
     else
       add_error(changeset, :host, "Invalid host")
     end
   end
 
   defp domain_regex() do
-    ~r/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$/ # (\:[0-9]{4,5})?
+    ~r/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}(:[0-9]{4,5})?$/
   end
 
   defp ip_regex() do

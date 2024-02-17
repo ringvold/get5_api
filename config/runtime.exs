@@ -20,7 +20,7 @@ if System.get_env("GET5API_IP") do
   Logger.debug("Using fixed host/IP addess from GET5API_IP env")
   host = System.get_env("GET5API_IP")
 
-  case String.split(host, ":") |> dbg do
+  case String.split(host, ":") do
     [host, port] ->
       Logger.debug("Host: #{host}, port: #{port}")
       config :get5_api, Get5ApiWeb.Endpoint, url: [host: host, port: port]
