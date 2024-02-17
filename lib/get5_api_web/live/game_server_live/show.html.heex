@@ -2,17 +2,16 @@
   <%= @game_server.name %>
   <.visibility_icons type={:inline} visible={@game_server.public} />
   <:subtitle>
-    <%= case @status do %>
-      <% :loading -> %>
+    <.async_result :let={status} assign={@status}>
+      <:loading>
         Loading status
-      <% nil -> %>
-        <span></span>
-      <% _ -> %>
-        <%= if @status["gamestate"] == "none" do %>
+      </:loading>
+      <%= if status["gamestate"] == "none" do %>
           No active match.
         <% end %>
-        Plugin version: <%= @status["plugin_version"] %>
-    <% end %>
+        Plugin version: <%= status["plugin_version"] %>
+    </.async_result>
+
   </:subtitle>
   <:actions :if={@current_user.id == @game_server.user_id}>
     <.link

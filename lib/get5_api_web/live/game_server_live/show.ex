@@ -8,23 +8,26 @@ defmodule Get5ApiWeb.GameServerLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket
-      |> assign_new(:game_server, fn %{entity: entity} -> entity end)
-      |> assign(status_fetch_errors: 0)}
+    server = socket.assigns.entity
+
+    {:ok,
+     socket
+     |> assign_new(:game_server, fn %{entity: entity} -> entity end)
+     |> assign(status_fetch_errors: 0)
+     |> assign_async(:status, fn -> Get5Client.status(server) end)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     game_server = socket.assigns.entity || GameServers.get_game_server!(id)
-    send(self(), {:get_status, game_server})
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:game_server, game_server)
      |> assign(:show_password, false)
-     |> assign(:status, :loading)
-     |> assign(:rcon_password, "")}
+     |> assign(:rcon_password, "")
+      }
   end
 
   @impl true

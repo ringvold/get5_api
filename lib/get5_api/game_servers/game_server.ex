@@ -28,6 +28,7 @@ defmodule Get5Api.GameServers.GameServer do
     |> cast_assoc(:user)
     |> validate_required([:name, :host, :port, :rcon_password, :user_id])
     |> validate_password(opts)
+    |> validate_host()
   end
 
   @doc false
@@ -36,6 +37,7 @@ defmodule Get5Api.GameServers.GameServer do
       game_server
       |> cast(attrs, [:name, :host, :port, :gotv_port, :in_use, :public, :rcon_password])
       |> validate_required([:name, :host, :port])
+      |> validate_host()
 
     password_cs = rcon_password_changeset(game_server, attrs, opts)
 
@@ -52,6 +54,24 @@ defmodule Get5Api.GameServers.GameServer do
     game_server
     |> cast(attrs, [:rcon_password])
     |> validate_password(opts)
+  end
+
+  def validate_host(changeset) do
+    host = get_change(changeset, :host)
+
+    if host && (Regex.match?(domain_regex(), host) || Regex.match?(ip_regex(), host)) do
+      changeset
+    else
+      add_error(changeset, :host, "Invalid IP address")
+    end
+  end
+
+  defp domain_regex() do
+    ~r/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}(\:[0-9]{4,5})?$/
+  end
+
+  defp ip_regex() do
+    ~r/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
   end
 
   defp validate_password(changeset, opts) do
