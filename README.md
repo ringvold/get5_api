@@ -2,13 +2,13 @@
 
 ***Project status: Pre alpha aka a lot of stuff is not working yet***
 
-This will be a web panel for the [splewis/get5](https://splewis.github.io/get5) CSGO sourcemod plugin.
+This will be a web panel for the ~~[splewis/get5](https://splewis.github.io/get5) CSGO sourcemod~~ https://github.com/shobhit-pathak/MatchZy plugin.
 
 Get5Api aims to replace parts of [splewis/get5-web] and [PhlexPlexico/G5API]/[PhlexPlexico/G5V] 
 and implement new features as needs arise. It is actually not much of an API at 
 the moment so the name is a bit misleading for now. The focus is on getting a 
 solid base functionality down first through the web app and then focus on the 
-API. There will be a GraphQL-based API further down the road for chat bots 
+API. There will be an API further down the road for chat bots 
 and other use cases.
 
 This application is written with [Phoenix](https://www.phoenixframework.org/) and PostgreSQL.
