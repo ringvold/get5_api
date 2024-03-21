@@ -11,13 +11,11 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Get5Api.Accounts.User
-alias Get5Api.Teams.Team
-alias Get5Api.Teams.Player
+alias Get5Api.Teams.{Team, Player}
 alias Get5Api.Matches.Match
 alias Get5Api.GameServers
 alias Get5Api.GameServers.GameServer
-alias Get5Api.Stats.MapStats
-alias Get5Api.Stats.PlayerStats
+alias Get5Api.Stats.{MapStats, PlayerStats}
 alias Get5Api.Repo
 
 user =

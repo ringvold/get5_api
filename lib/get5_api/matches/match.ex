@@ -4,6 +4,7 @@ defmodule Get5Api.Matches.Match do
   alias Get5Api.Accounts.User
   alias Get5Api.Teams.Team
   alias Get5Api.GameServers.GameServer
+  alias Get5Api.Stats.MapStats
 
   @type series_type() :: :bo1_preset | :bo1 | :bo2 | :bo3 | :bo5 | :bo7
   # Side type is defined by Get5 in match schema
@@ -56,6 +57,8 @@ defmodule Get5Api.Matches.Match do
     belongs_to(:team2, Team)
     belongs_to(:winner, Team)
     belongs_to(:game_server, GameServer)
+
+    has_many(:map_stats, MapStats)
 
     timestamps()
   end
