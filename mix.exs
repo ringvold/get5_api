@@ -47,7 +47,7 @@ defmodule Get5Api.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"},
+      {:bandit, "~> 1.4"},
       {:finch, "~> 0.13"},
       {:swoosh, "~> 1.4"},
       {:absinthe, "~> 1.6"},

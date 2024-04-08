@@ -15,6 +15,7 @@ config :get5_api,
 # Configures the endpoint
 config :get5_api, Get5ApiWeb.Endpoint,
   url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
   secret_key_base: "MaVRItF5pUXwisQld88PmNLIhCUsxNkuyftzqZh2AwToCGLdnwfeWvZbKq0gH3j1",
   render_errors: [
     formats: [html: Get5ApiWeb.ErrorHTML, json: Get5ApiWeb.ErrorJSON],
