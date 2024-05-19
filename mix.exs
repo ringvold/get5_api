@@ -33,13 +33,14 @@ defmodule Get5Api.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.10"},
-      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 4.0"},
-      {:phoenix_live_view, "~> 0.20.5"},
-      {:phoenix_live_dashboard, "~> 0.8.2"},
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:phoenix_html, "~> 4.1"},
+      {:phoenix_live_view, "~> 1.0.0-rc.0"},
+      # Add back when live_view 1.0 compatible is out
+      # {:phoenix_live_dashboard, "~> 0.8.2"},
+      {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:heroicons, "~> 0.5"},
@@ -64,7 +65,7 @@ defmodule Get5Api.MixProject do
       {:thousand_island, "~> 1.3.2"},
       {:floki, ">= 0.30.0", only: :test},
       {:sweet_xml, "~> 0.7.1"},
-      {:req, "~> 0.4.14"},
+      {:req, "~> 0.4.14"}
     ]
   end
 
