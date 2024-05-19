@@ -59,7 +59,7 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
             Map.put(player_params, "name", profile.steam_id)
 
           {:error, _error} ->
-            Map.put(player_params, "name", nil)
+            player_params
         end
       end
 
@@ -100,6 +100,7 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     end
   end
 
+  @impl true
   def handle_event("save_player", %{"player" => player_params}, socket) do
     save_player(socket, socket.assigns.action, player_params)
   end
@@ -110,6 +111,19 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Player added successfully")
+         |> push_navigate(to: socket.assigns.navigate)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_player_form(socket, changeset |> Map.put(:action, :validate))}
+    end
+  end
+
+  defp save_player(socket, :edit_player, player_params) do
+    case Teams.edit_player(socket.assigns.team, socket.assigns.player, player_params) do
+      {:ok, _team} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Player successfully edited")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -132,7 +146,6 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     rescue
       error ->
         Logger.error(error)
-        Logger.debug(error.stacktrace)
         {:error, error}
     end
   end
@@ -144,5 +157,4 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
       Steam.steam_id_to_steamID64(id)
     end
   end
-
 end

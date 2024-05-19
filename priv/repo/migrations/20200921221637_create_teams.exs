@@ -4,7 +4,7 @@ defmodule Get5Api.Repo.Migrations.CreateTeams do
   def change do
     create table(:teams) do
       add :name, :string, null: false
-      add :players, :jsonb, default: "[]"
+      add :players, :map, default: "[]"
 
       timestamps()
     end

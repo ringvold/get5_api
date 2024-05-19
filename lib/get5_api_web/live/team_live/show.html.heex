@@ -14,19 +14,21 @@
 
 <.table
   id="players"
-  rows={
-    Enum.map_reduce(@team.players, 1, fn p, acc ->
-      {Map.put(p, :id, acc), acc + 1}
-    end)
-    |> elem(0)
-  }
+  rows={@team.players}
 >
   <:col :let={player} label="Steam ID"><%= player.steam_id %></:col>
   <:col :let={player} label="Name"><%= player.name %></:col>
   <:action :let={player}>
     <.link
       :if={@current_user.id == @team.user_id}
-      phx-click={JS.push("delete_player", value: %{id: player.steam_id})}
+      patch={~p"/teams/#{@team}/players/edit/#{player.id}"}
+      phx-click={JS.push_focus()}
+    >
+      <.button>Edit player</.button>
+    </.link>
+    <.link
+      :if={@current_user.id == @team.user_id}
+      phx-click={JS.push("delete_player", value: %{id: player.id})}
       data-confirm="Are you sure?"
     >
       Delete
@@ -49,18 +51,18 @@
 </.modal>
 
 <.modal
-  :if={@live_action == :add_player}
+  :if={@live_action in [:add_player, :edit_player]}
   id="team-player-modal"
   show
   on_cancel={JS.patch(~p"/teams/#{@team}")}
 >
   <.live_component
     module={Get5ApiWeb.TeamLive.PlayerFormComponent}
-    id="add_player"
+    id="player_modal"
     title={@page_title}
     action={@live_action}
     team={@team}
-    player={%Player{}}
+    player={@player || %Player{}}
     current_user={@current_user}
     navigate={~p"/teams/#{@team}"}
   />

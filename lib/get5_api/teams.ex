@@ -139,6 +139,30 @@ defmodule Get5Api.Teams do
     end
   end
 
+  def edit_player(%Team{} = team, %Player{} = player, attrs \\ %{}) do
+    player = change_player(player, attrs)
+
+    if player.valid? do
+      # players = List.update_at(team.players, player.index, &(&1.steam_id == player.steam_id))
+
+      result =
+        team
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_embed(:players, [player])
+        |> Repo.update()
+
+      case result do
+        {:ok, team} ->
+          {:ok, team.players}
+
+        rest ->
+          rest
+      end
+    else
+      {:error, player}
+    end
+  end
+
   def remove_player(%User{} = user, %Team{} = team, %Player{} = player) do
     if team.user_id == user.id do
       remove_player(team, player)
