@@ -55,7 +55,7 @@ defmodule Get5Api.MixProject do
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_error_payload, "~> 1.1"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:cors_plug, "~> 2.0"},
+      {:cors_plug, "~> 3.0"},
       # {:ueberauth, "~> 0.7"},
       # {:ueberauth_steam, git: "https://github.com/dualitygg/ueberauth_steam"},
       {:rcon, "~> 0.4.0"},
@@ -65,7 +65,7 @@ defmodule Get5Api.MixProject do
       {:thousand_island, "~> 1.3.2"},
       {:floki, ">= 0.30.0", only: :test},
       {:sweet_xml, "~> 0.7.1"},
-      {:req, "~> 0.4.14"}
+      {:req, "~> 0.5.0"}
     ]
   end
 
