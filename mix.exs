@@ -49,6 +49,7 @@ defmodule Get5Api.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:bandit, "~> 1.4"},
+      {:hpax, "~> 0.2.0", override: true},
       {:finch, "~> 0.13"},
       {:swoosh, "~> 1.4"},
       {:absinthe, "~> 1.6"},
