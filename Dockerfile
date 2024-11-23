@@ -1,83 +1,85 @@
 ARG ELIXIR_VERSION=1.17.2
 ARG OTP_VERSION=27.0.1
-# ARG DEBIAN_VERSION=bookworm-20240701-slim
-ARG ALPINE_VERSION=3.18.7
+ARG DEBIAN_VERSION=bookworm-20240701-slim
 
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
-# ARG RUNNER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
-ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
+ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-
-###
-### Fist Stage - Building the Release
-###
-FROM ${BUILDER_IMAGE} AS build
+FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-# git needed for getting ueberauth_steam
-RUN apk add --no-cache build-base git
+RUN apt-get update -y && apt-get install -y build-essential git \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
-
-# extend hex timeout
-ENV HEX_HTTP_TIMEOUT=20
 
 # install hex + rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# set build ENV as prod
-ENV MIX_ENV=prod
-ENV SECRET_KEY_BASE=nokey
-ENV DATABASE_URL=$DATABASE_URL
+# set build ENV
+ENV MIX_ENV="prod"
 
-# Copy over the mix.exs and mix.lock files to load the dependencies. If those
-# files don't change, then we don't keep re-fetching and rebuilding the deps.
+# install mix dependencies
 COPY mix.exs mix.lock ./
-COPY config config
+RUN mix deps.get --only $MIX_ENV
+RUN mkdir config
 
-RUN mix deps.get --only prod && \
-    mix deps.compile
+# copy compile-time config files before we compile dependencies
+# to ensure any relevant config change will trigger the dependencies
+# to be re-compiled.
+COPY config/config.exs config/${MIX_ENV}.exs config/
+RUN mix deps.compile
 
 COPY priv priv
+
+COPY lib lib
+
 COPY assets assets
 
-# NOTE: If using TailwindCSS, it uses a special "purge" step and that requires
-# the code in `lib` to see what is being used. Uncomment that here before
-# running the npm deploy script if that's the case.
-COPY lib lib
-
-# build assets
+# compile assets
 RUN mix assets.deploy
-RUN mix phx.digest
 
-# copy source here if not using TailwindCSS
-COPY lib lib
+# Compile the release
+RUN mix compile
 
-# compile and build release
+# Changes to config/runtime.exs don't require recompiling the code
+COPY config/runtime.exs config/
+
 COPY rel rel
-RUN mix do compile, release
+RUN mix release
 
-###
-### Second Stage - Setup the Runtime Environment
-###
+# start a new build stage so that the final image will only contain
+# the compiled release and other runtime necessities
+FROM ${RUNNER_IMAGE}
 
-# prepare release docker image
-FROM ${RUNNER_IMAGE} AS app
-RUN apk add --no-cache libstdc++ openssl ncurses-libs
+RUN apt-get update -y && \
+  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
+  && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
-WORKDIR /app
+# Set the locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
-RUN chown nobody:nobody /app
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
-USER nobody:nobody
+WORKDIR "/app"
+RUN chown nobody /app
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/get5_api ./
+# set runner ENV
+ENV MIX_ENV="prod"
 
-ENV HOME=/app
-ENV MIX_ENV=prod
-ENV SECRET_KEY_BASE=nokey
-ENV PORT=4000
+# Only copy the final release from the build stage
+COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/get5_api ./
 
-CMD ["bin/get5_api", "start"]
+USER nobody
+
+# If using an environment that doesn't automatically reap zombie processes, it is
+# advised to add an init process such as tini via `apt-get install`
+# above and adding an entrypoint. See https://github.com/krallin/tini for details
+# ENTRYPOINT ["/tini", "--"]
+
+CMD ["/app/bin/server"]
+

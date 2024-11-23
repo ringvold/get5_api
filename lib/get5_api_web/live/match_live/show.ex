@@ -24,6 +24,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
     match = socket.assigns.entity || Matches.get_match!(id)
     map_stats = Stats.get_by_match(id)
     player_stats = Stats.player_stats_by_match(id)
+    game_server = socket.assigns.entity.game_server
 
     {:noreply,
      socket
@@ -31,23 +32,27 @@ defmodule Get5ApiWeb.MatchLive.Show do
      |> assign(:match, match)
      |> assign(:map_stats, map_stats)
      |> assign(:player_stats, player_stats)
-     |> start_async(:get_status, fn -> Get5Client.status(socket.assigns.entity.game_server) end)}
+     |> start_async(:get_status, fn -> Get5Client.status(game_server) end)}
   end
 
   @impl true
   def handle_event("get_status", _params, socket) do
+    game_server = socket.assigns.match.game_server
+
     {:noreply,
      socket
      |> assign(status: AsyncResult.loading())
-     |> start_async(:get_status, fn -> Get5Client.status(socket.assigns.match.game_server) end)}
+     |> start_async(:get_status, fn -> Get5Client.status(game_server) end)}
   end
 
   @impl true
   def handle_event("start_match", _params, socket) do
     if socket.assigns.match.user_id == socket.assigns.current_user.id do
+      match = socket.assigns.match
+
       {:noreply,
        socket
-       |> start_async(:start_match, fn -> Get5Client.start_match(socket.assigns.match) end)}
+       |> start_async(:start_match, fn -> Get5Client.start_match(match) end)}
     else
       {:noreply,
        socket
@@ -56,23 +61,42 @@ defmodule Get5ApiWeb.MatchLive.Show do
   end
 
   @impl true
+  def handle_event("end_match", _params, socket) do
+    if socket.assigns.match.user_id == socket.assigns.current_user.id do
+      match = socket.assigns.match
+
+      {:noreply,
+       socket
+       |> start_async(:end_match, fn -> Get5Client.end_match(match) end)}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("You are not allowed to end this match"))}
+    end
+  end
+
+  @impl true
   def handle_async(:start_match, {:ok, {:ok, _resp}}, socket) do
+    game_server = socket.assigns.match.game_server
+
     {:noreply,
      socket
      |> start_async(:get_status, fn ->
-       Get5Client.status(socket.assigns.match.game_server)
+       Get5Client.status(game_server)
      end)
      |> put_flash(:info, gettext("Match sendt to server"))}
   end
 
   @impl true
   def handle_async(:start_match, {:ok, {:error, error}}, socket) do
+    game_server = socket.assigns.match.game_server
+
     case error do
       :nxdomain ->
         {:noreply,
          socket
          |> start_async(:get_status, fn ->
-           Get5Client.status(socket.assigns.match.game_server)
+           Get5Client.status(game_server)
          end)
          |> put_flash(
            :error,
@@ -85,42 +109,31 @@ defmodule Get5ApiWeb.MatchLive.Show do
         {:noreply,
          socket
          |> start_async(:get_status, fn ->
-           Get5Client.status(socket.assigns.match.game_server)
+           Get5Client.status(game_server)
          end)
          |> put_flash(
            :error,
            gettext("A match is already loaded on the server")
          )}
 
-      err ->
+      _err ->
         {:noreply,
          socket
          |> start_async(:get_status, fn ->
-           Get5Client.status(socket.assigns.match.game_server)
+           Get5Client.status(game_server)
          end)
          |> put_flash(:error, gettext("Failed to start match"))}
     end
   end
 
   @impl true
-  def handle_event("end_match", _params, socket) do
-    if socket.assigns.match.user_id == socket.assigns.current_user.id do
-      {:noreply,
-       socket
-       |> start_async(:end_match, fn -> Get5Client.end_match(socket.assigns.match) end)}
-    else
-      {:noreply,
-       socket
-       |> put_flash(:error, gettext("You are not allowed to end this match"))}
-    end
-  end
+  def handle_async(:end_match, {:ok, {:ok, _msg}}, socket) do
+    game_server = socket.assigns.match.game_server
 
-  @impl true
-  def handle_async(:end_match, {:ok, {:ok, msg}}, socket) do
     {:noreply,
      socket
      |> start_async(:get_status, fn ->
-       Get5Client.status(socket.assigns.match.game_server)
+       Get5Client.status(game_server)
      end)
      |> put_flash(:info, gettext("Match ended"))}
   end

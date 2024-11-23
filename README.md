@@ -94,6 +94,8 @@ in alignment with the projects plans. 😄
 
 ### All in docker
 
+**NB: This section is outdated. Need to find a docker image for CS2. Any tips?**
+
 Run both app and database (and csgo server) in docker.
 
 1. Start the database and server with `docker-compose up`. This might take a while. 
@@ -104,7 +106,7 @@ Enjoy some quiet time while downloading and compiling. 😄
 
 If you also wish to run a CSGO server configured with Get5 you can uncomment
 the csgo service in `docker-compose.yml`. ***Note:** this image does not work on 
-M1/Apple Silicon and the server needs to be serves somewhere else.*
+M1/Apple Silicon and the server needs to be served somewhere else.*
 Check out the repo for that image on more information about how it works: https://github.com/ringvold/csgo
 
 
@@ -145,12 +147,12 @@ source ~/.zshrc
 asdf plugin-add erlang
 asdf plugin-add elixir
 
-asdf install elixir 1.14.2-otp-25
-asdf install erlang 25.1.2
+# install the versions specified in .tool-versions
+asdf install
 
-# Set the installed versions av default
-asdf global erlang 25.1.2
-asdf global elixir 1.14.2-otp-25
+# Set the installed versions av default if you wish
+asdf global erlang erlang 27.0.1
+asdf global elixir elixir 1.17.2-otp-27
 
 mix local.hex
 mix local.rebar
