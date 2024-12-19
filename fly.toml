@@ -9,7 +9,7 @@ processes = []
 [env]
 
 [deploy]
-  release_command = "/app/bin/get5_api eval Get5Api.Release.migrate"
+  release_command = '/app/bin/migrate'
 
 [experimental]
   allowed_public_ports = []
