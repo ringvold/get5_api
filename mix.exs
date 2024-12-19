@@ -37,7 +37,7 @@ defmodule Get5Api.MixProject do
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
-      {:phoenix_live_view, "~> 1.0.0-rc.0"},
+      {:phoenix_live_view, "~> 1.0"},
       # Add back when live_view 1.0 compatible is out
       # {:phoenix_live_dashboard, "~> 0.8.2"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
