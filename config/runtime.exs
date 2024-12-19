@@ -30,6 +30,10 @@ if System.get_env("GET5API_IP") do
   end
 end
 
+if System.get_env("PHX_SERVER") do
+  config :get5_api, Get5ApiWeb.Endpoint, server: true
+end
+
 if config_env() == :prod do
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
@@ -38,17 +42,14 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  app_name =
-    System.get_env("FLY_APP_NAME") ||
-      raise "FLY_APP_NAME not available"
+  host = System.get_env("PHX_HOST") || "example.com"
+  port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :get5_api, Get5ApiWeb.Endpoint,
-    server: true,
-    url: [host: "#{app_name}.fly.dev", port: 80],
+    url: [host: host, port: 443, scheme: "https"],
     http: [
-      port: String.to_integer(System.get_env("PORT") || "4000"),
-      # IMPORTANT: support IPv6 addresses
-      transport_options: [socket_opts: [:inet6]]
+      ip: {0, 0, 0, 0, 0, 0, 0, 0},
+      port: port
     ],
     secret_key_base: secret_key_base
 
@@ -68,35 +69,3 @@ if config_env() == :prod do
     socket_options: [:inet6],
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 end
-
-# ## SSL Support
-#
-# To get SSL working, you will need to add the `https` key
-# to your endpoint configuration:
-#
-#     config :my_app, MyAppWeb.Endpoint,
-#       https: [
-#         ...,
-#         port: 443,
-#         cipher_suite: :strong,
-#         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
-#         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
-#       ]
-#
-# The `cipher_suite` is set to `:strong` to support only the
-# latest and more secure SSL ciphers. This means old browsers
-# and clients may not be supported. You can set it to
-# `:compatible` for wider support.
-#
-# `:keyfile` and `:certfile` expect an absolute path to the key
-# and cert in disk or a relative path inside priv, for example
-# "priv/ssl/server.key". For all supported SSL configuration
-# options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1
-#
-# We also recommend setting `force_ssl` in your endpoint, ensuring
-# no data is ever sent via http, always redirecting to https:
-#
-#     config :my_app, MyAppWeb.Endpoint,
-#       force_ssl: [hsts: true]
-#
-# Check `Plug.SSL` for all available options in `force_ssl`.
