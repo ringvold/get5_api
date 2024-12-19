@@ -12,10 +12,10 @@
   rows={@streams.teams}
   row_click={fn {_id, team} -> JS.navigate(~p"/teams/#{team}") end}
 >
-  <:col :let={{_id, team}} label="Name"><%= team.name %></:col>
+  <:col :let={{_id, team}} label="Name">{team.name}</:col>
   <:col :let={{_id, team}} label="Players">
-    <%= Enum.map(team.players, fn player -> player.steam_id end)
-    |> Enum.join(", ") %>
+    {Enum.map(team.players, fn player -> player.steam_id end)
+    |> Enum.join(", ")}
   </:col>
   <:col :let={{_id, team}} label="Visibility">
     <.visibility_icons

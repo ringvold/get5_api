@@ -30,7 +30,7 @@ defmodule Get5Api.Steam.SteamID do
     steam_id1 = rem(community_id, 2)
     steam_id2 = community_id - 76_561_197_960_265_728
 
-    unless steam_id2 > 0 do
+    if not (steam_id2 > 0) do
       raise "SteamID #{community_id} is too small."
     end
 
@@ -49,13 +49,13 @@ defmodule Get5Api.Steam.SteamID do
   """
   @spec community_id_to_steam_id3(pos_integer) :: binary
   def community_id_to_steam_id3(community_id) do
-    unless rem(community_id, 2) == 1 do
+    if rem(community_id, 2) != 1 do
       raise "SteamID3 only supports public universe"
     end
 
     steam_id2 = community_id - 76_561_197_960_265_728
 
-    unless steam_id2 > 0 do
+    if not (steam_id2 > 0) do
       raise "SteamID #{community_id} is too small."
     end
 

@@ -8,7 +8,7 @@ defmodule Get5ApiWeb.TeamLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>
           <%= if assigns.action == :edit do %>
             Edit team details

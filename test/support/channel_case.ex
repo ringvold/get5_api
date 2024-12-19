@@ -31,7 +31,7 @@ defmodule Get5ApiWeb.ChannelCase do
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Get5Api.Repo)
 
-    unless tags[:async] do
+    if !tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Get5Api.Repo, {:shared, self()})
     end
 

@@ -26,8 +26,7 @@ defmodule Get5ApiWeb.GameServerLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:game_server, game_server)
      |> assign(:show_password, false)
-     |> assign(:rcon_password, "")
-      }
+     |> assign(:rcon_password, "")}
   end
 
   @impl true

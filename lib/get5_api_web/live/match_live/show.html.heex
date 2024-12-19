@@ -1,18 +1,18 @@
 <.header>
-  <%= @match.team1.name %> vs <%= @match.team2.name %>
+  {@match.team1.name} vs {@match.team2.name}
   <.visibility_icons type={:inline} visible={@match.public} />
   <:subtitle>
     <.async_result :let={status} assign={@status}>
       <:loading>
-        <%= gettext("Loading status") %>
+        {gettext("Loading status")}
       </:loading>
       <%= if status["gamestate"] != "none" and status["matchid"] == to_string(@match.id)
         do %>
-        <%= gettext("Match is running on server. Game state: %{game_state}",
+        {gettext("Match is running on server. Game state: %{game_state}",
           game_state: status["gamestate"]
-        ) %>
+        )}
       <% else %>
-        <%= gettext("Match is not running on server") %>
+        {gettext("Match is not running on server")}
       <% end %>
     </.async_result>
   </:subtitle>
@@ -24,7 +24,7 @@
       phx-disable-with={gettext("Loading...")}
       data-confirm={gettext("Are you sure you want to start the match?")}
     >
-      <%= gettext("Start match") %>
+      {gettext("Start match")}
     </.button>
     <.button
       :if={@current_user.id == @match.user_id}
@@ -32,7 +32,7 @@
       phx-disable-with={gettext("Loading...")}
       data-confirm={gettext("Are you sure you want end the match?")}
     >
-      <%= gettext("End match") %>
+      {gettext("End match")}
     </.button>
     <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>
       Check status
@@ -48,37 +48,37 @@
 </.header>
 
 <.list>
-  <:item title={gettext("Matchid")}><%= @match.id %></:item>
+  <:item title={gettext("Matchid")}>{@match.id}</:item>
   <:item title={gettext("Server")}>
     <.link navigate={~p"/game_servers/#{@match.game_server.id}"} class="underline">
-      <%= @match.game_server.name %>
+      {@match.game_server.name}
     </.link>
   </:item>
-  <:item title={gettext("Team 1")}><%= @match.team1.name %></:item>
-  <:item title={gettext("Team 2")}><%= @match.team2.name %></:item>
-  <:item title={gettext("Series type")}><%= @match.series_type %></:item>
-  <:item title={gettext("Side type")}><%= @match.side_type %></:item>
-  <:item title={gettext("Map list")}><%= Enum.join(@match.map_list, ", ") %></:item>
-  <:item title={gettext("Public")}><%= @match.public %></:item>
+  <:item title={gettext("Team 1")}>{@match.team1.name}</:item>
+  <:item title={gettext("Team 2")}>{@match.team2.name}</:item>
+  <:item title={gettext("Series type")}>{@match.series_type}</:item>
+  <:item title={gettext("Side type")}>{@match.side_type}</:item>
+  <:item title={gettext("Map list")}>{Enum.join(@match.map_list, ", ")}</:item>
+  <:item title={gettext("Public")}>{@match.public}</:item>
 </.list>
 
 <.table id="player_stats" rows={@player_stats}>
-  <:col :let={player} label="Name"><%= player.name %></:col>
-  <:col :let={player} label="Kills"><%= player.kills %></:col>
-  <:col :let={player} label="Damage"><%= player.damage %></:col>
-  <:col :let={player} label="Deaths"><%= player.deaths %></:col>
-  <:col :let={player} label="Assists"><%= player.assists %></:col>
-  <:col :let={player} label="Flashed"><%= player.enemies_flashed %></:col>
-  <:col :let={player} label="HS"><%= player.headshot_kills %></:col>
+  <:col :let={player} label="Name">{player.name}</:col>
+  <:col :let={player} label="Kills">{player.kills}</:col>
+  <:col :let={player} label="Damage">{player.damage}</:col>
+  <:col :let={player} label="Deaths">{player.deaths}</:col>
+  <:col :let={player} label="Assists">{player.assists}</:col>
+  <:col :let={player} label="Flashed">{player.enemies_flashed}</:col>
+  <:col :let={player} label="HS">{player.headshot_kills}</:col>
   <:col :let={player} label="HS%">
-    <%= "#{ceil(player.headshot_kills / player.kills * 100)}%" %>
+    {"#{ceil(player.headshot_kills / player.kills * 100)}%"}
   </:col>
-  <:col :let={player} label="Utility"><%= player.utility_damage %></:col>
-  <:col :let={player} label="KAST"><%= player.kast %></:col>
-  <:col :let={player} label="Score"><%= player.score %></:col>
+  <:col :let={player} label="Utility">{player.utility_damage}</:col>
+  <:col :let={player} label="KAST">{player.kast}</:col>
+  <:col :let={player} label="Score">{player.score}</:col>
 </.table>
 
-<.back navigate={~p"/matches"}><%= gettext("Back to matches") %></.back>
+<.back navigate={~p"/matches"}>{gettext("Back to matches")}</.back>
 
 <.modal
   :if={@live_action == :edit}

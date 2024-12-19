@@ -1,7 +1,6 @@
 import Config
 require Logger
 
-
 # Get correct IP for testing locally. You might need to modify this for your machine.
 # My machine has the local network IP that my test csgo server can reach at
 # index 1 in the list.
@@ -24,6 +23,7 @@ if System.get_env("GET5API_IP") do
     [host, port] ->
       Logger.debug("Host: #{host}, port: #{port}")
       config :get5_api, Get5ApiWeb.Endpoint, url: [host: host, port: port]
+
     [host] ->
       Logger.debug("Host: #{host}")
       config :get5_api, Get5ApiWeb.Endpoint, url: [host: host]

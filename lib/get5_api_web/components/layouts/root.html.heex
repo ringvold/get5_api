@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Get5 webpanel">
-      <%= assigns[:page_title] || "Get5 webpanel" %>
+      {assigns[:page_title] || "Get5 webpanel"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
@@ -15,6 +15,6 @@
     "bg-white text-zinc-900 antialiased",
     "dark:bg-zinc-900 dark:text-zinc-200"
   ]}>
-    <%= @inner_content %>
+    {@inner_content}
   </body>
 </html>

@@ -1,5 +1,5 @@
 <.header>
-  <%= @team.name %>
+  {@team.name}
   <.visibility_icons type={:inline} visible={@team.public} />
   <:subtitle :if={@current_user.id == @team.user_id}>Owner: You</:subtitle>
   <:actions :if={@current_user.id == @team.user_id}>
@@ -12,12 +12,9 @@
   </:actions>
 </.header>
 
-<.table
-  id="players"
-  rows={@team.players}
->
-  <:col :let={player} label="Steam ID"><%= player.steam_id %></:col>
-  <:col :let={player} label="Name"><%= player.name %></:col>
+<.table id="players" rows={@team.players}>
+  <:col :let={player} label="Steam ID">{player.steam_id}</:col>
+  <:col :let={player} label="Name">{player.name}</:col>
   <:action :let={player}>
     <.link
       :if={@current_user.id == @team.user_id}

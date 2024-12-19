@@ -11,7 +11,7 @@ defmodule Get5ApiWeb.TeamLive.PlayerFormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>
           Add player by steam id. Name is optional. If not set name defaults to the players current steam name.
         </:subtitle>

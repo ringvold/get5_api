@@ -6,7 +6,8 @@ defmodule Get5ApiWeb.GameServerLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :game_servers, GameServers.list_game_servers(socket.assigns.current_user.id))}
+    {:ok,
+     stream(socket, :game_servers, GameServers.list_game_servers(socket.assigns.current_user.id))}
   end
 
   @impl true

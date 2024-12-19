@@ -8,7 +8,7 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>Use this form to manage game_server records in your database.</:subtitle>
       </.header>
 
@@ -63,7 +63,11 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
   end
 
   defp save_game_server(socket, :edit, game_server_params) do
-    case GameServers.update_game_server(socket.assigns.current_user, socket.assigns.game_server, game_server_params) do
+    case GameServers.update_game_server(
+           socket.assigns.current_user,
+           socket.assigns.game_server,
+           game_server_params
+         ) do
       {:ok, game_server} ->
         notify_parent({:saved, game_server})
 
@@ -76,14 +80,16 @@ defmodule Get5ApiWeb.GameServerLive.FormComponent do
         {:noreply, assign_form(socket, changeset)}
 
       {:error, :unauthorized} ->
-        {:noreply, socket
+        {:noreply,
+         socket
          |> put_flash(:error, "Unauthorized")
-        |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: socket.assigns.navigate)}
     end
   end
 
   defp save_game_server(socket, :new, game_server_params) do
-    game_server_params_with_user = Map.put(game_server_params, "user_id", socket.assigns.current_user.id)
+    game_server_params_with_user =
+      Map.put(game_server_params, "user_id", socket.assigns.current_user.id)
 
     case GameServers.create_game_server(game_server_params_with_user) do
       {:ok, game_server} ->

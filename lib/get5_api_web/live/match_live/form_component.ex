@@ -11,7 +11,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.simple_form
@@ -94,6 +94,7 @@ defmodule Get5ApiWeb.MatchLive.FormComponent do
   @impl true
   def update(%{match: match, current_user: user} = assigns, socket) do
     changeset = Matches.change_match(match)
+
     {:ok,
      socket
      |> assign(assigns)

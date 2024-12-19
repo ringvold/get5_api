@@ -12,10 +12,10 @@
   rows={@streams.game_servers}
   row_click={fn {_id, game_server} -> JS.navigate(~p"/game_servers/#{game_server}") end}
 >
-  <:col :let={{_id, game_server}} label="Name"><%= game_server.name %></:col>
-  <:col :let={{_id, game_server}} label="Host"><%= game_server.host %></:col>
-  <:col :let={{_id, game_server}} label="Port"><%= game_server.port %></:col>
-  <:col :let={{_id, game_server}} label="In use"><%= game_server.in_use %></:col>
+  <:col :let={{_id, game_server}} label="Name">{game_server.name}</:col>
+  <:col :let={{_id, game_server}} label="Host">{game_server.host}</:col>
+  <:col :let={{_id, game_server}} label="Port">{game_server.port}</:col>
+  <:col :let={{_id, game_server}} label="In use">{game_server.in_use}</:col>
   <:col :let={{_id, game_server}} label="Visibility">
     <.visibility_icons
       visible={game_server.public}
