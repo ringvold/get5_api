@@ -5,39 +5,171 @@ defmodule Get5Api.SeriesEvents do
   alias Get5Api.Matches.Match
   alias Get5Api.Stats
 
+  @moduledoc """
+  This module handles events related to series, such as map picks, map results, and series results.
+
+  It provides functions to process these events and update the match state accordingly.
+
+  Events documentation: https://shobhit-pathak.github.io/MatchZy/events.html
+  """
+
+  @typedoc """
+  event: map_picked
+  """
   @type on_map_picked() :: %{
-          # event: "map_picked"
           event: String.t(),
-          matchid: String.t(),
+          matchid: integer(),
           team: String.t(),
           map_name: String.t(),
           map_number: integer()
         }
+
+  @typedoc """
+  event: map_vetoed
+  """
   @type on_map_vetoed() :: %{
-          # event: "map_vetoed"
           event: String.t(),
-          matchid: String.t(),
+          matchid: integer(),
           team: String.t(),
           map_name: String.t()
         }
+
+  @typedoc """
+  event: backup_loaded
+  """
   @type on_backup_restore() :: %{
-          # event: "backup_loaded"
           event: String.t(),
-          matchid: String.t(),
+          matchid: integer(),
           map_number: integer(),
           round_number: integer(),
           filename: String.t()
         }
 
+  @typedoc """
+  event: series_start
+  """
+  @type on_series_start() :: %{
+          event: String.t(),
+          matchid: integer(),
+          num_maps: integer(),
+          team1: %{
+            id: String.t(),
+            name: String.t()
+          },
+          team2: %{
+            id: String.t(),
+            name: String.t()
+          }
+        }
+
+  @type player_stats() :: %{
+          kills: integer(),
+          deaths: integer(),
+          assists: integer(),
+          flash_assists: integer(),
+          team_kills: integer(),
+          suicides: integer(),
+          damage: integer(),
+          utility_damage: integer(),
+          enemies_flashed: integer(),
+          friendlies_flashed: integer(),
+          knife_kills: integer(),
+          headshot_kills: integer(),
+          rounds_played: integer(),
+          bomb_defuses: integer(),
+          bomb_plants: integer(),
+          "1k": integer(),
+          "2k": integer(),
+          "3k": integer(),
+          "4k": integer(),
+          "5k": integer(),
+          "1v1": integer(),
+          "1v2": integer(),
+          "1v3": integer(),
+          "1v4": integer(),
+          "1v5": integer(),
+          first_kills_t: integer(),
+          first_kills_ct: integer(),
+          first_deaths_t: integer(),
+          first_deaths_ct: integer(),
+          trade_kills: integer(),
+          kast: integer(),
+          score: integer(),
+          mvp: integer()
+        }
+
+  @typedoc """
+  event: map_result
+  """
+  @type on_map_result() :: %{
+          event: String.t(),
+          matchid: integer(),
+          map_number: integer(),
+          team1: %{
+            id: String.t(),
+            name: String.t(),
+            series_score: integer(),
+            score: integer(),
+            score_ct: integer(),
+            score_t: integer(),
+            players:
+              list(%{
+                steamid: String.t(),
+                name: String.t(),
+                stats: player_stats()
+              }),
+            side: String.t(),
+            starting_side: String.t()
+          },
+          team2: %{
+            id: String.t(),
+            name: String.t(),
+            series_score: integer(),
+            score: integer(),
+            score_ct: integer(),
+            score_t: integer(),
+            players:
+              list(%{
+                steamid: String.t(),
+                name: String.t(),
+                stats: player_stats()
+              }),
+            side: String.t(),
+            starting_side: String.t()
+          },
+          winner: %{
+            side: String.t(),
+            team: String.t()
+          }
+        }
+
+  @typedoc """
+  event: series_result
+  """
+  @type on_series_result() :: %{
+          event: String.t(),
+          matchid: integer(),
+          team1_series_score: integer(),
+          team2_series_score: integer(),
+          winner: %{
+            side: String.t(),
+            team: String.t()
+          },
+          time_until_restore: integer()
+        }
+
+  @spec on_series_init(event :: on_series_start(), match :: %Match{}) :: any()
   def on_series_init(_event, match) do
     Matches.update_match(match, %{start_time: DateTime.utc_now()})
     GameServers.update_game_server(match.game_server, %{in_use: true})
   end
 
+  @spec on_map_result(event :: on_map_result(), match :: %Match{}) :: any()
   def on_map_result(event, match) do
     Stats.store_map_result(match, event)
   end
 
+  @spec on_series_result(event :: on_series_result(), match :: %Match{}) :: any()
   def on_series_result(event, match) do
     Matches.update_match(match, %{
       team1_score: event["team1_series_score"],
@@ -134,4 +266,47 @@ defmodule Get5Api.SeriesEvents do
     # Remember to delete stats for later rounds than the one being restored
     :not_implemented
   end
+
+  @type on_round_end() :: %{
+          event: String.t(),
+          matchid: integer(),
+          map_number: integer(),
+          round_number: integer(),
+          round_time: integer(),
+          reason: integer(),
+          winner: %{
+            side: String.t(),
+            team: String.t()
+          },
+          team1: %{
+            id: String.t(),
+            name: String.t(),
+            score: integer(),
+            score_ct: integer(),
+            score_t: integer(),
+            players:
+              list(%{
+                steamid: String.t(),
+                name: String.t(),
+                stats: player_stats()
+              }),
+            side: String.t(),
+            starting_side: String.t()
+          },
+          team2: %{
+            id: String.t(),
+            name: String.t(),
+            score: integer(),
+            score_ct: integer(),
+            score_t: integer(),
+            players:
+              list(%{
+                steamid: String.t(),
+                name: String.t(),
+                stats: player_stats()
+              }),
+            side: String.t(),
+            starting_side: String.t()
+          }
+        }
 end

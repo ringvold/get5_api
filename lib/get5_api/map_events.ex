@@ -4,7 +4,10 @@ defmodule Get5Api.MapEvents do
   alias Get5Api.Stats
   alias Get5Api.MapSelections
 
-  @type on_going_live() :: %{event: String.t(), matchid: String.t(), map_number: integer()}
+  @typedoc """
+  event: going_live
+  """
+  @type on_going_live() :: %{event: String.t(), matchid: integer(), map_number: integer()}
 
   @spec on_going_live(on_going_live(), %Match{}) :: any()
   def on_going_live(event, match) do
