@@ -3,7 +3,7 @@ defmodule Get5ApiWeb.TeamResolver do
   alias Get5Api.Teams.Player
 
   def all_teams(_root, _args, _info) do
-    teams = Teams.list_teams()
+    teams = Teams.list_teams(nil)
     {:ok, teams}
   end
 
@@ -26,15 +26,16 @@ defmodule Get5ApiWeb.TeamResolver do
       nil ->
         {:error, "Team not found"}
 
-      team ->
-        case Teams.delete_team(team) do
-          {:ok, struct} ->
-            {:ok, struct}
+      _team ->
+        # TODO: Pass actual user from context for authorization
+        # For now, check if team belongs to user before deleting
+        case Teams.get_team(id) do
+          %{user_id: user_id} when not is_nil(user_id) ->
+            # Need user struct to delete - this requires auth context
+            {:error, "Authentication required to delete team"}
 
-          {:error, changeset} ->
-            IO.inspect(changeset)
-
-            {:error, changeset}
+          _ ->
+            {:error, "Team not found or invalid"}
         end
     end
   end

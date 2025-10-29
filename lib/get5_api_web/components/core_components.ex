@@ -11,9 +11,9 @@ defmodule Get5ApiWeb.CoreComponents do
   """
   use Phoenix.Component
   use Get5ApiWeb, :verified_routes
+  use Gettext, backend: Get5ApiWeb.Gettext
 
   alias Phoenix.LiveView.JS
-  import Get5ApiWeb.Gettext
 
   def user_menu(assigns) do
     ~H"""

@@ -11,7 +11,10 @@ defmodule Get5Api.Teams.Team do
 
     embeds_many :players, Player, on_replace: :delete
 
-    has_many :matches, Match
+    # Matches have team1_id and team2_id foreign keys, not a generic team_id
+    # So we need separate associations for each
+    has_many :team1_matches, Match, foreign_key: :team1_id
+    has_many :team2_matches, Match, foreign_key: :team2_id
     belongs_to(:user, User)
 
     timestamps()

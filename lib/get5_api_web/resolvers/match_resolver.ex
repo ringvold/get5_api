@@ -2,7 +2,7 @@ defmodule Get5ApiWeb.MatchResolver do
   alias Get5Api.Matches
 
   def all_matches(_root, _args, _info) do
-    matches = Matches.list_matches()
+    matches = Matches.list_matches(nil)
     {:ok, matches}
   end
 

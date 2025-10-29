@@ -3,6 +3,8 @@ defmodule Get5Api.MapSelections.MapSelection do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Get5Api.Matches.Match
+
   schema "map_selections" do
     field :map_name, :string
     field :team_name, :string

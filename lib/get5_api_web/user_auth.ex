@@ -1,9 +1,9 @@
 defmodule Get5ApiWeb.UserAuth do
   use Get5ApiWeb, :verified_routes
+  use Gettext, backend: Get5ApiWeb.Gettext
 
   import Plug.Conn
   import Phoenix.Controller
-  import Get5ApiWeb.Gettext
 
   alias Get5Api.Accounts
 

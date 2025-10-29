@@ -3,13 +3,14 @@ defmodule Get5Api.MapSelections.SideSelection do
   import Ecto.Changeset
 
   alias Get5Api.MapSelections.MapSelection
+  alias Get5Api.Matches.Match
 
   schema "side_selections" do
     field :map_name, :string
     field :side, Ecto.Enum, values: [:t, :ct]
     field :team_name, :string
 
-    belongs_to(:match, Matche)
+    belongs_to(:match, Match)
     belongs_to(:map_selection, MapSelection)
 
     timestamps()

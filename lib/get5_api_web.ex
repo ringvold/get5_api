@@ -43,9 +43,9 @@ defmodule Get5ApiWeb do
         namespace: Get5ApiWeb,
         formats: [:html, :json],
         layouts: [html: Get5ApiWeb.Layouts]
+      use Gettext, backend: Get5ApiWeb.Gettext
 
       import Plug.Conn
-      import Get5ApiWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -87,7 +87,7 @@ defmodule Get5ApiWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import Get5ApiWeb.CoreComponents
-      import Get5ApiWeb.Gettext
+      use Gettext, backend: Get5ApiWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
