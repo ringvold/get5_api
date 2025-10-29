@@ -1,4 +1,4 @@
-defmodule Get5ApiWeb.UserAuthTest do
+defmodule Get5ApiWeb.UserAuthControllerTest do
   use Get5ApiWeb.ConnCase, async: true
 
   alias Get5Api.Accounts

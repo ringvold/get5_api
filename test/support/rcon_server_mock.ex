@@ -44,9 +44,9 @@ defmodule Get5Api.RconServerMock do
           log_command(body)
           send_packet(socket, :exec_resp, packet_id, "", :server)
 
-        {:exec_resp, packet_id, body = body} ->
-          dbg(body)
-          log_command(body)
+        {:exec_resp, packet_id, body1 = body} ->
+          dbg(body1)
+          log_command(body1)
           send_packet(socket, :exec_resp, packet_id, 1, :server)
 
         {:exec, packet_id, body} ->

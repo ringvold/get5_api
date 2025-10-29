@@ -10,7 +10,8 @@ defmodule Get5Api.MixProject do
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers()
     ]
   end
 
@@ -33,6 +34,7 @@ defmodule Get5Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:lazy_html, ">= 0.0.0", only: :test},
       {:tidewave, "~> 0.1", only: [:dev]},
       {:phoenix, "~> 1.8.3"},
       {:phoenix_ecto, "~> 4.5"},
