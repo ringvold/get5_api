@@ -9,6 +9,7 @@ defmodule Get5Api.Stats do
   alias Get5Api.Matches.Match
   alias Get5Api.Stats.MapStats
   alias Get5Api.Stats.PlayerStats
+  alias Get5Api.Stats.RoundStat
   alias Ecto.Multi
 
   def store_map_result(%Match{} = match, payload) do
@@ -308,5 +309,54 @@ defmodule Get5Api.Stats do
   """
   def change_player_stats(%PlayerStats{} = player_stats, attrs \\ %{}) do
     PlayerStats.changeset(player_stats, attrs)
+  end
+
+  @doc """
+  Stores round statistics from a round_end event.
+  """
+  def store_round_stats(%Match{} = match, event) do
+    map_stats = get_by_match_and_map_number(match.id, event["map_number"]) |> List.first()
+
+    %RoundStat{}
+    |> RoundStat.changeset(%{
+      match_id: match.id,
+      map_stats_id: map_stats && map_stats.id,
+      round_number: event["round_number"],
+      round_time: event["round_time"],
+      reason: event["reason"],
+      team1_score: event["team1"]["score"],
+      team2_score: event["team2"]["score"],
+      winner_side: event["winner"]["side"],
+      winner_team: event["winner"]["team"]
+    })
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns the list of round_stats for a match.
+  """
+  def list_round_stats_by_match(match_id) do
+    from(rs in RoundStat,
+      where: rs.match_id == ^match_id,
+      order_by: [asc: rs.round_number]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of round_stats for a specific map in a match.
+  """
+  def list_round_stats_by_map(match_id, map_number) do
+    map_stats = get_by_match_and_map_number(match_id, map_number) |> List.first()
+
+    if map_stats do
+      from(rs in RoundStat,
+        where: rs.map_stats_id == ^map_stats.id,
+        order_by: [asc: rs.round_number]
+      )
+      |> Repo.all()
+    else
+      []
+    end
   end
 end

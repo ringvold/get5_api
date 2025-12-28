@@ -43,6 +43,7 @@ defmodule Get5ApiWeb do
         namespace: Get5ApiWeb,
         formats: [:html, :json],
         layouts: [html: Get5ApiWeb.Layouts]
+
       use Gettext, backend: Get5ApiWeb.Gettext
 
       import Plug.Conn

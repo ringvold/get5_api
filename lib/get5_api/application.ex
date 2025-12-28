@@ -8,18 +8,11 @@ defmodule Get5Api.Application do
   def start(_type, _args) do
     children =
       [
-        # Start the Ecto repository
         Get5Api.Repo,
-        # Start the Telemetry supervisor
         Get5ApiWeb.Telemetry,
-        # Start the PubSub system
         {Phoenix.PubSub, name: Get5Api.PubSub},
-        # Start Finch
         {Finch, name: Get5Api.Finch},
-        # Start the Endpoint (http/https)
         Get5ApiWeb.Endpoint
-        # Start a worker by calling: Get5Api.Worker.start_link(arg)
-        # {Get5Api.Worker, arg}
       ] ++ env_children(System.get_env("MIX_ENV"))
 
     # See https://hexdocs.pm/elixir/Supervisor.html

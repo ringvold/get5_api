@@ -112,8 +112,33 @@ defmodule Get5ApiWeb.MatchController do
         end
 
       #
-      # Live events goes here (ex: player death, bomb defused, round end)
+      # Live events
       #
+      "round_end" ->
+        case SeriesEvents.on_round_end(params, match) do
+          {:ok, _round_stat} ->
+            conn
+            |> put_status(:ok)
+            |> json(:ok)
+
+          {:error, changeset} ->
+            {:error, %{changeset: changeset}}
+        end
+
+      "demo_upload_ended" ->
+        SeriesEvents.on_demo_upload_ended(params, match)
+
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
+
+      "backup_loaded" ->
+        SeriesEvents.on_backup_restore(params, match)
+
+        conn
+        |> put_status(:ok)
+        |> json(:ok)
+
       _ ->
         # Ignore other events
         conn

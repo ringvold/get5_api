@@ -261,10 +261,16 @@ defmodule Get5Api.SeriesEvents do
     end
   end
 
-  @spec on_backup_restore(on_backup_restore(), %Match{}) :: any()
-  def on_backup_restore(_event, _match) do
-    # Remember to delete stats for later rounds than the one being restored
-    :not_implemented
+  @spec on_backup_restore(on_backup_restore(), %Match{}) :: {:ok, :broadcasted}
+  def on_backup_restore(event, match) do
+    Get5ApiWeb.Endpoint.broadcast("match_events", "backup_loaded", %{
+      match_id: match.id,
+      map_number: event["map_number"],
+      round_number: event["round_number"],
+      filename: event["filename"]
+    })
+
+    {:ok, :broadcasted}
   end
 
   @type on_round_end() :: %{
@@ -309,4 +315,46 @@ defmodule Get5Api.SeriesEvents do
             starting_side: String.t()
           }
         }
+
+  @spec on_round_end(on_round_end(), %Match{}) :: {:ok, any()} | {:error, Ecto.Changeset.t()}
+  def on_round_end(event, match) do
+    case Stats.store_round_stats(match, event) do
+      {:ok, round_stat} ->
+        Get5ApiWeb.Endpoint.broadcast("match_events", "round_end", %{
+          match_id: match.id,
+          map_number: event["map_number"],
+          round_number: event["round_number"],
+          round_time: event["round_time"],
+          reason: event["reason"],
+          winner: event["winner"],
+          team1_score: event["team1"]["score"],
+          team2_score: event["team2"]["score"]
+        })
+
+        {:ok, round_stat}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @type on_demo_upload_ended() :: %{
+          event: String.t(),
+          matchid: integer(),
+          map_number: integer(),
+          filename: String.t(),
+          success: boolean()
+        }
+
+  @spec on_demo_upload_ended(on_demo_upload_ended(), %Match{}) :: {:ok, :broadcasted}
+  def on_demo_upload_ended(event, match) do
+    Get5ApiWeb.Endpoint.broadcast("match_events", "demo_upload_ended", %{
+      match_id: match.id,
+      map_number: event["map_number"],
+      filename: event["filename"],
+      success: event["success"]
+    })
+
+    {:ok, :broadcasted}
+  end
 end
