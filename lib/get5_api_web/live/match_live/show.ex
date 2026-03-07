@@ -116,6 +116,19 @@ defmodule Get5ApiWeb.MatchLive.Show do
            gettext("A match is already loaded on the server")
          )}
 
+      :plugin_not_installed ->
+        {:noreply,
+         socket
+         |> start_async(:get_status, fn ->
+           Get5Client.status(game_server)
+         end)
+         |> put_flash(
+           :error,
+           gettext(
+             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+           )
+         )}
+
       _err ->
         {:noreply,
          socket
@@ -124,6 +137,15 @@ defmodule Get5ApiWeb.MatchLive.Show do
          end)
          |> put_flash(:error, gettext("Failed to start match"))}
     end
+  end
+
+  @impl true
+  def handle_async(:start_match, {:exit, reason}, socket) do
+    Logger.error("start_match async task crashed: #{inspect(reason)}")
+
+    {:noreply,
+     socket
+     |> put_flash(:error, gettext("Something went wrong while starting the match"))}
   end
 
   @impl true
@@ -151,19 +173,30 @@ defmodule Get5ApiWeb.MatchLive.Show do
            )
          )}
 
+      :plugin_not_installed ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext(
+             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+           )
+         )}
+
       msg ->
         {:noreply,
          socket
-         |> put_flash(:error, msg)}
+         |> put_flash(:error, to_string(msg))}
     end
   end
 
   @impl true
   def handle_async(:end_match, {:exit, reason}, socket) do
+    Logger.error("end_match async task crashed: #{inspect(reason)}")
+
     {:noreply,
      socket
-     |> assign(status: AsyncResult.failed(socket.assigns.status, reason))
-     |> put_flash(:error, reason)}
+     |> put_flash(:error, gettext("Something went wrong while ending the match"))}
   end
 
   @impl true
@@ -187,33 +220,69 @@ defmodule Get5ApiWeb.MatchLive.Show do
            )
          )}
 
+      :plugin_not_installed ->
+        {:noreply,
+         socket
+         |> assign(status: AsyncResult.failed(socket.assigns.status, :plugin_not_installed))
+         |> put_flash(
+           :error,
+           gettext(
+             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+           )
+         )}
+
       msg ->
         {:noreply,
          socket
          |> assign(status: AsyncResult.failed(socket.assigns.status, msg))
-         |> put_flash(:error, msg)}
+         |> put_flash(:error, to_string(msg))}
     end
   end
 
   @impl true
-  def handle_async(:status, {:exit, reason}, socket) do
+  def handle_async(:get_status, {:exit, reason}, socket) do
+    Logger.error("get_status async task crashed: #{inspect(reason)}")
+
     {:noreply,
      socket
      |> assign(status: AsyncResult.failed(socket.assigns.status, reason))
-     |> put_flash(:error, reason)}
+     |> put_flash(:error, gettext("Something went wrong while fetching server status"))}
   end
 
   @impl true
-  def handle_info(%{topic: @topic, payload: payload}, socket) do
-    IO.puts("HANDLE BROADCAST FOR #{@topic}")
-    dbg(payload)
+  def handle_info(
+        %{topic: @topic, event: "match_config_loaded", payload: %{match_id: match_id}},
+        socket
+      ) do
+    if match_id == socket.assigns.match.id do
+      game_server = socket.assigns.match.game_server
 
-    {:noreply,
-     socket
-     |> put_flash(
-       :error,
-       payload.reason
-     )}
+      {:noreply,
+       socket
+       |> start_async(:get_status, fn -> Get5Client.status(game_server) end)
+       |> put_flash(:info, gettext("Match config loaded by server, match is starting"))}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(
+        %{topic: @topic, event: "match_config_load_fail", payload: payload},
+        socket
+      ) do
+    if payload.match_id == socket.assigns.match.id do
+      {:noreply,
+       socket
+       |> put_flash(:error, payload.reason)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(%{topic: @topic}, socket) do
+    {:noreply, socket}
   end
 
   def get_entity_for_id(socket, id) do

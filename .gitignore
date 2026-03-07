@@ -44,3 +44,5 @@ npm-debug.log
 *.sublime-workspace
 
 .expert
+
+.claude

@@ -22,6 +22,9 @@ defmodule Get5Api.GameServers.Get5Client do
         |> hd
 
       cond do
+        unknown_command?(message) ->
+          {:error, :plugin_not_installed}
+
         String.contains?(message, "Loading match configuration") ->
           {:ok, message}
 
@@ -45,6 +48,9 @@ defmodule Get5Api.GameServers.Get5Client do
     with {:ok, conn} <- connect(match.game_server),
          {:ok, _con, res} <- Rcon.exec(conn, "get5_endmatch") do
       cond do
+        unknown_command?(res) ->
+          {:error, :plugin_not_installed}
+
         String.contains?(res, "An admin force-ended the match") ->
           {:ok, "Match ended"}
 
@@ -116,6 +122,16 @@ defmodule Get5Api.GameServers.Get5Client do
     with {:ok, _con, response} <- RCON.Client.exec(conn, "get5_status"),
          {:ok, response} <- response_to_json(response) do
       {:ok, response}
+    else
+      {:error, %Jason.DecodeError{data: data}} ->
+        if unknown_command?(data) do
+          {:error, :plugin_not_installed}
+        else
+          {:error, "Invalid response from server: #{String.trim(data)}"}
+        end
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
@@ -124,5 +140,10 @@ defmodule Get5Api.GameServers.Get5Client do
     |> String.split("\nL")
     |> hd
     |> Jason.decode()
+  end
+
+  defp unknown_command?(response) do
+    downcased = String.downcase(response)
+    String.contains?(downcased, "unknown command") or String.contains?(downcased, "command not found")
   end
 end

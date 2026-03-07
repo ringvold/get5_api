@@ -61,20 +61,39 @@ defmodule Get5ApiWeb.GameServerLive.Show do
            socket
            |> assign(status: resp)}
 
+        {:error, :plugin_not_installed} ->
+          {:noreply,
+           socket
+           |> assign(status: nil, status_fetch_errors: socket.assigns.status_fetch_errors + 1)
+           |> put_flash(
+             :error,
+             gettext(
+               "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+             )
+           )}
+
         {:error, msg} ->
           Logger.error(%{message: msg})
 
           {:noreply,
            socket
-           |> assign(status: nil, status_fetches: socket.assigns.status_fetch_errors + 1)
+           |> assign(status: nil, status_fetch_errors: socket.assigns.status_fetch_errors + 1)
            |> put_flash(:error, "Could not fetch get5 status from server")}
       end
     end
   end
 
   defp get_status(server) do
-    {:ok, status} = Get5Client.status(server)
-    {:ok, %{status: status}}
+    case Get5Client.status(server) do
+      {:ok, status} ->
+        {:ok, %{status: status}}
+
+      {:error, :plugin_not_installed} ->
+        {:error, :plugin_not_installed}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   def get_entity_for_id(socket, id) do

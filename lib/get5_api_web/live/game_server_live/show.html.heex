@@ -6,6 +6,15 @@
       <:loading>
         Loading status
       </:loading>
+      <:failed :let={reason}>
+        <%= if reason == :plugin_not_installed do %>
+          {gettext(
+            "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+          )}
+        <% else %>
+          {gettext("Could not fetch status from server")}
+        <% end %>
+      </:failed>
       <%= if status["gamestate"] == "none" do %>
         No active match.
       <% end %>
