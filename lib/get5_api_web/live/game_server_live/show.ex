@@ -67,9 +67,7 @@ defmodule Get5ApiWeb.GameServerLive.Show do
            |> assign(status: nil, status_fetch_errors: socket.assigns.status_fetch_errors + 1)
            |> put_flash(
              :error,
-             gettext(
-               "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
-             )
+             plugin_not_installed_message()
            )}
 
         {:error, msg} ->

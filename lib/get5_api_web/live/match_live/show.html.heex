@@ -6,6 +6,13 @@
       <:loading>
         {gettext("Loading status")}
       </:loading>
+      <:failed :let={reason}>
+        <%= if reason == :plugin_not_installed do %>
+          {plugin_not_installed_message()}
+        <% else %>
+          {gettext("Could not fetch status from server")}
+        <% end %>
+      </:failed>
       <%= if status["gamestate"] != "none" and status["matchid"] == to_string(@match.id)
         do %>
         {gettext("Match is running on server. Game state: %{game_state}",
@@ -34,7 +41,7 @@
     >
       {gettext("End match")}
     </.button>
-    <.button phx-click="end_match" phx-disable-with={gettext("Loading...")}>
+    <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>
       Check status
     </.button>
     <.link
@@ -71,7 +78,7 @@
   <:col :let={player} label="Flashed">{player.enemies_flashed}</:col>
   <:col :let={player} label="HS">{player.headshot_kills}</:col>
   <:col :let={player} label="HS%">
-    {"#{ceil(player.headshot_kills / player.kills * 100)}%"}
+    {if player.kills > 0, do: "#{ceil(player.headshot_kills / player.kills * 100)}%", else: "0%"}
   </:col>
   <:col :let={player} label="Utility">{player.utility_damage}</:col>
   <:col :let={player} label="KAST">{player.kast}</:col>

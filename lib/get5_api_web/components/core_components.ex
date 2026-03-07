@@ -15,6 +15,12 @@ defmodule Get5ApiWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  def plugin_not_installed_message do
+    gettext(
+      "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
+    )
+  end
+
   def user_menu(assigns) do
     ~H"""
     <div class="flex items-center gap-4">

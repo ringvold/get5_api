@@ -124,9 +124,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          end)
          |> put_flash(
            :error,
-           gettext(
-             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
-           )
+           plugin_not_installed_message()
          )}
 
       _err ->
@@ -178,9 +176,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          socket
          |> put_flash(
            :error,
-           gettext(
-             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
-           )
+           plugin_not_installed_message()
          )}
 
       msg ->
@@ -226,9 +222,7 @@ defmodule Get5ApiWeb.MatchLive.Show do
          |> assign(status: AsyncResult.failed(socket.assigns.status, :plugin_not_installed))
          |> put_flash(
            :error,
-           gettext(
-             "The server does not recognize Get5 commands. Is MatchZy (or Get5) installed on the server?"
-           )
+           plugin_not_installed_message()
          )}
 
       msg ->
