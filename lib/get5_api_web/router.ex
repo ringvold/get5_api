@@ -42,17 +42,6 @@ defmodule Get5ApiWeb.Router do
     post "/matches/:id/events", MatchController, :events
   end
 
-  scope "/" do
-    forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: Get5ApiWeb.Schema,
-      interface: :simple,
-      context: %{pubsub: Get5ApiWeb.Endpoint}
-  end
-
-  scope "/api" do
-    forward "/graphql/v1", Absinthe.Plug, schema: Get5ApiWeb.Schema
-  end
-
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:get5_api, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
