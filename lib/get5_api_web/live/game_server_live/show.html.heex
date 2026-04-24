@@ -1,57 +1,178 @@
-<.header>
-  {@game_server.name}
-  <.visibility_icons type={:inline} visible={@game_server.public} />
-  <:subtitle>
-    <.async_result :let={status} assign={@status}>
-      <:loading>
-        Loading status
-      </:loading>
-      <:failed :let={reason}>
-        <%= if reason == :plugin_not_installed do %>
-          {plugin_not_installed_message()}
-        <% else %>
-          {gettext("Could not fetch status from server")}
-        <% end %>
-      </:failed>
-      <%= if status["gamestate"] == "none" do %>
-        No active match.
-      <% end %>
-      Plugin version: {status["plugin_version"]}
-    </.async_result>
-  </:subtitle>
-  <:actions :if={@current_user.id == @game_server.user_id}>
-    <.link patch={~p"/game_servers/#{@game_server}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit server</.button>
-    </.link>
-  </:actions>
-</.header>
+<nav class="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+  <.link navigate={~p"/game_servers"} class="hover:text-zinc-900 dark:hover:text-zinc-100">
+    Servers
+  </.link>
+  <span class="mx-1.5">/</span>
+  <span class="text-zinc-900 dark:text-zinc-100">{@game_server.name}</span>
+</nav>
 
-<.list>
-  <:item title="Name">{@game_server.name}</:item>
-  <:item title="Host">{@game_server.host}</:item>
-  <:item title="Port">{@game_server.port}</:item>
-  <:item title="In use">{@game_server.in_use}</:item>
-  <:item title="Public">{@game_server.public}</:item>
-  <:item :if={@current_user.id == @game_server.user_id} title="Rcon password">
-    <div class="flex group items-center">
-      <code
-        class="bg-gray-200 dark:bg-gray-700 p-1 font-mono cursor-pointer"
-        phx-click="show_password"
+<section class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-800/60 dark:to-zinc-900 p-6 mb-6">
+  <div class="flex items-start gap-5">
+    <div class="flex-none w-16 h-16 rounded-xl bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 flex items-center justify-center shadow-md">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="w-7 h-7"
       >
-        <%= if @show_password do %>
-          {@rcon_password}
-        <% else %>
-          &lt;encrypted&gt;
-        <% end %>
-      </code>
-      <!--  <div role="tooltip" class=" z-10 mx-3 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 dark:bg-gray-700 group-hover:visible group-hover:opacity-100">
-        Click to show password
-      </div> -->
+        <path
+          fill-rule="evenodd"
+          d="M4.25 2A2.25 2.25 0 002 4.25v2a2.25 2.25 0 002.25 2.25h11.5A2.25 2.25 0 0018 6.25v-2A2.25 2.25 0 0015.75 2H4.25zm0 9.5A2.25 2.25 0 002 13.75v2a2.25 2.25 0 002.25 2.25h11.5A2.25 2.25 0 0018 15.75v-2a2.25 2.25 0 00-2.25-2.25H4.25zM6 5.25a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V5.25zm.75 8.75a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V14.75a.75.75 0 00-.75-.75H6.75z"
+          clip-rule="evenodd"
+        />
+      </svg>
     </div>
-  </:item>
-</.list>
 
-<.back navigate={~p"/game_servers"}>Back to game servers</.back>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-3 flex-wrap">
+        <h1 class="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 truncate">
+          {@game_server.name}
+        </h1>
+        <span class={[
+          "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+          if(@game_server.in_use,
+            do: "bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300",
+            else: "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+          )
+        ]}>
+          <span class={[
+            "w-1.5 h-1.5 rounded-full",
+            if(@game_server.in_use, do: "bg-amber-500", else: "bg-emerald-500")
+          ]}>
+          </span>
+          {if @game_server.in_use, do: "In use", else: "Available"}
+        </span>
+        <span class={[
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+          if(@game_server.public,
+            do: "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300",
+            else: "bg-zinc-100 text-zinc-600 dark:bg-zinc-700/60 dark:text-zinc-300"
+          )
+        ]}>
+          {if @game_server.public, do: "Public", else: "Private"}
+        </span>
+      </div>
+
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 font-mono mt-2">
+        {@game_server.host}:{@game_server.port}
+      </p>
+    </div>
+
+    <div :if={@current_user.id == @game_server.user_id} class="flex-none">
+      <.link patch={~p"/game_servers/#{@game_server}/show/edit"} phx-click={JS.push_focus()}>
+        <button class="rounded-lg bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700">
+          Edit server
+        </button>
+      </.link>
+    </div>
+  </div>
+</section>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+  <section class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 overflow-hidden">
+    <div class="px-5 py-3 border-b border-zinc-200 dark:border-zinc-700">
+      <h2 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Connection</h2>
+    </div>
+    <dl class="divide-y divide-zinc-200 dark:divide-zinc-700">
+      <div class="px-5 py-3 flex items-center justify-between gap-4">
+        <dt class="text-sm text-zinc-500 dark:text-zinc-400">Host</dt>
+        <dd class="font-mono text-sm text-zinc-900 dark:text-zinc-100 truncate">
+          {@game_server.host}
+        </dd>
+      </div>
+      <div class="px-5 py-3 flex items-center justify-between gap-4">
+        <dt class="text-sm text-zinc-500 dark:text-zinc-400">Port</dt>
+        <dd class="font-mono text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
+          {@game_server.port}
+        </dd>
+      </div>
+      <div :if={@game_server.gotv_port} class="px-5 py-3 flex items-center justify-between gap-4">
+        <dt class="text-sm text-zinc-500 dark:text-zinc-400">GOTV port</dt>
+        <dd class="font-mono text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
+          {@game_server.gotv_port}
+        </dd>
+      </div>
+      <div
+        :if={@current_user.id == @game_server.user_id}
+        class="px-5 py-3 flex items-center justify-between gap-4"
+      >
+        <dt class="text-sm text-zinc-500 dark:text-zinc-400">RCON password</dt>
+        <dd class="flex items-center gap-2 min-w-0">
+          <code class="font-mono text-xs bg-zinc-100 dark:bg-zinc-700 rounded px-2 py-1 truncate">
+            <%= if @show_password do %>
+              {@rcon_password}
+            <% else %>
+              ••••••••••••
+            <% end %>
+          </code>
+          <button
+            type="button"
+            phx-click="show_password"
+            class="flex-none text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+          >
+            {if @show_password, do: "Hide", else: "Show"}
+          </button>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 overflow-hidden">
+    <div class="px-5 py-3 border-b border-zinc-200 dark:border-zinc-700">
+      <h2 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Server status</h2>
+    </div>
+    <div class="px-5 py-4">
+      <.async_result :let={status} assign={@status}>
+        <:loading>
+          <div class="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+            <span class="inline-block w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></span>
+            Checking server…
+          </div>
+        </:loading>
+        <:failed :let={reason}>
+          <%= if reason == :plugin_not_installed do %>
+            <p class="text-sm text-rose-600 dark:text-rose-400">
+              {plugin_not_installed_message()}
+            </p>
+          <% else %>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">
+              {gettext("Could not fetch status from server")}
+            </p>
+          <% end %>
+        </:failed>
+        <dl class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <dt class="text-zinc-500 dark:text-zinc-400">Gamestate</dt>
+            <dd class="font-medium text-zinc-900 dark:text-zinc-100">
+              <%= if status["gamestate"] in [nil, "none"] do %>
+                <span class="text-zinc-500 dark:text-zinc-400">No active match</span>
+              <% else %>
+                {status["gamestate"]}
+              <% end %>
+            </dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-zinc-500 dark:text-zinc-400">Plugin version</dt>
+            <dd class="font-mono text-xs text-zinc-900 dark:text-zinc-100">
+              {status["plugin_version"] || "—"}
+            </dd>
+          </div>
+          <div :if={status["matchid"] && status["matchid"] != "0"} class="flex justify-between">
+            <dt class="text-zinc-500 dark:text-zinc-400">Match ID</dt>
+            <dd>
+              <.link
+                navigate={~p"/matches/#{status["matchid"]}"}
+                class="font-mono text-xs text-zinc-900 dark:text-zinc-100 hover:underline"
+              >
+                {status["matchid"]}
+              </.link>
+            </dd>
+          </div>
+        </dl>
+      </.async_result>
+    </div>
+  </section>
+</div>
 
 <.modal
   :if={@live_action == :edit}

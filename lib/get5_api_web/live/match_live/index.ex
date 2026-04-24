@@ -9,6 +9,12 @@ defmodule Get5ApiWeb.MatchLive.Index do
     {:ok, stream(socket, :matches, Matches.list_matches(socket.assigns.current_user.id))}
   end
 
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn -> Matches.get_match!(id) end)
+  end
+
+  def redirect_url, do: ~p"/matches"
+
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}

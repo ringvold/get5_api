@@ -23,7 +23,10 @@ defmodule Get5ApiWeb.Router do
     get "/", PageController, :home
 
     live_session :authenticated,
-      on_mount: [{Get5ApiWeb.UserAuth, :ensure_authenticated}] do
+      on_mount: [
+        {Get5ApiWeb.UserAuth, :ensure_authenticated},
+        {Get5ApiWeb.UserAuth, :assign_current_path}
+      ] do
       live "/matches", MatchLive.Index, :index
       live "/matches/new", MatchLive.Index, :new
 
@@ -65,7 +68,11 @@ defmodule Get5ApiWeb.Router do
   scope "/", Get5ApiWeb do
     pipe_through :browser
 
-    live_session :authorized, on_mount: [{Get5ApiWeb.UserAuth, :ensure_owner_if_private}] do
+    live_session :authorized,
+      on_mount: [
+        {Get5ApiWeb.UserAuth, :ensure_owner_if_private},
+        {Get5ApiWeb.UserAuth, :assign_current_path}
+      ] do
       live "/matches/:id", MatchLive.Show, :show
       live "/matches/:id/edit", MatchLive.Index, :edit
       live "/matches/:id/show/edit", MatchLive.Show, :edit

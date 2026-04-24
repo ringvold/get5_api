@@ -7,39 +7,77 @@
   </:actions>
 </.header>
 
-<.table
+<ul
   id="game_servers"
-  rows={@streams.game_servers}
-  row_click={fn {_id, game_server} -> JS.navigate(~p"/game_servers/#{game_server}") end}
+  phx-update="stream"
+  class="divide-y divide-zinc-200 dark:divide-zinc-700 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800/40"
 >
-  <:col :let={{_id, game_server}} label="Name">{game_server.name}</:col>
-  <:col :let={{_id, game_server}} label="Host">{game_server.host}</:col>
-  <:col :let={{_id, game_server}} label="Port">{game_server.port}</:col>
-  <:col :let={{_id, game_server}} label="In use">{game_server.in_use}</:col>
-  <:col :let={{_id, game_server}} label="Visibility">
-    <.visibility_icons
-      visible={game_server.public}
-      title={if game_server.public, do: "Public server", else: "Private server"}
-    />
-  </:col>
-  <:action :let={{_id, game_server}}>
-    <span :if={@current_user.id == game_server.user_id}>
-      <div class="sr-only">
-        <.link navigate={~p"/game_servers/#{game_server}"}>Show</.link>
+  <li
+    :for={{dom_id, game_server} <- @streams.game_servers}
+    id={dom_id}
+    class="group flex items-center gap-4 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition"
+  >
+    <.link navigate={~p"/game_servers/#{game_server}"} class="flex items-center gap-4 flex-1 min-w-0">
+      <div class="flex-none w-9 h-9 rounded-md bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center text-zinc-500 dark:text-zinc-300">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-4 h-4"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4.25 2A2.25 2.25 0 002 4.25v2a2.25 2.25 0 002.25 2.25h11.5A2.25 2.25 0 0018 6.25v-2A2.25 2.25 0 0015.75 2H4.25zm0 9.5A2.25 2.25 0 002 13.75v2a2.25 2.25 0 002.25 2.25h11.5A2.25 2.25 0 0018 15.75v-2a2.25 2.25 0 00-2.25-2.25H4.25zM6 5.25a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V5.25zm.75 8.75a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V14.75a.75.75 0 00-.75-.75H6.75z"
+            clip-rule="evenodd"
+          />
+        </svg>
       </div>
-      <.link patch={~p"/game_servers/#{game_server}/edit"}>Edit</.link>
-    </span>
-  </:action>
-  <:action :let={{id, game_server}}>
-    <.link
-      :if={@current_user.id == game_server.user_id}
-      phx-click={JS.push("delete", value: %{id: game_server.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
+
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+          {game_server.name}
+        </h3>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 font-mono truncate mt-0.5">
+          {game_server.host}:{game_server.port}
+        </p>
+      </div>
     </.link>
-  </:action>
-</.table>
+
+    <span class={[
+      "inline-flex flex-none items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+      if(game_server.in_use,
+        do: "bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300",
+        else: "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+      )
+    ]}>
+      <span class={[
+        "w-1.5 h-1.5 rounded-full",
+        if(game_server.in_use, do: "bg-amber-500", else: "bg-emerald-500")
+      ]}>
+      </span>
+      {if game_server.in_use, do: "In use", else: "Available"}
+    </span>
+
+    <div
+      :if={@current_user.id == game_server.user_id}
+      class="flex-none flex items-center gap-3 text-xs opacity-0 group-hover:opacity-100 transition"
+    >
+      <.link
+        patch={~p"/game_servers/#{game_server}/edit"}
+        class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+      >
+        Edit
+      </.link>
+      <.link
+        phx-click={JS.push("delete", value: %{id: game_server.id}) |> hide("##{dom_id}")}
+        data-confirm="Are you sure?"
+        class="text-zinc-500 hover:text-rose-600"
+      >
+        Delete
+      </.link>
+    </div>
+  </li>
+</ul>
 
 <.modal
   :if={@live_action in [:new, :edit]}

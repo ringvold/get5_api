@@ -1,35 +1,45 @@
-<header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-500 py-3">
-    <div class="flex items-center gap-4">
-      <.link navigate={~p"/"}>
-        <h1 class="font-semibold text-lg md:text-xl xl:text-2xl">Get5 webpanel</h1>
-      </.link>
+<header class="border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-14">
+      <div class="flex items-center gap-8">
+        <.link navigate={~p"/"} class="flex items-center gap-2 group">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-orange-400 to-rose-500 text-white font-bold text-xs">
+            G5
+          </span>
+          <span class="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-600 dark:group-hover:text-white">
+            Get5
+          </span>
+        </.link>
+
+        <nav class="flex items-center gap-1">
+          <.nav_link
+            navigate={~p"/teams"}
+            active={active_section(assigns[:current_path]) == :teams}
+          >
+            Teams
+          </.nav_link>
+          <.nav_link
+            navigate={~p"/matches"}
+            active={active_section(assigns[:current_path]) == :matches}
+          >
+            Matches
+          </.nav_link>
+          <.nav_link
+            navigate={~p"/game_servers"}
+            active={active_section(assigns[:current_path]) == :servers}
+          >
+            Servers
+          </.nav_link>
+        </nav>
+      </div>
+
+      <.user_menu current_user={@current_user} />
     </div>
-    <div class="flex gap-4">
-      <.link
-        navigate={~p"/teams"}
-        class="font-bold leading-6 hover:text-zinc-700 dark:hover:text-white p-3"
-      >
-        Teams
-      </.link>
-      <.link
-        navigate={~p"/matches"}
-        class="font-bold leading-6 hover:text-zinc-700 dark:hover:text-white p-3"
-      >
-        Matches
-      </.link>
-      <.link
-        navigate={~p"/game_servers"}
-        class="font-bold leading-6 hover:text-zinc-700 dark:hover:text-white p-3"
-      >
-        Servers
-      </.link>
-    </div>
-    <.user_menu current_user={@current_user} />
   </div>
 </header>
-<main class="px-4 py-20 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-2xl">
+
+<main class="px-4 py-8 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
     <.flash_group flash={@flash} />
     {@inner_content}
   </div>

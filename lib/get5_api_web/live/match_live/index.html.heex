@@ -7,38 +7,79 @@
   </:actions>
 </.header>
 
-<.table
+<ul
   id="matches"
-  rows={@streams.matches}
-  row_click={fn {_id, match} -> JS.navigate(~p"/matches/#{match}") end}
+  phx-update="stream"
+  class="divide-y divide-zinc-200 dark:divide-zinc-700 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800/40"
 >
-  <:col :let={{_id, match}} label="Name">{match.team1.name} vs {match.team2.name}</:col>
-  <:col :let={{_id, match}} label="Series type">{match.series_type}</:col>
-  <:col :let={{_id, match}} label="Server">{match.game_server.name}</:col>
-  <:col :let={{_id, match}} label="Visibility">
-    <.visibility_icons
-      visible={match.public}
-      title={if match.public, do: "Public match", else: "Private match"}
-    />
-  </:col>
-  <:action :let={{_id, match}}>
-    <span :if={@current_user.id == match.user_id}>
-      <div class="sr-only">
-        <.link navigate={~p"/matches/#{match}"}>Show</.link>
-      </div>
-      <.link patch={~p"/matches/#{match}/edit"}>Edit</.link>
-    </span>
-  </:action>
-  <:action :let={{id, match}}>
-    <.link
-      :if={@current_user.id == match.user_id}
-      phx-click={JS.push("delete", value: %{id: match.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
+  <li
+    :for={{dom_id, match} <- @streams.matches}
+    id={dom_id}
+    class="group flex items-center gap-4 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition"
+  >
+    <.link navigate={~p"/matches/#{match}"} class="flex-1 min-w-0">
+      <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+        {match.team1.name}
+        <span class="text-zinc-400 dark:text-zinc-500 mx-1 font-normal">vs</span>
+        {match.team2.name}
+      </h3>
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+        <span class="uppercase tracking-wide font-semibold">
+          {match.series_type |> to_string() |> String.capitalize()}
+        </span>
+        <span class="mx-1.5">·</span>
+        <span class="font-mono">{match.game_server.name}</span>
+      </p>
     </.link>
-  </:action>
-</.table>
+
+    <span class={[
+      "inline-flex flex-none items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+      case match.status do
+        :live -> "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300"
+        :pending -> "bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300"
+        :finished -> "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+        :cancelled -> "bg-zinc-100 text-zinc-500 dark:bg-zinc-700/60 dark:text-zinc-400"
+        _ -> "bg-zinc-100 text-zinc-600 dark:bg-zinc-700/60 dark:text-zinc-300"
+      end
+    ]}>
+      <span :if={match.status == :live} class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75">
+        </span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+      </span>
+      <span :if={match.status != :live} class={[
+        "w-1.5 h-1.5 rounded-full",
+        case match.status do
+          :pending -> "bg-amber-500"
+          :finished -> "bg-emerald-500"
+          :cancelled -> "bg-zinc-400"
+          _ -> "bg-zinc-400"
+        end
+      ]}>
+      </span>
+      {match.status |> to_string() |> String.capitalize()}
+    </span>
+
+    <div
+      :if={@current_user.id == match.user_id}
+      class="flex-none flex items-center gap-3 text-xs opacity-0 group-hover:opacity-100 transition"
+    >
+      <.link
+        patch={~p"/matches/#{match}/edit"}
+        class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+      >
+        Edit
+      </.link>
+      <.link
+        phx-click={JS.push("delete", value: %{id: match.id}) |> hide("##{dom_id}")}
+        data-confirm="Are you sure?"
+        class="text-zinc-500 hover:text-rose-600"
+      >
+        Delete
+      </.link>
+    </div>
+  </li>
+</ul>
 
 <.modal
   :if={@live_action in [:new, :edit]}

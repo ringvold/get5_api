@@ -59,7 +59,7 @@ config :get5_api, Get5ApiWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/get5_api_web/(live|views)/.*(ex)$",
+      ~r"lib/get5_api_web/(live|views|components|controllers)/.*(ex|heex)$",
       ~r"lib/get5_api_web/templates/.*(eex)$"
     ]
   ]

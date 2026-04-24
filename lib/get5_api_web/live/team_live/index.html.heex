@@ -7,40 +7,72 @@
   </:actions>
 </.header>
 
-<.table
+<ul
   id="teams"
-  rows={@streams.teams}
-  row_click={fn {_id, team} -> JS.navigate(~p"/teams/#{team}") end}
+  phx-update="stream"
+  class="divide-y divide-zinc-200 dark:divide-zinc-700 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800/40"
 >
-  <:col :let={{_id, team}} label="Name">{team.name}</:col>
-  <:col :let={{_id, team}} label="Players">
-    {Enum.map(team.players, fn player -> player.steam_id end)
-    |> Enum.join(", ")}
-  </:col>
-  <:col :let={{_id, team}} label="Visibility">
-    <.visibility_icons
-      visible={team.public}
-      title={if team.public, do: "Public team", else: "Private team"}
-    />
-  </:col>
-  <:action :let={{_id, team}}>
-    <span :if={@current_user.id == team.user_id}>
-      <div class="sr-only">
-        <.link navigate={~p"/teams/#{team}"}>Show</.link>
-      </div>
-      <.link patch={~p"/teams/#{team}/edit"}>Edit</.link>
-    </span>
-  </:action>
-  <:action :let={{id, team}}>
+  <li
+    :for={{dom_id, team} <- @streams.teams}
+    id={dom_id}
+    class="group flex items-center gap-4 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition"
+  >
     <.link
-      :if={@current_user.id == team.user_id}
-      phx-click={JS.push("delete", value: %{id: team.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
+      navigate={~p"/teams/#{team}"}
+      class="flex items-center gap-4 flex-1 min-w-0"
     >
-      Delete
+      <div class="flex-none w-9 h-9 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs">
+        {team.name |> String.slice(0, 2) |> String.upcase()}
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+          {team.name}
+        </h3>
+        <p
+          :if={team.players != []}
+          class="text-xs text-zinc-500 dark:text-zinc-400 font-mono truncate mt-0.5"
+        >
+          {team.players |> Enum.map(&(&1.name || &1.steam_id)) |> Enum.join(" · ")}
+        </p>
+      </div>
     </.link>
-  </:action>
-</.table>
+
+    <span class={[
+      "inline-flex flex-none items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+      if(team.public,
+        do: "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300",
+        else: "bg-zinc-100 text-zinc-600 dark:bg-zinc-700/60 dark:text-zinc-300"
+      )
+    ]}>
+      <span class={[
+        "w-1.5 h-1.5 rounded-full",
+        if(team.public, do: "bg-emerald-500", else: "bg-zinc-400")
+      ]}>
+      </span>
+      {if team.public, do: "Public", else: "Private"}
+    </span>
+
+    <div
+      :if={@current_user.id == team.user_id}
+      class="flex-none flex items-center gap-3 text-xs opacity-0 group-hover:opacity-100 transition"
+    >
+      <.link
+        patch={~p"/teams/#{team}/edit"}
+        class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+      >
+        Edit
+      </.link>
+      <.link
+        phx-click={JS.push("delete", value: %{id: team.id}) |> hide("##{dom_id}")}
+        data-confirm="Are you sure?"
+        class="text-zinc-500 hover:text-rose-600"
+      >
+        Delete
+      </.link>
+    </div>
+  </li>
+</ul>
 
 <.modal
   :if={@live_action in [:new, :edit]}

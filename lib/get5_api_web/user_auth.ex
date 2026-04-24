@@ -173,6 +173,18 @@ defmodule Get5ApiWeb.UserAuth do
     end
   end
 
+  def on_mount(:assign_current_path, _params, _session, socket) do
+    {:cont,
+     Phoenix.LiveView.attach_hook(
+       socket,
+       :set_current_path,
+       :handle_params,
+       fn _params, url, socket ->
+         {:cont, Phoenix.Component.assign(socket, :current_path, URI.parse(url).path)}
+       end
+     )}
+  end
+
   def on_mount(:ensure_owner_if_private, params, session, socket) do
     socket = mount_current_user(session, socket) |> socket.view.get_entity_for_id(params["id"])
     redirect_url = socket.view.redirect_url()

@@ -1,91 +1,262 @@
-<.header>
-  {@match.team1.name} vs {@match.team2.name}
-  <.visibility_icons type={:inline} visible={@match.public} />
-  <:subtitle>
-    <.async_result :let={status} assign={@status}>
-      <:loading>
-        {gettext("Loading status")}
-      </:loading>
-      <:failed :let={reason}>
-        <%= if reason == :plugin_not_installed do %>
-          {plugin_not_installed_message()}
-        <% else %>
-          {gettext("Could not fetch status from server")}
-        <% end %>
-      </:failed>
-      <%= if status["gamestate"] != "none" and status["matchid"] == to_string(@match.id)
-        do %>
-        {gettext("Match is running on server. Game state: %{game_state}",
-          game_state: status["gamestate"]
-        )}
-      <% else %>
-        {gettext("Match is not running on server")}
-      <% end %>
-    </.async_result>
-  </:subtitle>
+<nav class="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+  <.link navigate={~p"/matches"} class="hover:text-zinc-900 dark:hover:text-zinc-100">
+    Matches
+  </.link>
+  <span class="mx-1.5">/</span>
+  <span class="text-zinc-900 dark:text-zinc-100">
+    {@match.team1.name} vs {@match.team2.name}
+  </span>
+</nav>
 
-  <:actions>
-    <.button
-      :if={@current_user.id == @match.user_id}
-      phx-click="start_match"
-      phx-disable-with={gettext("Loading...")}
-      data-confirm={gettext("Are you sure you want to start the match?")}
-    >
-      {gettext("Start match")}
-    </.button>
-    <.button
-      :if={@current_user.id == @match.user_id}
-      phx-click="end_match"
-      phx-disable-with={gettext("Loading...")}
-      data-confirm={gettext("Are you sure you want end the match?")}
-    >
-      {gettext("End match")}
-    </.button>
-    <.button phx-click="get_status" phx-disable-with={gettext("Loading...")}>
-      Check status
-    </.button>
+<section class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-800/60 dark:to-zinc-900 p-6 md:p-8 mb-6">
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-6 md:gap-10">
+    <div class="flex items-center gap-4 justify-end text-right min-w-0">
+      <div class="min-w-0">
+        <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          Team 1
+        </div>
+        <div class="font-bold text-lg md:text-2xl text-zinc-900 dark:text-zinc-100 truncate">
+          {@match.team1.name}
+        </div>
+      </div>
+      <div class="flex-none w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white font-bold shadow-md">
+        {@match.team1.name |> String.slice(0, 2) |> String.upcase()}
+      </div>
+    </div>
+
+    <div class="text-center">
+      <div class="font-bold text-4xl md:text-6xl tabular-nums text-zinc-900 dark:text-zinc-100 flex items-baseline gap-2 md:gap-4">
+        <span>{@match.team1_score || 0}</span>
+        <span class="text-zinc-300 dark:text-zinc-600 text-3xl md:text-4xl">—</span>
+        <span>{@match.team2_score || 0}</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4 min-w-0">
+      <div class="flex-none w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md">
+        {@match.team2.name |> String.slice(0, 2) |> String.upcase()}
+      </div>
+      <div class="min-w-0">
+        <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          Team 2
+        </div>
+        <div class="font-bold text-lg md:text-2xl text-zinc-900 dark:text-zinc-100 truncate">
+          {@match.team2.name}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class={[
+        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold",
+        case @match.status do
+          :live -> "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300"
+          :pending -> "bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300"
+          :finished -> "bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+          :cancelled -> "bg-zinc-100 text-zinc-500 dark:bg-zinc-700/60 dark:text-zinc-400"
+        end
+      ]}>
+        <span :if={@match.status == :live} class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75">
+          </span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+        </span>
+        <span :if={@match.status != :live} class={[
+          "w-1.5 h-1.5 rounded-full",
+          case @match.status do
+            :pending -> "bg-amber-500"
+            :finished -> "bg-emerald-500"
+            :cancelled -> "bg-zinc-400"
+          end
+        ]}>
+        </span>
+        {@match.status |> to_string() |> String.upcase()}
+      </span>
+
+      <div class="text-xs text-zinc-500 dark:text-zinc-400">
+        <.async_result :let={status} assign={@status}>
+          <:loading>
+            <span class="inline-flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></span>
+              {gettext("Checking server…")}
+            </span>
+          </:loading>
+          <:failed :let={reason}>
+            <%= if reason == :plugin_not_installed do %>
+              <span class="text-rose-600 dark:text-rose-400">
+                {plugin_not_installed_message()}
+              </span>
+            <% else %>
+              <span class="text-zinc-500">{gettext("Could not fetch server status")}</span>
+            <% end %>
+          </:failed>
+          <%= if status["gamestate"] != "none" and status["matchid"] == to_string(@match.id) do %>
+            <span>
+              {gettext("On server · gamestate: %{game_state}",
+                game_state: status["gamestate"]
+              )}
+            </span>
+          <% else %>
+            <span>{gettext("Not loaded on server")}</span>
+          <% end %>
+        </.async_result>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <.button
+        :if={@current_user.id == @match.user_id and @match.status == :pending}
+        phx-click="start_match"
+        phx-disable-with={gettext("Loading...")}
+        data-confirm={gettext("Are you sure you want to start the match?")}
+      >
+        {gettext("Start match")}
+      </.button>
+      <.button
+        :if={@current_user.id == @match.user_id and @match.status == :live}
+        phx-click="end_match"
+        phx-disable-with={gettext("Loading...")}
+        data-confirm={gettext("Are you sure you want end the match?")}
+      >
+        {gettext("End match")}
+      </.button>
+      <button
+        phx-click="get_status"
+        phx-disable-with={gettext("Loading...")}
+        class="rounded-lg bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+      >
+        Check status
+      </button>
+      <.link
+        :if={@current_user.id == @match.user_id}
+        patch={~p"/matches/#{@match}/show/edit"}
+        phx-click={JS.push_focus()}
+      >
+        <button class="rounded-lg bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700">
+          Edit
+        </button>
+      </.link>
+    </div>
+  </div>
+</section>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+  <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 p-4">
+    <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      Server
+    </div>
     <.link
-      :if={@current_user.id == @match.user_id}
-      patch={~p"/matches/#{@match}/show/edit"}
-      phx-click={JS.push_focus()}
+      navigate={~p"/game_servers/#{@match.game_server.id}"}
+      class="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline truncate block mt-1"
     >
-      <.button>Edit match</.button>
-    </.link>
-  </:actions>
-</.header>
-
-<.list>
-  <:item title={gettext("Matchid")}>{@match.id}</:item>
-  <:item title={gettext("Server")}>
-    <.link navigate={~p"/game_servers/#{@match.game_server.id}"} class="underline">
       {@match.game_server.name}
     </.link>
-  </:item>
-  <:item title={gettext("Team 1")}>{@match.team1.name}</:item>
-  <:item title={gettext("Team 2")}>{@match.team2.name}</:item>
-  <:item title={gettext("Series type")}>{@match.series_type}</:item>
-  <:item title={gettext("Side type")}>{@match.side_type}</:item>
-  <:item title={gettext("Map list")}>{Enum.join(@match.map_list, ", ")}</:item>
-  <:item title={gettext("Public")}>{@match.public}</:item>
-</.list>
+  </div>
+  <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 p-4">
+    <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      Series
+    </div>
+    <div class="font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
+      {@match.series_type |> to_string() |> String.capitalize()}
+    </div>
+  </div>
+  <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 p-4">
+    <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      Side
+    </div>
+    <div class="font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
+      {@match.side_type |> to_string() |> String.replace("_", " ") |> String.capitalize()}
+    </div>
+  </div>
+  <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 p-4">
+    <div class="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      Maps
+    </div>
+    <div class="font-semibold text-zinc-900 dark:text-zinc-100 mt-1 text-sm truncate">
+      {if @match.map_list in [nil, []],
+        do: "—",
+        else: Enum.join(@match.map_list, ", ")}
+    </div>
+  </div>
+</div>
 
-<.table id="player_stats" rows={@player_stats}>
-  <:col :let={player} label="Name">{player.name}</:col>
-  <:col :let={player} label="Kills">{player.kills}</:col>
-  <:col :let={player} label="Damage">{player.damage}</:col>
-  <:col :let={player} label="Deaths">{player.deaths}</:col>
-  <:col :let={player} label="Assists">{player.assists}</:col>
-  <:col :let={player} label="Flashed">{player.enemies_flashed}</:col>
-  <:col :let={player} label="HS">{player.headshot_kills}</:col>
-  <:col :let={player} label="HS%">
-    {if player.kills > 0, do: "#{ceil(player.headshot_kills / player.kills * 100)}%", else: "0%"}
-  </:col>
-  <:col :let={player} label="Utility">{player.utility_damage}</:col>
-  <:col :let={player} label="KAST">{player.kast}</:col>
-  <:col :let={player} label="Score">{player.score}</:col>
-</.table>
+<div :if={@player_stats != []}>
+  <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-3">
+    Player stats
+  </h2>
+  <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800/40">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-zinc-50 dark:bg-zinc-800/80 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+          <tr>
+            <th class="text-left font-medium px-4 py-2.5">Player</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">K</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">D</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">A</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">HS%</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">Flashed</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">Util</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">KAST</th>
+            <th class="text-right font-medium px-3 py-2.5 tabular-nums">ADR</th>
+            <th class="text-right font-medium px-4 py-2.5 tabular-nums">Score</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/60">
+          <tr
+            :for={player <- @player_stats}
+            class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30"
+          >
+            <td class="px-4 py-2.5">
+              <div class="font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                {player.name}
+              </div>
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">
+              {player.kills}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-rose-600 dark:text-rose-400">
+              {player.deaths}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+              {player.assists}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+              {if player.kills > 0,
+                do: "#{ceil(player.headshot_kills / player.kills * 100)}%",
+                else: "—"}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-500">
+              {player.enemies_flashed}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-500">
+              {player.utility_damage}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+              {player.kast}
+            </td>
+            <td class="px-3 py-2.5 text-right tabular-nums text-zinc-500">
+              {player.damage}
+            </td>
+            <td class="px-4 py-2.5 text-right tabular-nums font-semibold text-zinc-900 dark:text-zinc-100">
+              {player.score}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<.back navigate={~p"/matches"}>{gettext("Back to matches")}</.back>
+<div
+  :if={@player_stats == []}
+  class="rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-700 p-8 text-center"
+>
+  <p class="text-sm text-zinc-500 dark:text-zinc-400">
+    No player stats yet. They'll appear here once the match starts.
+  </p>
+</div>
 
 <.modal
   :if={@live_action == :edit}

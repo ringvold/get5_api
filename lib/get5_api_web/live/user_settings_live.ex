@@ -5,70 +5,103 @@ defmodule Get5ApiWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
-    </.header>
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Account settings</h1>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+        Manage your login details and security
+      </p>
+    </div>
 
-    <div class="space-y-12 divide-y">
-      <div>
-        <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
-        >
-          <.input field={@email_form[:email]} type="email" label="Email" required />
-          <.input
-            field={@email_form[:current_password]}
-            name="current_password"
-            id="current_password_for_email"
-            type="password"
-            label="Current password"
-            value={@email_form_current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/log_in?_action=password_updated"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <.input
-            field={@password_form[:email]}
-            type="hidden"
-            id="hidden_user_email"
-            value={@current_email}
-          />
-          <.input field={@password_form[:password]} type="password" label="New password" required />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label="Confirm new password"
-          />
-          <.input
-            field={@password_form[:current_password]}
-            name="current_password"
-            type="password"
-            label="Current password"
-            id="current_password_for_password"
-            value={@current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Password</.button>
-          </:actions>
-        </.simple_form>
-      </div>
+    <div class="space-y-8">
+      <section class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 overflow-hidden">
+        <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-zinc-700">
+          <div class="p-6 md:col-span-1">
+            <h2 class="font-semibold text-zinc-900 dark:text-zinc-100">Email address</h2>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+              Used for sign-in. A confirmation link will be sent to the new address before the change takes effect.
+            </p>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-4 font-mono break-all">
+              Current: {@current_email}
+            </p>
+          </div>
+
+          <div class="p-6 md:col-span-2">
+            <.simple_form
+              for={@email_form}
+              id="email_form"
+              phx-submit="update_email"
+              phx-change="validate_email"
+            >
+              <.input field={@email_form[:email]} type="email" label="New email" required />
+              <.input
+                field={@email_form[:current_password]}
+                name="current_password"
+                id="current_password_for_email"
+                type="password"
+                label="Current password"
+                value={@email_form_current_password}
+                required
+              />
+              <:actions>
+                <.button phx-disable-with="Changing...">Change email</.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/40 overflow-hidden">
+        <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-zinc-700">
+          <div class="p-6 md:col-span-1">
+            <h2 class="font-semibold text-zinc-900 dark:text-zinc-100">Password</h2>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+              Choose a strong password. You'll be signed in with the new password after changing.
+            </p>
+          </div>
+
+          <div class="p-6 md:col-span-2">
+            <.simple_form
+              for={@password_form}
+              id="password_form"
+              action={~p"/users/log_in?_action=password_updated"}
+              method="post"
+              phx-change="validate_password"
+              phx-submit="update_password"
+              phx-trigger-action={@trigger_submit}
+            >
+              <.input
+                field={@password_form[:email]}
+                type="hidden"
+                id="hidden_user_email"
+                value={@current_email}
+              />
+              <.input
+                field={@password_form[:password]}
+                type="password"
+                label="New password"
+                required
+              />
+              <.input
+                field={@password_form[:password_confirmation]}
+                type="password"
+                label="Confirm new password"
+              />
+              <.input
+                field={@password_form[:current_password]}
+                name="current_password"
+                type="password"
+                label="Current password"
+                id="current_password_for_password"
+                value={@current_password}
+                required
+              />
+              <:actions>
+                <.button phx-disable-with="Changing...">Change password</.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </div>
+      </section>
     </div>
     """
   end

@@ -9,6 +9,12 @@ defmodule Get5ApiWeb.TeamLive.Index do
     {:ok, stream(socket, :teams, Teams.list_teams(socket.assigns.current_user.id))}
   end
 
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn -> Teams.get_team!(id) end)
+  end
+
+  def redirect_url, do: ~p"/teams"
+
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}

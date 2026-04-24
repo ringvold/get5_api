@@ -10,6 +10,12 @@ defmodule Get5ApiWeb.GameServerLive.Index do
      stream(socket, :game_servers, GameServers.list_game_servers(socket.assigns.current_user.id))}
   end
 
+  def get_entity_for_id(socket, id) do
+    assign_new(socket, :entity, fn -> GameServers.get_game_server!(id) end)
+  end
+
+  def redirect_url, do: ~p"/game_servers"
+
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
