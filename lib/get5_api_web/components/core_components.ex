@@ -459,7 +459,7 @@ defmodule Get5ApiWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white dark:bg-zinc-900 rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
+        class="mt-1 block w-full py-2 px-3 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 dark:text-zinc-100 rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >
@@ -482,7 +482,7 @@ defmodule Get5ApiWeb.CoreComponents do
           "mt-2 block min-h-[6rem] w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
           "text-zinc-900 focus:border-zinc-400 focus:outline-none focus:ring-4 focus:ring-zinc-800/5 sm:text-sm sm:leading-6",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
-          "dark:text-zinc-100 dark:bg-zinc-900",
+          "dark:text-zinc-100 dark:bg-zinc-800 dark:border-zinc-600",
           @errors != [] && "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
         ]}
         {@rest}
@@ -505,7 +505,7 @@ defmodule Get5ApiWeb.CoreComponents do
           input_border(@errors),
           "mt-2 block w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
-          "dark:text-zinc-100 dark:bg-zinc-900 dark:placeholder:text"
+          "dark:text-zinc-100 dark:bg-zinc-800 dark:border-zinc-600 dark:placeholder:text-zinc-500"
         ]}
         {@rest}
       />
@@ -559,7 +559,7 @@ defmodule Get5ApiWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header class={["mb-6", @actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-xl font-semibold leading-8 text-zinc-800 dark:text-zinc-100">
           {render_slot(@inner_block)}

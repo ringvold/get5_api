@@ -11,7 +11,7 @@
           </span>
         </.link>
 
-        <nav class="flex items-center gap-1">
+        <nav :if={@current_user} class="flex items-center gap-1">
           <.nav_link
             navigate={~p"/teams"}
             active={active_section(assigns[:current_path]) == :teams}
